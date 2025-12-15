@@ -1,6 +1,7 @@
 import {
   AtomicCodec,
   ClassCodec,
+  Definition,
   Codec,
   CodeContext,
   FieldReference,
@@ -178,14 +179,14 @@ export abstract class Emit extends Backend {
   protected exitTypeDefinition(type: Type): void {}
 
   protected enterArrayType(
-    _type: new (...args: any[]) => Codec,
+    _type: new (...args: any[]) => Definition,
     _count: number
   ): void {
     this.pushScope();
   }
 
   protected exitArrayType(
-    _type: new (...args: any[]) => Codec,
+    _type: new (...args: any[]) => Definition,
     _count: number
   ): void {
     const [type, count] = this.popScope();
@@ -194,14 +195,14 @@ export abstract class Emit extends Backend {
   }
 
   protected enterListType(
-    _type: new (...args: any[]) => Codec,
+    _type: new (...args: any[]) => Definition,
     _maxCount?: number
   ): void {
     this.pushScope();
   }
 
   protected exitListType(
-    _type: new (...args: any[]) => Codec,
+    _type: new (...args: any[]) => Definition,
     maxCount?: number
   ): void {
     const [type] = this.popScope();
@@ -209,7 +210,7 @@ export abstract class Emit extends Backend {
     this.pushString(this.emitListType(type!, maxCount));
   }
 
-  protected exitType(type: new (...args: any[]) => Codec): void {
+  protected exitType(type: new (...args: any[]) => Definition): void {
     this.pushString(this.emitType(type.name));
   }
 

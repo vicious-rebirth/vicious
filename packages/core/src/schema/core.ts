@@ -1,4 +1,4 @@
-export abstract class Codec {
+export abstract class Definition {
   __offset: number | undefined = undefined;
   __todo: boolean | undefined = undefined;
   __doc: string | undefined = undefined;
@@ -9,11 +9,11 @@ type FixedArray<T, N extends number, R extends T[] = []> = R["length"] extends N
   : FixedArray<T, N, [...R, T]>;
 
 export type TypeContext = {
-  array: <T extends Codec, K extends number>(
+  array: <T extends Definition, K extends number>(
     type: new (...args: any[]) => T,
     count: K
   ) => FixedArray<T, K>;
-  list: <T extends Codec>(
+  list: <T extends Definition>(
     type: new (...args: any[]) => T,
     maxCount?: number
   ) => T[];
@@ -22,8 +22,8 @@ export type TypeContext = {
 export type Type<T = any> =
   | ((ctx: TypeContext) => T)
   | (new (...args: any[]) => T);
-export type Value = Codec | number | string | ((ctx: CodeContext) => any);
-export type Op2 = (left: Value, right: Value) => Codec;
+export type Value = Definition | number | string | ((ctx: CodeContext) => any);
+export type Op2 = (left: Value, right: Value) => Definition;
 
 export type CodeContext = {
   if: (
@@ -33,7 +33,7 @@ export type CodeContext = {
   ) => void;
 
   for: (
-    size: Codec | number | ((ctx: CodeContext) => void),
+    size: Definition | number | ((ctx: CodeContext) => void),
     body: (ctx: CodeContext) => void
   ) => void;
   loop: (body: (ctx: CodeContext) => void) => void;
@@ -42,7 +42,7 @@ export type CodeContext = {
 
   var: <T>(type: Type<T>, data: Value) => T;
 
-  not: (value: Value) => Codec;
+  not: (value: Value) => Definition;
   add: Op2;
   sub: Op2;
   mul: Op2;
@@ -66,10 +66,13 @@ export type CodeContext = {
   version: () => number;
   end: () => number;
 
-  index: <T extends Codec | number | string>(target: T[], value: Value) => T;
+  index: <T extends Definition | number | string>(
+    target: T[],
+    value: Value
+  ) => T;
 
   set: (target: Value, value: Value) => void;
-  allocate: <T extends Codec | number | string>(
+  allocate: <T extends Definition | number | string>(
     target: T[],
     count: Value
   ) => void;
@@ -80,7 +83,7 @@ export type CodeContext = {
 
   walk: (target?: Value) => void;
 
-  getId: (id: Value) => Codec;
+  getId: (id: Value) => Definition;
   setId: (id: Value, target: Value) => void;
   walkId: (id: Value, target?: Value) => void;
 
@@ -123,14 +126,16 @@ export function deprecated(condition: (ctx: CodeContext) => void): undefined {
   return field(null as any, { condition }) as any as undefined;
 }
 
-export abstract class MetadataCodec extends Codec {}
+export abstract class AtomicCodec extends Definition {}
 
-export abstract class ClassCodec<T = any> extends MetadataCodec {
+export abstract class Codec extends Definition {}
+
+export abstract class MetadataCodec extends Definition {}
+
+export abstract class ClassCodec<T = any> extends Definition {
   abstract get __id(): number;
   __folder: string | undefined = undefined;
   __ext: string | undefined = undefined;
 
   abstract get base(): T;
 }
-
-export abstract class AtomicCodec extends Codec {}

@@ -1,6 +1,7 @@
 import { U32 } from "../schema/types/atomic";
 import {
   FieldReference,
+  Definition,
   Codec,
   MetadataCodec,
   ClassCodec,
@@ -21,7 +22,7 @@ export abstract class Backend {
   protected currentIterator: VariableReference | null = null;
   protected variableCount: number = 0;
 
-  public visit(obj: Codec): void {
+  public visit(obj: Definition): void {
     if (obj instanceof ClassCodec) {
       this.visitClass(obj);
     } else if (obj instanceof MetadataCodec) {
@@ -58,23 +59,23 @@ export abstract class Backend {
   protected abstract enterTypeDefinition(type: Type): void;
   protected abstract exitTypeDefinition(type: Type): void;
 
-  protected abstract exitType(type: new (...args: any[]) => Codec): void;
+  protected abstract exitType(type: new (...args: any[]) => Definition): void;
 
   protected abstract enterArrayType(
-    type: new (...args: any[]) => Codec,
+    type: new (...args: any[]) => Definition,
     count: number
   ): void;
   protected abstract exitArrayType(
-    type: new (...args: any[]) => Codec,
+    type: new (...args: any[]) => Definition,
     count: number
   ): void;
 
   protected abstract enterListType(
-    type: new (...args: any[]) => Codec,
+    type: new (...args: any[]) => Definition,
     maxCount?: number
   ): void;
   protected abstract exitListType(
-    type: new (...args: any[]) => Codec,
+    type: new (...args: any[]) => Definition,
     maxCount?: number
   ): void;
 
@@ -94,12 +95,12 @@ export abstract class Backend {
 
   protected abstract enterFor(
     v: VariableReference,
-    size: Codec | number | undefined | ((ctx: CodeContext) => void),
+    size: Definition | number | undefined | ((ctx: CodeContext) => void),
     body: (ctx: CodeContext) => void
   ): void;
   protected abstract exitFor(
     v: VariableReference,
-    size: Codec | number | undefined | ((ctx: CodeContext) => void),
+    size: Definition | number | undefined | ((ctx: CodeContext) => void),
     body: (ctx: CodeContext) => void
   ): void;
 
@@ -299,12 +300,12 @@ export abstract class Backend {
     this.exitTypeDefinition(type);
   }
 
-  protected visitType(type: new (...args: any[]) => Codec): void {
+  protected visitType(type: new (...args: any[]) => Definition): void {
     this.exitType(type);
   }
 
   public visitArrayType(
-    type: new (...args: any[]) => Codec,
+    type: new (...args: any[]) => Definition,
     count: number
   ): void {
     this.enterArrayType(type, count);
@@ -315,7 +316,7 @@ export abstract class Backend {
   }
 
   protected visitListType(
-    type: new (...args: any[]) => Codec,
+    type: new (...args: any[]) => Definition,
     maxCount?: number
   ): void {
     this.enterListType(type, maxCount);
@@ -396,7 +397,7 @@ export abstract class Backend {
   }
 
   protected visitFor(
-    size: Codec | number | undefined | ((ctx: CodeContext) => void),
+    size: Definition | number | undefined | ((ctx: CodeContext) => void),
     body: (ctx: CodeContext) => void
   ): void {
     const v = this.newVariable(U32);
@@ -571,7 +572,7 @@ export abstract class Backend {
       ) => this.visitIf(condition, true_, false_) as any,
 
       for: (
-        size: Codec | number | ((ctx: CodeContext) => void),
+        size: Definition | number | ((ctx: CodeContext) => void),
         body: (ctx: CodeContext) => void
       ) => this.visitFor(size, body) as any,
 
@@ -630,7 +631,7 @@ export abstract class Backend {
 
       set: (target: Value, value: Value) =>
         this.visitAssign(target, value) as any,
-      allocate: <T extends Codec | number | string>(
+      allocate: <T extends Definition | number | string>(
         target: T[],
         count: Value
       ) => this.visitAllocate(target as any, count) as any,
