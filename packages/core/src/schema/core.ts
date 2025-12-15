@@ -126,7 +126,7 @@ export function deprecated(condition: (ctx: CodeContext) => void): undefined {
   return field(null as any, { condition }) as any as undefined;
 }
 
-export abstract class AtomicCodec extends Definition {}
+export abstract class Atom extends Definition {}
 
 export abstract class Codec extends Definition {}
 

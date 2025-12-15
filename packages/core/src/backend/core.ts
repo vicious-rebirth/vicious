@@ -7,7 +7,7 @@ import {
   ClassCodec,
   Type,
   TypeContext,
-  AtomicCodec,
+  Atom,
   CodeContext,
   Value,
   VariableReference,
@@ -27,8 +27,8 @@ export abstract class Backend {
       this.visitClass(obj);
     } else if (obj instanceof MetadataCodec) {
       this.visitMetadataStruct(obj);
-    } else if (obj instanceof AtomicCodec) {
-      this.visitAtomic(obj);
+    } else if (obj instanceof Atom) {
+      this.visitAtom(obj);
     } else if (obj instanceof Codec) {
       this.visitStruct(obj);
     }
@@ -47,7 +47,7 @@ export abstract class Backend {
   protected abstract enterStruct(struct: Codec): void;
   protected abstract exitStruct(struct: Codec): void;
 
-  protected abstract exitAtomic(atom: AtomicCodec): void;
+  protected abstract exitAtom(atom: Atom): void;
 
   protected abstract exitMetadataHeader(): void;
 
@@ -214,10 +214,10 @@ export abstract class Backend {
     this.exitStruct(struct);
   }
 
-  protected visitAtomic(atom: AtomicCodec): void {
+  protected visitAtom(atom: Atom): void {
     this.variableCount = 0;
 
-    this.exitAtomic(atom);
+    this.exitAtom(atom);
   }
 
   protected visitMetadataHeader(): void {

@@ -1,5 +1,5 @@
 import {
-  AtomicCodec,
+  Atom,
   ClassCodec,
   Definition,
   Codec,
@@ -32,7 +32,7 @@ export abstract class Emit extends Backend {
 
   protected abstract emitStruct(struct: Codec, fields: string): string;
 
-  protected abstract emitAtomic(atom: AtomicCodec): string;
+  protected abstract emitAtom(atom: Atom): string;
 
   protected abstract emitStructField(
     field: FieldReference,
@@ -152,8 +152,8 @@ export abstract class Emit extends Backend {
     this.pushString(this.emitStruct(struct, fields.join("\n")));
   }
 
-  protected exitAtomic(atom: AtomicCodec): void {
-    this.pushString(this.emitAtomic(atom));
+  protected exitAtom(atom: Atom): void {
+    this.pushString(this.emitAtom(atom));
   }
 
   protected enterStructField(field: FieldReference): void {

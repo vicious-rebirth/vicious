@@ -1,4 +1,4 @@
-import { AtomicCodec, FieldReference, U32 } from "@repo/core/schema";
+import { Atom, FieldReference, U32 } from "@repo/core/schema";
 import { Emit } from "./emit";
 
 export class Encoder extends Emit {
@@ -12,7 +12,7 @@ export class Encoder extends Emit {
     `;
   }
 
-  protected emitAtomic(atom: AtomicCodec): string {
+  protected emitAtom(atom: Atom): string {
     return "TODO";
   }
 
