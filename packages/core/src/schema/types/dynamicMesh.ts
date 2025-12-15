@@ -84,9 +84,7 @@ export class DynamicMeshEntry extends Struct {
   label = field(Label, {
     condition: (ctx) => ctx.gt(this.version, 3),
   });
-  _ = field(U8, {
-    deprecated: (ctx) => ctx.lte(this.version, 3),
-  });
+  _ = deprecated((ctx) => ctx.lte(this.version, 3));
 }
 
 export class DynamicMeshEntries extends Struct {
@@ -244,7 +242,7 @@ export class DynamicMeshBody extends Struct {
 
   enabled = field(BOOL);
   meshSections = field((ctx) => ctx.array(MeshSection, 32), {
-    condition: (ctx) => ctx.neq(this.enabled, 0),
+    condition: (ctx) => ctx.isTrue(this.enabled),
     custom: (ctx) => {
       ctx.for(32, (ctx) => {
         ctx.walk((ctx) =>
@@ -254,12 +252,12 @@ export class DynamicMeshBody extends Struct {
     },
   });
   riggedBufferCount = field(U32, {
-    condition: (ctx) => ctx.neq(this.enabled, 0),
+    condition: (ctx) => ctx.isTrue(this.enabled),
   });
   riggedVertexBuffer = field(U8Buffer, {
     condition: (ctx) =>
       ctx.and(
-        (ctx) => ctx.neq(this.enabled, 0),
+        (ctx) => ctx.isTrue(this.enabled),
         (ctx) => ctx.gt((ctx) => ctx.shl(this.riggedBufferCount, 5), 0)
       ),
     custom: (ctx) => {
@@ -273,7 +271,7 @@ export class DynamicMeshBody extends Struct {
   riggedJointWeightBuffer = field(U8Buffer, {
     condition: (ctx) =>
       ctx.and(
-        (ctx) => ctx.neq(this.enabled, 0),
+        (ctx) => ctx.isTrue(this.enabled),
         (ctx) => ctx.gt((ctx) => ctx.shl(this.riggedBufferCount, 2), 0)
       ),
     custom: (ctx) => {
@@ -285,12 +283,12 @@ export class DynamicMeshBody extends Struct {
     },
   });
   staticVertexBufferCount = field(U32, {
-    condition: (ctx) => ctx.neq(this.enabled, 0),
+    condition: (ctx) => ctx.isTrue(this.enabled),
   });
   staticVertexBuffer = field(U8Buffer, {
     condition: (ctx) =>
       ctx.and(
-        (ctx) => ctx.neq(this.enabled, 0),
+        (ctx) => ctx.isTrue(this.enabled),
         (ctx) => ctx.gt((ctx) => ctx.mul(this.staticVertexBufferCount, 16), 0)
       ),
     custom: (ctx) => {
@@ -302,12 +300,12 @@ export class DynamicMeshBody extends Struct {
     },
   });
   indexBufferCount = field(U32, {
-    condition: (ctx) => ctx.neq(this.enabled, 0),
+    condition: (ctx) => ctx.isTrue(this.enabled),
   });
   indexBuffer = field(U8Buffer, {
     condition: (ctx) =>
       ctx.and(
-        (ctx) => ctx.neq(this.enabled, 0),
+        (ctx) => ctx.isTrue(this.enabled),
         (ctx) => ctx.gt((ctx) => ctx.mul(this.indexBufferCount, 2), 0)
       ),
     custom: (ctx) => {

@@ -28,7 +28,7 @@ export class V512 extends Class {
   f_0x18 = field(U32);
   f_0xa0 = field(F32Buffer, {
     custom: (ctx) => {
-      ctx.set(this.f_0xa0.consume, 1);
+      ctx.set(this.f_0xa0.consume, true);
       ctx.walk(this.f_0xa0);
     },
   });

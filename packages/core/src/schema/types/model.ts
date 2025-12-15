@@ -22,7 +22,7 @@ export class VertexBuffer extends Struct {
   buffer = field(U8Buffer, {
     custom: (ctx) => {
       ctx.if(
-        (ctx) => ctx.neq(this.enabled, 0),
+        (ctx) => ctx.isTrue(this.enabled),
         (ctx) => {
           ctx.set(this.buffer.consume, true);
           ctx.walk();

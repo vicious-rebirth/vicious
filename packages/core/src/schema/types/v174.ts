@@ -10,7 +10,7 @@ export class V174 extends Class {
   base = field(V173);
   f_1 = field(F32Buffer, {
     custom: (ctx) => {
-      ctx.set(this.f_1.consume, 1);
+      ctx.set(this.f_1.consume, true);
       ctx.walk(this.f_1);
     },
   });

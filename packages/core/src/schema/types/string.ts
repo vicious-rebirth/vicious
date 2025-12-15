@@ -16,7 +16,7 @@ export class String extends Class {
   });
   buffer = field(StringBuffer, {
     custom: (ctx) => {
-      ctx.set(this.buffer.consume, 1);
+      ctx.set(this.buffer.consume, true);
       ctx.walk(this.buffer);
     },
   });

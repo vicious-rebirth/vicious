@@ -4,9 +4,10 @@ import {
   FieldReference,
   VariableReference,
 } from "@repo/core/schema";
-import { Emit as CoreEmit } from "@repo/core/backend";
+import { Emit } from "@repo/core/backend";
+import { cg } from "@repo/core/util";
 
-export abstract class Emit extends CoreEmit {
+export abstract class TSEmit extends Emit {
   /**
    * Override
    */
@@ -26,28 +27,20 @@ export abstract class Emit extends CoreEmit {
   }
 
   protected emitArrayType(type: string, _count: string): string {
-    return `${type}[]`;
+    return cg`${type}[]`;
   }
 
-  protected emitListType(type: string, maxCount?: number): string {
-    return `${type}[]`;
+  protected emitListType(type: string, _maxCount?: number): string {
+    return cg`${type}[]`;
   }
 
   protected emitType(type: string): string {
-    return type;
-  }
-
-  protected emitMetadataHeader(): string {
-    return "";
-  }
-
-  protected emitMetadataFooter(): string {
-    return "";
+    return cg`${type}`;
   }
 
   protected emitIf(condition: string, true_: string, false_?: string): string {
     if (false_ !== undefined) {
-      return `
+      return cg`
         if (${condition}) {
           ${true_}
         } else {
@@ -55,7 +48,7 @@ export abstract class Emit extends CoreEmit {
         }
       `;
     } else {
-      return `
+      return cg`
         if (${condition}) {
           ${true_}
         }
@@ -68,39 +61,55 @@ export abstract class Emit extends CoreEmit {
     size: string | undefined,
     body: string
   ): string {
-    return `
-      for (${variable} = 0; ${variable} < ${size}; ${variable}++) {
-        ${body}
-      }
-    `;
+    if (size !== undefined) {
+      return cg`
+        for (let ${variable} = 0; ${variable} < ${size}; ${variable}++) {
+          ${body}
+        }
+      `;
+    } else {
+      return cg`
+        for (let ${variable} = 0;; ${variable}++) {
+          ${body}
+        }
+      `;
+    }
   }
 
   protected emitBreak(): string {
-    return "break;";
+    return cg`break;`;
   }
 
   protected emitFieldReference(field: FieldReference): string {
-    return `self.${field.name}`;
+    return cg`self.${field.__name}`;
   }
 
   protected emitVariableReference(v: VariableReference): string {
-    return v.name;
+    return cg`${v.__name}`;
   }
 
   protected emitVariableDefinition(
     v: VariableReference,
-    type: string,
+    _type: string,
     data: string
   ): string {
-    return `let ${v.name}: ${type} = ${data};`;
+    return cg`let ${v.__name} = ${data};`;
   }
 
   protected emitLiteral(value: string): string {
+    return cg`${value}`;
+  }
+
+  protected emitIsTrue(value: string): string {
     return value;
   }
 
-  protected emitNot(value: string): string {
-    return `!(${value})`;
+  protected emitIsFalse(value: string): string {
+    return cg`!(${value})`;
+  }
+
+  protected emitDot(target: string, prop: string): string {
+    return cg`(${target}).${prop}`;
   }
 
   protected emitOperation(
@@ -108,42 +117,42 @@ export abstract class Emit extends CoreEmit {
     left: string,
     right: string
   ): string {
-    return `(${left}) ${operator} (${right})`;
+    return cg`(${left}) ${operator} (${right})`;
   }
 
   protected emitVersion(): string {
-    return "__version";
+    return cg`__version`;
   }
 
   protected emitEnd(): string {
-    return "__end";
+    return cg`__end`;
   }
 
   protected emitIndex(target: string, index: string): string {
-    return `${target}[${index}]`;
+    return cg`${target}[${index}]`;
   }
 
   protected emitAssign(target: string, value: string): string {
-    return `${target} = ${value}`;
+    return cg`${target} = ${value};`;
   }
 
   protected emitSeek(offset: string): string {
-    return `ctx.seek(${offset});`;
+    return cg`ctx.seek(${offset});`;
   }
 
   protected emitTell(): string {
-    return `ctx.tell()`;
+    return cg`ctx.tell()`;
   }
 
   protected emitGetAssetFromMap(id: string): string {
-    return `ctx.getId(${id})`;
+    return cg`ctx.getId(${id})`;
   }
 
   protected emitSetAssetInMap(id: string, target: string): string {
-    return `ctx.setId(${id}, ${target})`;
+    return cg`ctx.setId(${id}, ${target})`;
   }
 
   protected emitError(scope: string, message: string): string {
-    return `throw \"${scope}: ${message}\";`;
+    return cg`throw \"${scope}: ${message}\";`;
   }
 }

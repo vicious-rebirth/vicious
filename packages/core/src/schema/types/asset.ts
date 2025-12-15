@@ -27,7 +27,7 @@ export class AssetReference extends Struct {
     condition: (ctx) => ctx.gte(this.type, 0),
     custom: (ctx) => {
       ctx.if(
-        (ctx) => ctx.neq(this.first, 0),
+        (ctx) => ctx.isTrue(this.first),
         (ctx) => {
           ctx.walkId(this.type, this.asset);
           ctx.setId(this.id, this.asset);
@@ -68,7 +68,7 @@ export class AssetReferenceList extends Struct {
   __offset = 0x12090;
 
   consume = field(BOOL, { skip: true });
-  count = field(I32, { condition: (ctx) => ctx.neq(this.consume, 0) });
+  count = field(I32, { condition: (ctx) => ctx.isTrue(this.consume) });
   list = field((ctx) => ctx.list(AssetReference), {
     condition: (ctx) => ctx.gt(this.count, 0),
     custom: (ctx) => {
@@ -86,7 +86,7 @@ export class AssetReferenceSizedList extends Struct {
 
   base = field(AssetReferenceList, {
     custom: (ctx) => {
-      ctx.set(this.base.consume, 1);
+      ctx.set(this.base.consume, true);
       ctx.walk();
     },
   });
@@ -96,7 +96,7 @@ export class AssetReferenceSuffixList extends Struct {
   __offset = 0x1e440;
 
   consume = field(BOOL, { skip: true });
-  count = field(I32, { condition: (ctx) => ctx.neq(this.consume, 0) });
+  count = field(I32, { condition: (ctx) => ctx.isTrue(this.consume) });
   list = field((ctx) => ctx.list(AssetReferenceSuffix), {
     condition: (ctx) => ctx.gt(this.count, 0),
     custom: (ctx) => {
@@ -114,7 +114,7 @@ export class AssetReferenceSuffixSizedList extends Struct {
 
   base = field(AssetReferenceSuffixList, {
     custom: (ctx) => {
-      ctx.set(this.base.consume, 1);
+      ctx.set(this.base.consume, true);
       ctx.walk();
     },
   });
@@ -122,7 +122,7 @@ export class AssetReferenceSuffixSizedList extends Struct {
 
 export class AssetFromTypeList extends Struct {
   consume = field(BOOL, { skip: true });
-  count = field(I32, { condition: (ctx) => ctx.neq(this.consume, 0) });
+  count = field(I32, { condition: (ctx) => ctx.isTrue(this.consume) });
   list = field((ctx) => ctx.list(AssetFromType), {
     condition: (ctx) => ctx.gt(this.count, 0),
     custom: (ctx) => {
@@ -140,7 +140,7 @@ export class AssetFromTypeSizedList extends Struct {
 
   base = field(AssetFromTypeList, {
     custom: (ctx) => {
-      ctx.set(this.base.consume, 1);
+      ctx.set(this.base.consume, true);
       ctx.walk();
     },
   });

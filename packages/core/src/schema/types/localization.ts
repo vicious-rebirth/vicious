@@ -8,7 +8,7 @@ export class LocalizationTable extends Struct {
 
   enabled = field(BOOL);
   table = field(AssetReference, {
-    condition: (ctx) => ctx.neq(this.enabled, 0),
+    condition: (ctx) => ctx.isTrue(this.enabled),
   });
 }
 
@@ -23,11 +23,8 @@ export class LocalizationEntry extends Struct {
 
         ctx.if(
           (ctx) =>
-            ctx.neq(
-              ctx.not(
-                (ctx) => ctx.index(this.tables, (ctx) => ctx.iterator()).enabled
-              ),
-              0
+            ctx.isFalse(
+              (ctx) => ctx.index(this.tables, (ctx) => ctx.iterator()).enabled
             ),
           (ctx) => ctx.break()
         );

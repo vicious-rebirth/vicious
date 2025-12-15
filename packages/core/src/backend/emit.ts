@@ -8,14 +8,19 @@ import {
   Type,
   Value,
   VariableReference,
+  PropertyReference,
+  IndexReference,
 } from "../schema/core";
 import { Backend } from "./core";
 
 export abstract class Emit extends Backend {
   private scopes: string[][] = [[]];
 
-  public getOutput(): string {
-    return this.scopes[0]!.join("");
+  public popOutput(): string {
+    const output = this.scopes.pop();
+    this.scopes.push([]);
+
+    return output!.join("");
   }
 
   /**
@@ -30,7 +35,7 @@ export abstract class Emit extends Backend {
 
   protected abstract emitStructField(
     field: FieldReference,
-    type: string,
+    type?: string,
     handler?: string
   ): string;
 
@@ -52,7 +57,7 @@ export abstract class Emit extends Backend {
 
   protected abstract emitFor(
     variable: string,
-    size: string,
+    size: string | undefined,
     body: string
   ): string;
 
@@ -70,7 +75,10 @@ export abstract class Emit extends Backend {
 
   protected abstract emitLiteral(value: string): string;
 
-  protected abstract emitNot(value: string): string;
+  protected abstract emitIsTrue(value: string): string;
+  protected abstract emitIsFalse(value: string): string;
+
+  protected abstract emitDot(target: string, prop: string): string;
 
   protected abstract emitOperation(
     operator: string,
@@ -145,22 +153,20 @@ export abstract class Emit extends Backend {
   }
 
   protected exitStructField(field: FieldReference): void {
-    const out = this.popScope(field);
+    if (field.__props?.deprecated) {
+      const [handler] = this.popScope(field);
 
-    if (field.props?.skip) {
-      const [type] = out;
-
-      this.pushString(this.emitStructField(field, type!));
+      this.pushString(this.emitStructField(field, undefined, handler));
     } else {
-      const [type, handler] = out;
+      const [type, handler] = this.popScope(field);
 
-      this.pushString(this.emitStructField(field, type!, handler));
+      this.pushString(this.emitStructField(field, type, handler));
     }
   }
 
-  protected enterTypeDefinition(type: Type): void {}
+  protected enterTypeDefinition(_type: Type | null | undefined): void {}
 
-  protected exitTypeDefinition(type: Type): void {}
+  protected exitTypeDefinition(_type: Type | null | undefined): void {}
 
   protected enterArrayType(
     _type: new (...args: any[]) => Definition,
@@ -235,8 +241,8 @@ export abstract class Emit extends Backend {
   }
 
   protected enterFor(
-    v: VariableReference,
-    _size: (ctx: CodeContext) => void,
+    _v: VariableReference,
+    _size: ((ctx: CodeContext) => void) | undefined,
     _body: (ctx: CodeContext) => void
   ): void {
     this.pushScope();
@@ -244,20 +250,46 @@ export abstract class Emit extends Backend {
 
   protected exitFor(
     v: VariableReference,
-    _size: (ctx: CodeContext) => void,
+    size: ((ctx: CodeContext) => void) | undefined,
     _body: (ctx: CodeContext) => void
   ): void {
-    const [size, body] = this.popScope();
+    if (size) {
+      const [size, body] = this.popScope();
 
-    this.pushString(this.emitFor(v.name, size!, body!));
+      this.pushString(this.emitFor(v.__name, size!, body!));
+    } else {
+      const [body] = this.popScope();
+
+      this.pushString(this.emitFor(v.__name, undefined, body!));
+    }
   }
 
   protected exitBreak(): void {
     this.pushString(this.emitBreak());
   }
 
-  protected exitFieldReference(field: FieldReference): void {
-    this.pushString(this.emitFieldReference(field));
+  protected exitFieldReference(ref: FieldReference): void {
+    this.pushString(this.emitFieldReference(ref));
+  }
+
+  protected enterPropertyReference(_ref: PropertyReference): void {
+    this.pushScope();
+  }
+
+  protected exitPropertyReference(_ref: PropertyReference): void {
+    const [target, name] = this.popScope();
+
+    this.pushString(this.emitDot(target!, name!));
+  }
+
+  protected enterIndexReference(_ref: IndexReference): void {
+    this.pushScope();
+  }
+
+  protected exitIndexReference(_ref: IndexReference): void {
+    const [target, index] = this.popScope();
+
+    this.pushString(this.emitIndex(target!, index!));
   }
 
   protected exitVariableReference(v: VariableReference): void {
@@ -278,14 +310,26 @@ export abstract class Emit extends Backend {
     this.pushString(this.emitVariableDefinition(v, type!, data!));
   }
 
-  protected enterNot(_value: Value): void {
+  protected enterIsTrue(_value: Value): void {
     this.pushScope();
   }
 
-  protected exitNot(_value: Value): void {
+  protected exitIsTrue(_value: Value): void {
     const [value] = this.popScope();
 
-    this.pushString(this.emitNot(value!));
+    this.pushString(this.emitIsTrue(value!));
+  }
+
+  protected enterIsFalse(_value: Value): void {
+    this.pushScope();
+  }
+
+  protected exitIsFalse(_value: Value): void {
+    const [value] = this.popScope();
+
+    if (value === undefined) debugger;
+
+    this.pushString(this.emitIsFalse(value!));
   }
 
   protected enterOperation(
@@ -334,15 +378,11 @@ export abstract class Emit extends Backend {
     this.pushScope();
   }
 
-  protected exitAllocate(_target: Value, _count: Value): void {
-    const [target, count] = this.popScope();
+  protected exitAllocate(target: Value, _count: Value): void {
+    const [target_, count] = this.popScope();
 
     this.pushString(
-      this.emitAllocate(
-        target!,
-        this.getTypeName(this.currentReference),
-        count!
-      )
+      this.emitAllocate(target_!, this.getTypeName(target), count!)
     );
   }
 
@@ -350,11 +390,11 @@ export abstract class Emit extends Backend {
     this.pushScope();
   }
 
-  protected exitForward(_target: Value, _count: Value): void {
-    const [target, count] = this.popScope();
+  protected exitForward(target: Value, _count: Value): void {
+    const [target_, count] = this.popScope();
 
     this.pushString(
-      this.emitForward(target!, this.getTypeName(this.currentReference), count!)
+      this.emitForward(target_!, this.getTypeName(target), count!)
     );
   }
 
@@ -372,12 +412,10 @@ export abstract class Emit extends Backend {
     this.pushString(this.emitTell());
   }
 
-  protected exitWalk(_target: Value): void {
-    const [target] = this.popScope();
+  protected exitWalk(target: Value): void {
+    const [target_] = this.popScope();
 
-    this.pushString(
-      this.emitWalk(this.getTypeName(this.currentReference?.type), target!)
-    );
+    this.pushString(this.emitWalk(this.getTypeName(target), target_!));
   }
 
   protected enterWalk(_target: Value): void {
@@ -419,8 +457,6 @@ export abstract class Emit extends Backend {
   }
 
   protected pushString(str: string): void {
-    str = str.trim().replace(/^\s+/gm, "");
-
     this.scopes[this.scopes.length - 1]!.push(str);
   }
 
@@ -432,14 +468,194 @@ export abstract class Emit extends Backend {
     return this.scopes.pop()!;
   }
 
-  protected getTypeName(target?: FieldReference | Type | null): string {
-    let type: any;
+  protected getTypeName(target?: any): string {
     if (target instanceof FieldReference) {
-      type = target.type;
-    } else {
-      type = target;
+      return this.getTypeName(target.__type);
+    } else if (target instanceof VariableReference) {
+      return this.getTypeName(target.__type);
+    } else if (target instanceof PropertyReference) {
+      return this.getTypeName(target.__parent);
+    } else if (target instanceof IndexReference) {
+      return this.getTypeName(target.__parent);
     }
 
-    return type?.name || "TODO";
+    if (typeof target !== "function") {
+      debugger;
+      throw `invalid target: ${target}`;
+    }
+
+    const isClass = Function.prototype.toString
+      .call(target)
+      .startsWith("class ");
+    if (!isClass) {
+      return this.getTypeName(
+        target({
+          array: (type: any) => type,
+          list: (type: any) => type,
+          index: (target: any) => target,
+        })
+      );
+    }
+
+    if (!target?.name) {
+      debugger;
+      throw `no target name: ${target}`;
+    }
+
+    return target.name;
+  }
+}
+
+export class EmptyEmit extends Emit {
+  protected emitClass(_cls: Class, _fields: string): string {
+    return "";
+  }
+
+  protected emitStruct(_struct: Struct, _fields: string): string {
+    return "";
+  }
+
+  protected emitAtom(_atom: Atom): string {
+    return "";
+  }
+
+  protected emitStructField(
+    _field: FieldReference,
+    _type?: string,
+    _handler?: string
+  ): string {
+    return "";
+  }
+
+  protected emitMetadataHeader(): string {
+    return "";
+  }
+
+  protected emitMetadataFooter(): string {
+    return "";
+  }
+
+  protected emitArrayType(_type: string, _count: string): string {
+    return "";
+  }
+
+  protected emitListType(_type: string, _maxCount?: number): string {
+    return "";
+  }
+
+  protected emitType(_type: string): string {
+    return "";
+  }
+
+  protected emitIf(_condition: string, _true: string, _false?: string): string {
+    return "";
+  }
+
+  protected emitFor(_variable: string, _size: string, _body: string): string {
+    return "";
+  }
+
+  protected emitBreak(): string {
+    return "";
+  }
+
+  protected emitFieldReference(_field: FieldReference): string {
+    return "";
+  }
+
+  protected emitVariableReference(_v: VariableReference): string {
+    return "";
+  }
+
+  protected emitVariableDefinition(
+    _v: VariableReference,
+    _type: string,
+    _data: string
+  ): string {
+    return "";
+  }
+
+  protected emitLiteral(_value: string): string {
+    return "";
+  }
+
+  protected emitIsTrue(_value: string): string {
+    return "";
+  }
+
+  protected emitIsFalse(_value: string): string {
+    return "";
+  }
+
+  protected emitDot(_target: string, _prop: string): string {
+    return "";
+  }
+
+  protected emitOperation(
+    _operator: string,
+    _left: string,
+    _right: string
+  ): string {
+    return "";
+  }
+
+  protected emitVersion(): string {
+    return "";
+  }
+
+  protected emitEnd(): string {
+    return "";
+  }
+
+  protected emitIndex(_target: string, _index: string): string {
+    return "";
+  }
+
+  protected emitAssign(_target: string, _value: string): string {
+    return "";
+  }
+
+  protected emitAllocate(
+    _target: string,
+    _type: string,
+    _count: string
+  ): string {
+    return "";
+  }
+
+  protected emitForward(
+    _target: string,
+    _type: string,
+    _count: string
+  ): string {
+    return "";
+  }
+
+  protected emitSeek(_offset: string): string {
+    return "";
+  }
+
+  protected emitTell(): string {
+    return "";
+  }
+
+  protected emitWalk(_type: string, _target: string): string {
+    return "";
+  }
+
+  protected emitWalkType(_typeId: string, _target: string): string {
+    return "";
+  }
+
+  protected emitGetAssetFromMap(_id: string): string {
+    return "";
+  }
+
+  protected emitSetAssetInMap(_id: string, _target: string): string {
+    return "";
+  }
+
+  protected emitError(_scope: string, _message: string): string {
+    return "";
   }
 }

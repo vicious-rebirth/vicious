@@ -128,7 +128,7 @@ export class Animation extends Class {
   f_4 = field(U8Buffer, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2),
     custom: (ctx) => {
-      ctx.set(this.f_4.consume, 1);
+      ctx.set(this.f_4.consume, true);
       ctx.walk(this.f_4);
     },
   });

@@ -2,7 +2,7 @@ import { Class, deprecated, field } from "../core";
 
 import { Action } from "./action";
 import { AssetFromType, AssetFromTypeWrap, AssetReference } from "./asset";
-import { U32, U8 } from "./atomic";
+import { U32 } from "./atomic";
 import { ID } from "./id";
 import { V166 } from "./v166";
 import { V365 } from "./v365";
@@ -18,13 +18,12 @@ export class V138 extends Class {
   f_0x40 = field(V365, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2),
   });
-  ___ = field(U8, {
-    deprecated: (ctx) =>
-      ctx.and(
-        (ctx) => ctx.gt((ctx) => ctx.version(), 3),
-        (ctx) => ctx.lt((ctx) => ctx.version(), 8)
-      ),
-  });
+  ___ = deprecated((ctx) =>
+    ctx.and(
+      (ctx) => ctx.gt((ctx) => ctx.version(), 3),
+      (ctx) => ctx.lt((ctx) => ctx.version(), 8)
+    )
+  );
   f_0x54 = field(U32);
   f_0x58 = field(U32);
   f_0x5c = field(AssetFromTypeWrap);

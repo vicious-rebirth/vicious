@@ -14,7 +14,7 @@ export class V20 extends Class {
   f_1 = field(V20_1);
   body = field(V20_5);
   enabled = field(BOOL);
-  f_0x58 = field(V20_9, { condition: (ctx) => ctx.neq(this.enabled, 0) });
+  f_0x58 = field(V20_9, { condition: (ctx) => ctx.isTrue(this.enabled) });
 }
 
 export class V20_1 extends Struct {
@@ -72,13 +72,13 @@ export class V20_6 extends Struct {
   meshSections = field(V20_7);
   vertices = field(U8Buffer, {
     custom: (ctx) => {
-      ctx.set(this.vertices.consume, 1);
+      ctx.set(this.vertices.consume, true);
       ctx.walk();
     },
   });
   indices = field(U16Buffer, {
     custom: (ctx) => {
-      ctx.set(this.indices.consume, 1);
+      ctx.set(this.indices.consume, true);
       ctx.walk();
     },
   });
@@ -111,12 +111,10 @@ export class V20_5 extends Struct {
   __metadata = true;
   __offset = 0x10b170;
 
-  _ = field(U8, {
-    deprecated: (ctx) => ctx.eq((ctx) => ctx.version(), 0),
-  });
+  _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 0));
   enabled = field(BOOL);
   buffers = field(V20_6, {
-    condition: (ctx) => ctx.neq(this.enabled, 0),
+    condition: (ctx) => ctx.isTrue(this.enabled),
   });
 }
 
@@ -127,8 +125,8 @@ export class V20_9 extends Struct {
   skip = field(BOOL, {
     condition: (ctx) =>
       ctx.and(
-        ctx.lt((ctx) => ctx.version(), 4),
-        ctx.gt(ctx.end(), 0)
+        (ctx) => ctx.lt((ctx) => ctx.version(), 4),
+        (ctx) => ctx.gt((ctx) => ctx.end(), 0)
       ),
     custom: (ctx) => {
       ctx.seek((ctx) => ctx.end());
@@ -142,14 +140,18 @@ export class V20_9 extends Struct {
   });
   // TODO: Actually read data using clases instead of skipping over
   // f_2 = field(V20_11, {
-  //   condition: (ctx) => ctx.neq(this.enabled, 0),
+  //   condition: (ctx) => ctx.isTrue(this.enabled),
   //   custom: (ctx) => {
   //     ctx.set(this.f_2.version, (ctx) => ctx.version());
   //     ctx.walk();
   //   },
   // });
   f_2 = field(U8Buffer, {
-    condition: (ctx) => ctx.and(ctx.neq(this.enabled, 0), ctx.gt(ctx.end(), 0)),
+    condition: (ctx) =>
+      ctx.and(
+        (ctx) => ctx.isTrue(this.enabled),
+        (ctx) => ctx.gt((ctx) => ctx.end(), 0)
+      ),
     custom: (ctx) => {
       ctx.set(this.f_2.size, (ctx) =>
         ctx.sub(
@@ -246,9 +248,7 @@ export class V20_11_1 extends Struct {
       ctx.set(this.count3, (ctx) => ctx.add(this.count3, 1));
     },
   });
-  _ = field(U8, {
-    deprecated: (ctx) => ctx.eq(this.version, 1),
-  });
+  _ = deprecated((ctx) => ctx.eq(this.version, 1));
   list2 = field((ctx) => ctx.list(V20_11_3), {
     custom: (ctx) => {
       const size = ctx.var(U32, (ctx) =>
@@ -426,9 +426,7 @@ export class V20_15 extends Struct {
       );
     },
   });
-  _ = field(U8, {
-    deprecated: (ctx) => ctx.eq(this.version, 1),
-  });
+  _ = deprecated((ctx) => ctx.eq(this.version, 1));
   f_3 = field(U32, {
     custom: (ctx) => {
       ctx.walk(this.f_3);

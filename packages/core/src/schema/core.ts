@@ -47,7 +47,9 @@ export type CodeContext = {
 
   var: <T>(type: Type<T>, data: Value) => T;
 
-  not: (value: Value) => Definition;
+  isTrue: (value: Value) => Definition;
+  isFalse: (value: Value) => Definition;
+
   add: Op2;
   sub: Op2;
   mul: Op2;
@@ -110,29 +112,98 @@ export type FieldProps = {
 };
 
 export class FieldReference<T = any> {
-  public name: string = "";
+  public __name: string = "";
 
   public constructor(
-    public type: Type<T>,
-    public props?: FieldProps
-  ) {}
+    public readonly __type?: Type<T>,
+    public readonly __props?: FieldProps
+  ) {
+    return new Proxy(this, {
+      get(target, prop, receiver) {
+        if (
+          prop === "__name" ||
+          prop === "__type" ||
+          prop === "__props" ||
+          typeof prop === "symbol"
+        ) {
+          return Reflect.get(target, prop, receiver);
+        }
+
+        return new PropertyReference(target, prop);
+      },
+    });
+  }
 }
 
 export class VariableReference<T = any> {
   public constructor(
-    public name: string,
-    public type: Type<T>
-  ) {}
+    public readonly __name: string,
+    public readonly __type: Type<T>
+  ) {
+    return new Proxy(this, {
+      get(target, prop, receiver) {
+        if (
+          prop === "__name" ||
+          prop === "__type" ||
+          typeof prop === "symbol"
+        ) {
+          return Reflect.get(target, prop, receiver);
+        }
+
+        return new PropertyReference(target, prop);
+      },
+    });
+  }
+}
+
+export class IndexReference {
+  public constructor(
+    public readonly __parent: any,
+    public readonly __index: any
+  ) {
+    return new Proxy(this, {
+      get(target, prop, receiver) {
+        if (
+          prop === "__parent" ||
+          prop === "__index" ||
+          typeof prop === "symbol"
+        ) {
+          return Reflect.get(target, prop, receiver);
+        }
+
+        return new PropertyReference(target, prop);
+      },
+    });
+  }
+}
+
+export class PropertyReference {
+  public constructor(
+    public readonly __parent: any,
+    public readonly __prop: string
+  ) {
+    return new Proxy(this, {
+      get(target, prop, receiver) {
+        if (
+          prop === "__parent" ||
+          prop === "__prop" ||
+          typeof prop === "symbol"
+        ) {
+          return Reflect.get(target, prop, receiver);
+        }
+
+        return new PropertyReference(target, prop);
+      },
+    });
+  }
 }
 
 export function field<T>(type: Type<T>, props?: FieldProps): T {
-  const field = new FieldReference(type, props);
-
-  return field as T;
+  return new FieldReference(type, props) as T;
 }
 
 export function deprecated(condition: (ctx: CodeContext) => void): undefined {
-  return field(null as any, { condition }) as any as undefined;
+  return field(null as any, { deprecated: condition }) as any as undefined;
 }
 
 export abstract class Atom extends Definition {}

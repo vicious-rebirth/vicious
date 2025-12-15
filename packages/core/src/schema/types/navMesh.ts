@@ -25,7 +25,7 @@ export class NavMesh extends Class {
   f_2 = field(NavMesh_3);
   f_3 = field(U8Buffer, {
     custom: (ctx) => {
-      ctx.set(this.f_3.consume, 1);
+      ctx.set(this.f_3.consume, true);
       ctx.walk();
     },
   });

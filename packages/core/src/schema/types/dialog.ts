@@ -44,7 +44,7 @@ export class Dialog extends Class {
         (ctx) =>
           ctx.and(
             (ctx) => ctx.lt((ctx) => ctx.version(), 3),
-            (ctx) => ctx.not(this.condition)
+            (ctx) => ctx.eq(this.condition, 0)
           ),
         (ctx) => ctx.gte((ctx) => ctx.version(), 3)
       ),
@@ -57,7 +57,7 @@ export class Dialog extends Class {
             (ctx) =>
               ctx.and(
                 (ctx) => ctx.lt((ctx) => ctx.version(), 3),
-                this.condition
+                (ctx) => ctx.neq(this.condition, 0)
               ),
             (ctx) => ctx.gte((ctx) => ctx.version(), 3)
           ),

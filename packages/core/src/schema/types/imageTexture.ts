@@ -43,9 +43,9 @@ export class ImageTextureBuffer extends Struct {
   width = field(U32, { skip: true });
   height = field(U32, { skip: true });
   enabled = field(BOOL);
-  levels = field(U32, { condition: (ctx) => ctx.neq(this.enabled, 0) });
+  levels = field(U32, { condition: (ctx) => ctx.isTrue(this.enabled) });
   pixels = field(U8Buffer, {
-    condition: (ctx) => ctx.neq(this.enabled, 0),
+    condition: (ctx) => ctx.isTrue(this.enabled),
     custom: (ctx) => {
       const size = ctx.var(U32, 0);
       const width = ctx.var(U32, this.width);
@@ -79,7 +79,7 @@ export class ImageTextureBuffer extends Struct {
   palette = field(U8Buffer, {
     condition: (ctx) =>
       ctx.and(
-        (ctx) => ctx.neq(this.enabled, 0),
+        (ctx) => ctx.isTrue(this.enabled),
         (ctx) => ctx.eq(this.format, 3)
       ),
     custom: (ctx) => {

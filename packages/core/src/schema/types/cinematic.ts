@@ -1,4 +1,5 @@
 import { Class, field } from "../core";
+import { Object } from "./object";
 
 import {
   AssetFromTypeSizedList,
@@ -60,7 +61,7 @@ export class CinematicFrame extends Class {
   base = field(Base);
   name = field(StringBuffer, {
     custom: (ctx) => {
-      ctx.set(this.name.consume, 1);
+      ctx.set(this.name.consume, true);
       ctx.walk();
     },
   });

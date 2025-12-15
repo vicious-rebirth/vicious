@@ -44,19 +44,19 @@ export class SoundBuffer extends Struct {
 
   disabled = field(BOOL, { skip: true });
   enabled = field(BOOL);
-  sampleRate = field(U32, { condition: (ctx) => ctx.neq(this.enabled, 0) });
+  sampleRate = field(U32, { condition: (ctx) => ctx.isTrue(this.enabled) });
   F_2 = field((ctx) => ctx.array(U8, 18), {
     condition: (ctx) =>
       ctx.and(
-        (ctx) => ctx.neq(this.enabled, 0),
-        (ctx) => ctx.not(this.disabled)
+        (ctx) => ctx.isTrue(this.enabled),
+        (ctx) => ctx.isFalse(this.disabled)
       ),
   });
   data = field(U8Buffer, {
     condition: (ctx) =>
       ctx.and(
-        (ctx) => ctx.neq(this.enabled, 0),
-        (ctx) => ctx.not(this.disabled)
+        (ctx) => ctx.isTrue(this.enabled),
+        (ctx) => ctx.isFalse(this.disabled)
       ),
     custom: (ctx) => {
       ctx.set(this.data.consume, true);

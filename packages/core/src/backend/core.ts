@@ -10,14 +10,14 @@ import {
   CodeContext,
   Value,
   VariableReference,
+  PropertyReference,
+  IndexReference,
 } from "../schema/core";
 
 export abstract class Backend {
-  public readonly codeContext = this.buildCodeContext();
-  public readonly typeContext = this.buildTypeContext();
+  public readonly context = this.buildContext();
 
   protected currentField: FieldReference | null = null;
-  protected currentReference: FieldReference | null = null;
   protected currentIterator: VariableReference | null = null;
   protected variableCount: number = 0;
 
@@ -50,8 +50,8 @@ export abstract class Backend {
   protected abstract enterStructField(field: FieldReference): void;
   protected abstract exitStructField(field: FieldReference): void;
 
-  protected abstract enterTypeDefinition(type: Type): void;
-  protected abstract exitTypeDefinition(type: Type): void;
+  protected abstract enterTypeDefinition(type: Type | null | undefined): void;
+  protected abstract exitTypeDefinition(type: Type | null | undefined): void;
 
   protected abstract exitType(type: new (...args: any[]) => Definition): void;
 
@@ -101,7 +101,15 @@ export abstract class Backend {
   protected abstract exitBreak(): void;
 
   protected abstract exitFieldReference(field: FieldReference): void;
+
   protected abstract exitVariableReference(v: VariableReference): void;
+
+  protected abstract enterPropertyReference(prop: PropertyReference): void;
+  protected abstract exitPropertyReference(prop: PropertyReference): void;
+
+  protected abstract enterIndexReference(prop: IndexReference): void;
+  protected abstract exitIndexReference(prop: IndexReference): void;
+
   protected abstract exitLiteral(value: string): void;
 
   protected abstract enterVariableDefinition(
@@ -113,8 +121,11 @@ export abstract class Backend {
     data: Value
   ): void;
 
-  protected abstract enterNot(value: Value): void;
-  protected abstract exitNot(value: Value): void;
+  protected abstract enterIsTrue(value: Value): void;
+  protected abstract exitIsTrue(value: Value): void;
+
+  protected abstract enterIsFalse(value: Value): void;
+  protected abstract exitIsFalse(value: Value): void;
 
   protected abstract enterOperation(
     operator: string,
@@ -221,7 +232,7 @@ export abstract class Backend {
       const field = obj[name];
 
       if (field instanceof FieldReference) {
-        field.name = name;
+        field.__name = name;
         this.visitStructField(field);
       }
     }
@@ -232,26 +243,23 @@ export abstract class Backend {
 
     this.enterStructField(field);
 
-    this.visitTypeDefinition(field.type);
+    this.visitTypeDefinition(field.__type);
 
-    if (field.props?.deprecated) {
+    if (field.__props?.deprecated) {
+      const condition = field.__props?.deprecated;
+
       this.visitBlock((ctx) => {
-        const condition = field.props?.condition;
-        if (condition) {
-          ctx.if(
-            (ctx) => condition(ctx),
-            (ctx) => ctx.todo("deprecated")
-          );
-        } else {
-          ctx.todo("deprecated");
-        }
+        ctx.if(
+          (ctx) => condition(ctx),
+          (ctx) => ctx.todo("deprecated")
+        );
       });
-    } else if (field.props?.skip) {
+    } else if (field.__props?.skip) {
       // Skip
-    } else if (field.props?.custom) {
-      const custom = field.props?.custom;
+    } else if (field.__props?.custom) {
+      const custom = field.__props?.custom;
       this.visitBlock((ctx) => {
-        const condition = field.props?.condition;
+        const condition = field.__props?.condition;
         if (condition) {
           ctx.if(
             (ctx) => condition(ctx),
@@ -263,7 +271,7 @@ export abstract class Backend {
       });
     } else {
       this.visitBlock((ctx) => {
-        const condition = field.props?.condition;
+        const condition = field.__props?.condition;
         if (condition) {
           ctx.if(
             (ctx) => condition(ctx),
@@ -278,71 +286,98 @@ export abstract class Backend {
     this.exitStructField(field);
   }
 
-  protected visitTypeDefinition(type: Type): void {
+  protected visitTypeDefinition(type: Type | null | undefined): void {
     this.enterTypeDefinition(type);
 
-    const isClass = Function.prototype.toString.call(type).startsWith("class ");
-    if (isClass) this.visitType(type as any);
-    else (type as any)(this.typeContext);
+    if (type) {
+      const isClass = Function.prototype.toString
+        .call(type)
+        .startsWith("class ");
+      if (isClass) this.visitType(type as any);
+      else (type as any)(this.context);
+    }
 
     this.exitTypeDefinition(type);
   }
 
-  protected visitType(type: new (...args: any[]) => Definition): void {
+  protected visitType(type: new (...args: any[]) => Definition): any {
     this.exitType(type);
+
+    return type;
   }
 
   public visitArrayType(
     type: new (...args: any[]) => Definition,
     count: number
-  ): void {
+  ): any {
     this.enterArrayType(type, count);
 
-    this.visitType(type);
+    const out = this.visitType(type);
 
     this.exitArrayType(type, count);
+
+    return out;
   }
 
   protected visitListType(
     type: new (...args: any[]) => Definition,
     maxCount?: number
-  ): void {
+  ): any {
     this.enterListType(type, maxCount);
 
-    this.visitType(type);
+    const out = this.visitType(type);
 
     this.exitListType(type, maxCount);
+
+    return out;
   }
 
   protected visitCode(code: (ctx: CodeContext) => void): void {
-    code(this.codeContext);
+    code(this.context);
   }
 
-  protected visitReference(value: any): void {
-    this.currentReference = value;
+  protected visitReference(value: any): any {
+    if (typeof value === "function") {
+      value = value(this.context);
+    }
 
     if (value instanceof FieldReference) {
       return this.visitFieldReference(value);
     } else if (value instanceof VariableReference) {
       return this.visitVariableReference(value);
+    } else if (value instanceof PropertyReference) {
+      return this.visitPropertyReference(value);
+    } else if (value instanceof IndexReference) {
+      return this.visitIndexReference(value);
     }
 
-    // TODO: Reference
     debugger;
     throw `unhandled reference ${value}`;
   }
 
-  protected visitValue(value: Value): void {
+  protected isReference(value: any): boolean {
+    return (
+      value instanceof FieldReference ||
+      value instanceof IndexReference ||
+      value instanceof PropertyReference ||
+      value instanceof VariableReference
+    );
+  }
+
+  protected visitValue(value: Value): any {
     if (typeof value === "number" || typeof value === "boolean") {
       return this.visitLiteral(value.toString());
     } else if (typeof value === "string") {
       return this.visitLiteral(value);
     } else if (typeof value === "function") {
-      return value(this.codeContext);
-    } else if (
-      value instanceof FieldReference ||
-      value instanceof VariableReference
-    ) {
+      const out = value(this.context);
+
+      if (this.isReference(out)) {
+        return this.visitReference(out);
+      } else {
+        return out;
+      }
+    } else if (this.isReference(value)) {
       return this.visitReference(value);
     } else {
       debugger;
@@ -354,12 +389,38 @@ export abstract class Backend {
     this.exitLiteral(value);
   }
 
-  protected visitFieldReference(field: FieldReference): void {
-    this.exitFieldReference(field);
+  protected visitFieldReference(ref: FieldReference): FieldReference {
+    this.exitFieldReference(ref);
+
+    return ref;
   }
 
-  protected visitVariableReference(field: FieldReference): void {
-    this.exitVariableReference(field);
+  protected visitVariableReference(ref: VariableReference): VariableReference {
+    this.exitVariableReference(ref);
+
+    return ref;
+  }
+
+  protected visitPropertyReference(ref: PropertyReference): PropertyReference {
+    this.enterPropertyReference(ref);
+
+    this.visitReference(ref.__parent);
+    this.visitLiteral(String(ref.__prop));
+
+    this.exitPropertyReference(ref);
+
+    return ref;
+  }
+
+  protected visitIndexReference(ref: IndexReference): IndexReference {
+    this.enterIndexReference(ref);
+
+    this.visitReference(ref.__parent);
+    this.visitValue(ref.__index);
+
+    this.exitIndexReference(ref);
+
+    return ref;
   }
 
   protected visitBlock(code: (ctx: CodeContext) => void): void {
@@ -423,12 +484,20 @@ export abstract class Backend {
     return v;
   }
 
-  protected visitNot(value: Value): void {
-    this.enterNot(value);
+  protected visitIsTrue(value: Value): void {
+    this.enterIsTrue(value);
 
     this.visitValue(value);
 
-    this.exitNot(value);
+    this.exitIsTrue(value);
+  }
+
+  protected visitIsFalse(value: Value): void {
+    this.enterIsFalse(value);
+
+    this.visitValue(value);
+
+    this.exitIsFalse(value);
   }
 
   protected visitOperation(operator: string, left: Value, right: Value): void {
@@ -448,13 +517,8 @@ export abstract class Backend {
     this.exitEnd();
   }
 
-  protected visitIndex(target: Value, index: Value): void {
-    this.enterIndex(target, index);
-
-    this.visitValue(target);
-    this.visitValue(index);
-
-    this.exitIndex(target, index);
+  protected visitIndex(target: Value, index: Value): any {
+    return new IndexReference(target, index);
   }
 
   protected visitAssign(target: Value, value: Value): void {
@@ -544,15 +608,11 @@ export abstract class Backend {
     return new VariableReference(`t${this.variableCount++}`, type);
   }
 
-  protected buildTypeContext(): TypeContext {
+  protected buildContext(): TypeContext & CodeContext {
     return {
       array: (type, count) => this.visitArrayType(type, count) as any,
       list: (type, maxCount) => this.visitListType(type, maxCount) as any,
-    };
-  }
 
-  protected buildCodeContext(): CodeContext {
-    return {
       if: (
         condition: (ctx: CodeContext) => void,
         true_: (ctx: CodeContext) => void,
@@ -574,7 +634,8 @@ export abstract class Backend {
       var: (type: Type, data: Value) =>
         this.visitVariableDefinition(type, data) as any,
 
-      not: (value: Value) => this.visitNot(value) as any,
+      isTrue: (value: Value) => this.visitIsTrue(value) as any,
+      isFalse: (value: Value) => this.visitIsFalse(value) as any,
 
       add: (left: Value, right: Value) =>
         this.visitOperation("+", left, right) as any,
@@ -623,9 +684,11 @@ export abstract class Backend {
         target: T[],
         count: Value
       ) => this.visitAllocate(target as any, count) as any,
+      forward: <T extends Definition | number | string>(
+        target: T[],
+        count: Value
+      ) => this.visitForward(target as any, count),
 
-      forward: (target: Value, count: Value) =>
-        this.visitForward(target, count),
       seek: (offset: Value) => this.visitSeek(offset),
       tell: () => this.visitTell(),
 

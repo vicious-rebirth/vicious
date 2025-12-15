@@ -15,11 +15,8 @@ export class Group extends Class {
         ctx.walk((ctx) => ctx.index(this.list, (ctx) => ctx.iterator()));
         ctx.if(
           (ctx) =>
-            ctx.neq(
-              ctx.not(
-                (ctx) => ctx.index(this.list, (ctx) => ctx.iterator()).enabled
-              ),
-              0
+            ctx.isFalse(
+              (ctx) => ctx.index(this.list, (ctx) => ctx.iterator()).enabled
             ),
           (ctx) => ctx.break()
         );
@@ -33,7 +30,7 @@ export class GroupEntry extends Struct {
 
   enabled = field(BOOL);
   asset = field(AssetReference, {
-    condition: (ctx) => ctx.neq(this.enabled, 0),
+    condition: (ctx) => ctx.isTrue(this.enabled),
   });
 }
 
@@ -41,9 +38,9 @@ export class GroupListEntry extends Struct {
   __offset = 0xc9e24;
 
   enabled = field(BOOL);
-  type = field(U32, { condition: (ctx) => ctx.neq(this.enabled, 0) });
+  type = field(U32, { condition: (ctx) => ctx.isFalse(this.enabled) });
   object = field(ANY, {
-    condition: (ctx) => ctx.neq(this.enabled, 0),
+    condition: (ctx) => ctx.isTrue(this.enabled),
     custom: (ctx) => {
       ctx.walkId(this.type, this.object);
     },

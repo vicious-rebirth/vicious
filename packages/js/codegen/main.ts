@@ -1,9 +1,3 @@
-import * as schema from "@repo/core/schema";
-import { Decoder } from "./decoder";
+import { buildDecoder } from "./decoder";
 
-const file = new schema.U8Buffer();
-
-const backend = new Decoder();
-backend.visit(file);
-
-console.log(backend.getOutput());
+console.log(buildDecoder());
