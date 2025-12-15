@@ -7,6 +7,7 @@ import { V301 } from "./v301";
 
 export class V167 extends Class {
   __id = 167;
+  __offset = 0x48a60;
 
   base = field(Action);
   old = field(U32, { condition: (ctx) => ctx.lt((ctx) => ctx.version(), 2) });

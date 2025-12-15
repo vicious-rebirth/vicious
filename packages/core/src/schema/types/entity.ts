@@ -16,12 +16,14 @@ import { V45 } from "./v45";
 
 export class EntityGroup extends Class {
   __id = 141;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
 
 export class EntityTemplateGroup extends Class {
   __id = 143;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -30,6 +32,7 @@ export class Entity extends Class {
   __id = 140;
   __folder = "Entities";
   __ext = "ent";
+  __offset = 0x90e30;
 
   base = field(Object);
   template_ = field(AssetReference);
@@ -78,6 +81,7 @@ export class EntityTemplate extends Class {
   __id = 142;
   __folder = "EntityTemplates";
   __ext = "et";
+  __offset = 0x913c0;
 
   base = field(Object);
   f_0x71 = field(U8, {

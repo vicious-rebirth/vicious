@@ -7,6 +7,7 @@ import { Object } from "./object";
 
 export class CameraEffectGroup extends Class {
   __id = 433;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -15,6 +16,7 @@ export class CameraEffect extends Class {
   __id = 97;
   __folder = "CameraEffects";
   __ext = "cfx";
+  __offset = 0xe1530;
 
   base = field(Object);
   f_0x40 = field(AssetFromTypeSizedList);

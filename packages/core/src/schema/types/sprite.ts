@@ -7,6 +7,7 @@ import { Object } from "./object";
 
 export class SpriteGroup extends Class {
   __id = 62;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -15,6 +16,7 @@ export class Sprite extends Class {
   __id = 61;
   __folder = "Sprites";
   __ext = "spr";
+  __offset = 0xed980;
 
   base = field(Object);
   f_0x40 = field(U32, {

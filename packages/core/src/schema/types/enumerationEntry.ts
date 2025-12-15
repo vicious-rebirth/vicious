@@ -5,6 +5,7 @@ import { Named } from "./named";
 
 export class EnumerationEntry extends Class {
   __id = 170;
+  __offset = 0x27df0;
 
   base = field(Named);
   id = field(U32);

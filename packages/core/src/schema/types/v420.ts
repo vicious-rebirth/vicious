@@ -6,6 +6,7 @@ import { ExpressionList } from "./expression";
 
 export class V420 extends Class {
   __id = 420;
+  __offset = 0x48380;
 
   base = field(Action);
   f_0x08 = field(AssetFromType);

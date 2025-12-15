@@ -6,6 +6,7 @@ import { Transform, Vector3 } from "./math";
 
 export class V56 extends Class {
   __id = 56;
+  __offset = 0x113f80;
 
   base = field(Base);
   f_0x04 = field(U32);

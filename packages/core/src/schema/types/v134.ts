@@ -6,6 +6,7 @@ import { V133 } from "./v133";
 
 export class V134 extends Class {
   __id = 134;
+  __offset = 0x99aa0;
 
   base = field(V133);
   f_0xa4 = field(U32);

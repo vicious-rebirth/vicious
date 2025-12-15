@@ -7,6 +7,7 @@ import { Mesh } from "./mesh";
 
 export class V20 extends Class {
   __id = 20;
+  __offset = 0x124b70;
 
   base = field(Mesh);
   _ = deprecated((ctx) => ctx.lte((ctx) => ctx.version(), 1));

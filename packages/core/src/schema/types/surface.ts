@@ -6,6 +6,7 @@ import { Object } from "./object";
 
 export class SurfaceGroup extends Class {
   __id = 58;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -14,6 +15,7 @@ export class Surface extends Class {
   __id = 57;
   __folder = "Surfaces";
   __ext = "srf";
+  __offset = 0xee9b0;
 
   base = field(Object);
   f_0x48 = field(U32, {

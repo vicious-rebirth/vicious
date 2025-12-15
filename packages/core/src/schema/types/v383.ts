@@ -7,6 +7,7 @@ import { V380 } from "./v380";
 
 export class V383 extends Class {
   __id = 383;
+  __offset = 0x62020;
 
   base = field(V380);
   f_0x58 = field(U32);

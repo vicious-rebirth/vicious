@@ -7,6 +7,7 @@ import { V63 } from "./v63";
 
 export class SpriteMaterial extends Class {
   __id = 66;
+  __offset = 0x1056a0;
 
   base = field(V63);
   texture = field(AssetReference);

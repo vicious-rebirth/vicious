@@ -6,6 +6,7 @@ import { V368 } from "./v368";
 
 export class V379 extends Class {
   __id = 379;
+  __offset = 0x2f440;
 
   base = field(V368);
   _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 0));

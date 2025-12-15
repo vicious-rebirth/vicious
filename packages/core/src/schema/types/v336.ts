@@ -6,6 +6,7 @@ import { V166 } from "./v166";
 
 export class V336 extends Class {
   __id = 336;
+  __offset = 0x3e860;
 
   base = field(Action);
   f_1 = field(V166);

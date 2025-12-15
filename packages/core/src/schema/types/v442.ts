@@ -5,6 +5,7 @@ import { Base } from "./base";
 
 export class V442 extends Class {
   __id = 442;
+  __offset = 0x111d00;
 
   base = field(Base);
   f_1 = field(V442EntryList);

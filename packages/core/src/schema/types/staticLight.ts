@@ -7,6 +7,7 @@ import { Object } from "./object";
 
 export class StaticLightGroup extends Class {
   __id = 80;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -15,6 +16,7 @@ export class StaticLight extends Class {
   __id = 74;
   __folder = "StaticLight";
   __ext = "lit";
+  __offset = 0x1135d0;
 
   base = field(Object);
   f_0x40 = field(F32);

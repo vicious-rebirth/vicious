@@ -6,6 +6,7 @@ import { Label } from "./label";
 
 export class V338 extends Class {
   __id = 338;
+  __offset = 0x23f20;
 
   base = field(Action);
   f_1 = field(Label);

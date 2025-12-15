@@ -5,6 +5,7 @@ import { V173 } from "./v173";
 
 export class V174 extends Class {
   __id = 174;
+  __offset = 0x6ad90;
 
   base = field(V173);
   f_1 = field(F32Buffer, {

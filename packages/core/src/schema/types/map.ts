@@ -13,6 +13,7 @@ export class Map extends Class {
   __id = 101;
   __folder = "Maps";
   __ext = "map";
+  __offset = 0xbab00;
 
   base = field(World);
   f_1 = field(IDList, {

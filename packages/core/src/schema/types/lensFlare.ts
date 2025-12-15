@@ -8,6 +8,7 @@ export class LensFlare extends Class {
   __id = 411;
   __folder = "LensFlare";
   __ext = "lfl";
+  __offset = 0xe75a0;
 
   base = field(Object);
   f_0x40 = field(AssetFromTypeSizedList);

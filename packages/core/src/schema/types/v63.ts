@@ -6,6 +6,7 @@ import { Color } from "./math";
 
 export class V63 extends Class {
   __id = 63;
+  __offset = 0xedc80;
 
   base = field(Material);
   f_0x58 = field(U32);

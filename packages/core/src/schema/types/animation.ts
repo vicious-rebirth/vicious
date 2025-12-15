@@ -8,6 +8,7 @@ import { Object } from "./object";
 
 export class AnimationGroup extends Class {
   __id = 47;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -16,6 +17,7 @@ export class Animation extends Class {
   __id = 46;
   __folder = "Animations";
   __ext = "anm";
+  __offset = 0x10c660;
 
   base = field(Object);
   rate = field(I32, { condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2) });
@@ -150,6 +152,7 @@ export class CustomAnimation extends Class {
   __id = 406;
   __folder = "CustomAnimations";
   __ext = "can";
+  __offset = 0x273e0;
 
   base = field(Object);
   f_1 = field(AssetFromType);

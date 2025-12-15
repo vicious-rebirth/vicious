@@ -7,6 +7,7 @@ import { V421 } from "./v421";
 
 export class V436 extends Class {
   __id = 436;
+  __offset = 0x5a940;
 
   base = field(V109);
   f_0x04 = field(AssetFromTypeWrap, {

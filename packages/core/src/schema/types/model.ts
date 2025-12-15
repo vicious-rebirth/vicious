@@ -7,6 +7,7 @@ import { V26 } from "./v26";
 
 export class Model extends Class {
   __id = 29;
+  __offset = 0x113780;
 
   base = field(V26);
   transform = field(Transform);

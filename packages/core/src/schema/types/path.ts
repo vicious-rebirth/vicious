@@ -7,6 +7,7 @@ import { Object } from "./object";
 
 export class PathGroup extends Class {
   __id = 25;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -15,6 +16,7 @@ export class Path extends Class {
   __id = 24;
   __folder = "Paths";
   __ext = "pth";
+  __offset = 0x118c50;
 
   base = field(Object);
   body = field(PathBody);

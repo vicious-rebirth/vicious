@@ -8,6 +8,7 @@ export class VoiceOver extends Class {
   __id = 354;
   __folder = "VoiceOvers";
   __ext = "vo";
+  __offset = 0x35c40;
 
   base = field(Sound);
   body = field(VoiceOverBody);

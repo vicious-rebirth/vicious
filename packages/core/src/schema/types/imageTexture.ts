@@ -6,6 +6,7 @@ import { Texture } from "./texture";
 
 export class ImageTexture extends Class {
   __id = 12;
+  __offset = 0xeed90;
 
   base = field(Texture);
   f_0x48 = field(BOOL);

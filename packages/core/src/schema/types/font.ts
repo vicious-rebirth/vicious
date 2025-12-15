@@ -9,6 +9,7 @@ import { Object } from "./object";
 
 export class FontGroup extends Class {
   __id = 65;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -17,6 +18,7 @@ export class Font extends Class {
   __id = 64;
   __folder = "Fonts";
   __ext = "fnt";
+  __offset = 0xfd5b0;
 
   base = field(Object);
   material = field(AssetReference);

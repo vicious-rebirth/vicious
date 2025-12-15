@@ -7,6 +7,7 @@ import { Vector3 } from "./math";
 
 export class V154 extends Class {
   __id = 154;
+  __offset = 0x26c20;
 
   base = field(Base);
   f_0x00 = field(AssetFromTypeSizedList);

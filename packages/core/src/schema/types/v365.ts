@@ -5,6 +5,7 @@ import { V300 } from "./v300";
 
 export class V365 extends Class {
   __id = 365;
+  __offset = 0x3d810;
 
   base = field(V300);
   f_1 = field(FN_0x22080);

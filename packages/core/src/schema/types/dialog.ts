@@ -13,6 +13,7 @@ import { V133 } from "./v133";
 
 export class DialogGroup extends Class {
   __id = 139;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -21,6 +22,7 @@ export class Dialog extends Class {
   __id = 129;
   __folder = "Dialogs";
   __ext = "dlg";
+  __offset = 0x923e0;
 
   base = field(Object);
   f_0x48 = field(U32);

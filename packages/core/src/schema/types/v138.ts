@@ -9,6 +9,7 @@ import { V365 } from "./v365";
 
 export class V138 extends Class {
   __id = 138;
+  __offset = 0x4c8e0;
 
   base = field(Action);
   f_0x08 = field(V166);

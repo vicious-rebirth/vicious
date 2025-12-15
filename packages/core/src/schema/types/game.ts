@@ -15,6 +15,7 @@ export class Game extends Class {
   __id = 100;
   __folder = "Games";
   __ext = "gam";
+  __offset = 0x6c700;
 
   base = field(LocalizedObject);
   groups = field(GroupList);

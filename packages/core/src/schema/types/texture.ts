@@ -6,6 +6,7 @@ import { Object } from "./object";
 
 export class TextureGroup extends Class {
   __id = 11;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -14,6 +15,7 @@ export class Texture extends Class {
   __id = 10;
   __folder = "Textures";
   __ext = "txr";
+  __offset = 0xda310;
 
   base = field(Object);
   format = field(U8, {

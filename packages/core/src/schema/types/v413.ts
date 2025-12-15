@@ -7,6 +7,7 @@ import { Label } from "./label";
 
 export class V413 extends Class {
   __id = 413;
+  __offset = 0x23fc0;
 
   base = field(Action);
   _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 0));

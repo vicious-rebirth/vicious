@@ -6,6 +6,7 @@ import { Base } from "./base";
 
 export class V421 extends Class {
   __id = 421;
+  __offset = 0x21e60;
 
   base = field(Base);
   f_0x04 = field(U32, {

@@ -5,6 +5,7 @@ import { V173 } from "./v173";
 
 export class EnumerationAnimations extends Class {
   __id = 177;
+  __offset = 0x4df90;
 
   base = field(V173);
   animations = field(AssetFromTypeSizedList);

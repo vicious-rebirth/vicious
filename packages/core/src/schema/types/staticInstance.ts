@@ -7,6 +7,7 @@ import { Object } from "./object";
 
 export class StaticInstanceGroup extends Class {
   __id = 104;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -15,6 +16,7 @@ export class StaticInstance extends Class {
   __id = 103;
   __folder = "StaticInstances";
   __ext = "sti";
+  __offset = 0x2ecb0;
 
   base = field(Object);
   f_0x40 = field(AssetReference);

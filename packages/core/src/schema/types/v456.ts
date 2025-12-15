@@ -7,6 +7,7 @@ import { V421 } from "./v421";
 
 export class V456 extends Class {
   __id = 456;
+  __offset = 0x5b050;
 
   base = field(V108);
   f_0x04 = field(V301);

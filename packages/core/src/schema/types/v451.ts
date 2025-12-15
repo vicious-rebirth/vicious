@@ -5,6 +5,7 @@ import { V108 } from "./v108";
 export class V451 extends Class {
   __id = 451;
   __todo = true;
+  __offset = 0x5b4d0;
 
   base = field(V108);
 }

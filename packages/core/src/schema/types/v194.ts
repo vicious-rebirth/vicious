@@ -11,6 +11,7 @@ import { U32, BOOL } from "./atomic";
 
 export class V194 extends Class {
   __id = 194;
+  __offset = 0x226e0;
 
   base = field(Action);
   f_0x08 = field(AssetReference);

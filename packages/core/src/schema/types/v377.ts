@@ -6,6 +6,7 @@ import { Script } from "./script";
 
 export class V377 extends Class {
   __id = 377;
+  __offset = 0x21bb0;
 
   base = field(Base);
   f_0x04 = field(U32);

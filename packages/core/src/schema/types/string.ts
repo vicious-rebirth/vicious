@@ -7,6 +7,7 @@ import { Empty } from "./empty";
 
 export class String extends Class {
   __id = 135;
+  __offset = 0x6fc60;
 
   base = field(Base);
   old = field(Empty, { condition: (ctx) => ctx.lt((ctx) => ctx.version(), 2) });

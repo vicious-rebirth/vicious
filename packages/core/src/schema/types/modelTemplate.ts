@@ -12,6 +12,7 @@ import { V34 } from "./v34";
 
 export class ModelTemplate extends Class {
   __id = 44;
+  __offset = 0x10f920;
 
   base = field(V34);
   mesh = field(AssetReference);

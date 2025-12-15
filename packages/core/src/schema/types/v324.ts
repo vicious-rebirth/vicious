@@ -8,6 +8,7 @@ import { V176 } from "./v176";
 
 export class V324 extends Class {
   __id = 324;
+  __offset = 0x26a10;
 
   base = field(Base);
   f_0x18 = field(V176);

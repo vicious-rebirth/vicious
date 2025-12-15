@@ -11,6 +11,7 @@ import { Base } from "./base";
 
 export class V176 extends Class {
   __id = 176;
+  __offset = 0x6a940;
 
   base = field(Base);
   f_0x04 = field(AssetReference);

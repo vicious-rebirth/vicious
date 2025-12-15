@@ -6,6 +6,7 @@ import { V19 } from "./v19";
 
 export class V27 extends Class {
   __id = 27;
+  __offset = 0x111ff0;
 
   base = field(V19);
   texture = field(AssetReference);

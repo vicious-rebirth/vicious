@@ -7,6 +7,7 @@ import { V421 } from "./v421";
 
 export class V305 extends Class {
   __id = 305;
+  __offset = 0x2c7c0;
 
   base = field(Base);
   v421 = field(V421, {

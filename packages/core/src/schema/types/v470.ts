@@ -9,6 +9,7 @@ import { V301 } from "./v301";
 
 export class V470 extends Class {
   __id = 470;
+  __offset = 0x6d080;
 
   base = field(V160);
   f_0x40 = field(BOOL, {

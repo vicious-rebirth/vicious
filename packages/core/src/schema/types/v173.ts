@@ -5,6 +5,7 @@ import { Base } from "./base";
 
 export class V173 extends Class {
   __id = 173;
+  __offset = 0x2c160;
 
   base = field(Base);
   enumeration = field(AssetReference);

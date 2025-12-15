@@ -9,6 +9,7 @@ import { V56 } from "./v56";
 
 export class TriggerGroup extends Class {
   __id = 156;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -17,6 +18,7 @@ export class Trigger extends Class {
   __id = 155;
   __folder = "Triggers";
   __ext = "trg";
+  __offset = 0x83820;
 
   base = field(Object);
   f_0x98 = field(BOOL);

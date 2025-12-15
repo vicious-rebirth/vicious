@@ -7,6 +7,7 @@ import { Object } from "./object";
 
 export class SoundGroup extends Class {
   __id = 39;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -15,6 +16,7 @@ export class Sound extends Class {
   __id = 38;
   __folder = "Sounds";
   __ext = "snd";
+  __offset = 0xed730;
 
   base = field(Object);
   duration = field(U32);

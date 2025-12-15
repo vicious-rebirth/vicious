@@ -8,6 +8,7 @@ import { V421 } from "./v421";
 
 export class V301 extends Class {
   __id = 301;
+  __offset = 0x3c730;
 
   base = field(V300);
   f_1 = field(U8, { condition: (ctx) => ctx.lt((ctx) => ctx.version(), 2) });

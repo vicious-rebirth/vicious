@@ -6,6 +6,7 @@ import { Object } from "./object";
 
 export class MaterialGroup extends Class {
   __id = 17;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -14,6 +15,7 @@ export class Material extends Class {
   __id = 16;
   __folder = "Materials";
   __ext = "mtl";
+  __offset = 0x1d710;
 
   base = field(Object);
   version = field(U32);

@@ -9,6 +9,7 @@ import { Object } from "./object";
 
 export class NavMeshGroup extends Class {
   __id = 197;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -17,6 +18,7 @@ export class NavMesh extends Class {
   __id = 196;
   __folder = "NavMeshes";
   __ext = "nav";
+  __offset = 0x1180a0;
 
   base = field(Object);
   f_1 = field(NavMesh_1);

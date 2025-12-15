@@ -6,6 +6,7 @@ import { U32 } from "./atomic";
 
 export class V424 extends Class {
   __id = 424;
+  __offset = 0x23690;
 
   base = field(Action);
   _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 0));

@@ -6,6 +6,7 @@ import { U32 } from "./atomic";
 
 export class V509 extends Class {
   __id = 509;
+  __offset = 0x24470;
 
   base = field(Action);
   f_0x08 = field(U32);

@@ -5,6 +5,7 @@ import { Script } from "./script";
 
 export class V419 extends Class {
   __id = 419;
+  __offset = 0x1e6b0;
 
   base = field(Base);
   onStarted = field(Script);

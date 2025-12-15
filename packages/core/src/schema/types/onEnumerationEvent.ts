@@ -6,6 +6,7 @@ import { Base } from "./base";
 
 export class OnEnumerationEvent extends Class {
   __id = 278;
+  __offset = 0x51190;
 
   base = field(Base);
   enumeration = field(AssetReference);

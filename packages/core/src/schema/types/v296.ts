@@ -6,6 +6,7 @@ import { Matrix3, Vector3 } from "./math";
 
 export class V296 extends Class {
   __id = 296;
+  __offset = 0x177400;
 
   base = field(Base);
   f_1 = field(F32);

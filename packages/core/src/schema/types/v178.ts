@@ -7,6 +7,7 @@ import { ID } from "./id";
 
 export class V178 extends Class {
   __id = 178;
+  __offset = 0x22c70;
 
   base = field(Action);
   f_0x0c = field(BOOL, {

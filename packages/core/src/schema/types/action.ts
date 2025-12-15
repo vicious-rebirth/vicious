@@ -5,6 +5,7 @@ import { ExpressionWrap } from "./expression";
 
 export class Action extends Class {
   __id = 107;
+  __offset = 0x1e5c0;
 
   base = field(ExpressionWrap);
   t1 = field(U8, { condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1) });

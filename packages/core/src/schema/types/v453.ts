@@ -6,6 +6,7 @@ import { V108 } from "./v108";
 
 export class V453 extends Class {
   __id = 453;
+  __offset = 0x33d10;
 
   base = field(V108);
   flags = field(U32);

@@ -5,6 +5,7 @@ import { AssetFromTypeWrap } from "./asset";
 
 export class V168 extends Class {
   __id = 168;
+  __offset = 0x23c70;
 
   base = field(Action);
   _ = deprecated((ctx) => ctx.lte((ctx) => ctx.version(), 2));

@@ -8,6 +8,7 @@ import { Vector3 } from "./math";
 
 export class V160 extends Class {
   __id = 160;
+  __offset = 0x27510;
 
   base = field(Base);
   f_1 = field(AssetReference);

@@ -6,6 +6,7 @@ import { Base } from "./base";
 
 export class V435 extends Class {
   __id = 435;
+  __offset = 0x50110;
 
   base = field(Base);
   f_1 = field(U32, { condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2) });

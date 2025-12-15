@@ -6,6 +6,7 @@ import { Object } from "./object";
 
 export class ConstantGroup extends Class {
   __id = 124;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -14,6 +15,7 @@ export class Constant extends Class {
   __id = 123;
   __folder = "Constants";
   __ext = "k";
+  __offset = 0x1d710;
 
   base = field(Object);
   f_1 = field(U32);

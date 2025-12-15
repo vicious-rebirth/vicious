@@ -6,6 +6,7 @@ import { V23 } from "./v23";
 
 export class V45 extends Class {
   __id = 45;
+  __offset = 0xe4050;
 
   base = field(V23);
   data = field(V45Body, {

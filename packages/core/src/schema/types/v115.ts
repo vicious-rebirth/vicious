@@ -5,6 +5,7 @@ import { AssetFromType, AssetFromTypeSizedList, AssetReference } from "./asset";
 
 export class V115 extends Class {
   __id = 115;
+  __offset = 0x22b70;
 
   base = field(Action);
   f_0x08 = field(AssetReference);

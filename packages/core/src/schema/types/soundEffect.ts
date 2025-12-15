@@ -5,6 +5,7 @@ import { Sound } from "./sound";
 
 export class SoundEffect extends Class {
   __id = 42;
+  __offset = 0xed860;
 
   base = field(Sound);
   f_0x54 = field(F32, {

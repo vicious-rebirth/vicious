@@ -1,10 +1,11 @@
 import { Class, field } from "../core";
 
-import { MaterialSet } from "./materialSet";
+import { SurfaceSet } from "./surfaceSet";
 
 export class V41 extends Class {
   __id = 41;
   __todo = true;
+  __offset = 0x117590;
 
-  base = field(MaterialSet);
+  base = field(SurfaceSet);
 }

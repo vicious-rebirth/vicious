@@ -6,6 +6,7 @@ import { ExpressionList } from "./expression";
 
 export class IfExpression extends Class {
   __id = 118;
+  __offset = 0x47470;
 
   base = field(Action);
   condition = field(AssetFromType);

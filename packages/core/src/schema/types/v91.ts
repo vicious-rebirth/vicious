@@ -6,6 +6,7 @@ import { V34 } from "./v34";
 
 export class V91 extends Class {
   __id = 91;
+  __offset = 0x10dad0;
 
   base = field(V34);
   f_0x44 = field(AssetReferenceSizedList);

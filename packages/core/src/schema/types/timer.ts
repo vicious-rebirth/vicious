@@ -8,6 +8,7 @@ export class Timer extends Class {
   __id = 221;
   __folder = "Timers";
   __ext = "tim";
+  __offset = 0x2f4f0;
 
   base = field(Object);
   f_0xb0 = field(U32);

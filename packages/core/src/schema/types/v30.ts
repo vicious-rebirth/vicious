@@ -7,6 +7,7 @@ import { V33 } from "./v33";
 
 export class V30 extends Class {
   __id = 30;
+  __offset = 0x113800;
 
   base = field(V33);
   mesh = field(AssetReference);

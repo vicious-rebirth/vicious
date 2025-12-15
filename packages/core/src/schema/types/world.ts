@@ -7,6 +7,7 @@ import { LocalizedObject } from "./localizedObject";
 
 export class World extends Class {
   __id = 179;
+  __offset = 0xb5ab0;
 
   base = field(LocalizedObject);
   groups = field(GroupList);

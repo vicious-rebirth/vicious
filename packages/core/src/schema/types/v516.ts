@@ -7,6 +7,7 @@ import { FN_0x22520 } from "./fns";
 
 export class V516 extends Class {
   __id = 516;
+  __offset = 0x4a8e0;
 
   base = field(Action);
   f_1 = field(AssetReferenceSuffix, {

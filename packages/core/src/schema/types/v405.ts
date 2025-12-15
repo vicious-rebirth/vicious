@@ -6,6 +6,7 @@ import { Base } from "./base";
 
 export class V405 extends Class {
   __id = 405;
+  __offset = 0x114970;
 
   base = field(Base);
   f_0x04 = field(AssetReferenceSizedList);

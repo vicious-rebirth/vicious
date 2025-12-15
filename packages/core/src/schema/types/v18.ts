@@ -6,6 +6,7 @@ import { Material } from "./material";
 
 export class V18 extends Class {
   __id = 18;
+  __offset = 0x110fe0;
 
   base = field(Material);
   _ = deprecated((ctx) => ctx.lt((ctx) => ctx.version(), 2));

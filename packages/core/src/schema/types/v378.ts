@@ -6,6 +6,7 @@ import { V108 } from "./v108";
 
 export class V378 extends Class {
   __id = 378;
+  __offset = 0x55aa0;
 
   // Should be V369
   base = field(V108);

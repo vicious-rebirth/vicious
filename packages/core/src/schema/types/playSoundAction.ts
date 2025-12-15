@@ -8,6 +8,7 @@ import { V422 } from "./v422";
 
 export class PlaySoundAction extends Class {
   __id = 335;
+  __offset = 0x432d0;
 
   base = field(Action);
   f_0x08 = field(AssetFromTypeWrap);

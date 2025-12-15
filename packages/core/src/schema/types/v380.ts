@@ -5,6 +5,7 @@ import { Script } from "./script";
 
 export class V380 extends Class {
   __id = 380;
+  __offset = 0x1f250;
 
   base = field(Base);
   onAcquired = field(Script, {

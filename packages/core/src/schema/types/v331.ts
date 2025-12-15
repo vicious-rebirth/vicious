@@ -6,6 +6,7 @@ import { U32, U8 } from "./atomic";
 
 export class V331 extends Class {
   __id = 331;
+  __offset = 0x23b90;
 
   base = field(Action);
   old = field(U8, {

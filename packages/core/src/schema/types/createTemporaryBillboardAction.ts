@@ -6,6 +6,7 @@ import { F32, BOOL } from "./atomic";
 
 export class CreateTemporaryBillboardAction extends Class {
   __id = 165;
+  __offset = 0x22930;
 
   base = field(Action);
   f_0x0c = field(BOOL, {

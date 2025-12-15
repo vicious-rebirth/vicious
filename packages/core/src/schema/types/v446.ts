@@ -7,6 +7,7 @@ import { ID } from "./id";
 
 export class V446 extends Class {
   __id = 446;
+  __offset = 0x2f250;
 
   base = field(Base);
   f_1 = field(U32);

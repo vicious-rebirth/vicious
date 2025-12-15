@@ -6,6 +6,7 @@ import { Base } from "./base";
 
 export class Group extends Class {
   __id = 4;
+  __offset = 0xca470;
 
   base = field(Base);
   list = field((ctx) => ctx.list(GroupEntry), {

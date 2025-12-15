@@ -7,6 +7,7 @@ import { FN_0x22520 } from "./fns";
 
 export class V372 extends Class {
   __id = 372;
+  __offset = 0x4a630;
 
   base = field(Action);
   f_1 = field(FN_0x22520);

@@ -9,6 +9,7 @@ import { V20_9 } from "./v20";
 
 export class DynamicMesh extends Class {
   __id = 28;
+  __offset = 0x11e0c0;
 
   base = field(Mesh);
   viewBox = field(Vector3);

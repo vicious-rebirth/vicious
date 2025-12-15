@@ -6,6 +6,7 @@ import { Named } from "./named";
 
 export class V132 extends Class {
   __id = 132;
+  __offset = 0x71230;
 
   base = field(Named);
   f_0x20 = field(U32);

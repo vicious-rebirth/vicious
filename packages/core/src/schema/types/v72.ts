@@ -5,6 +5,7 @@ import { Base } from "./base";
 
 export class V72 extends Class {
   __id = 72;
+  __offset = 0xd7660;
 
   base = field(Base);
   f_0x04 = field(BOOL, {

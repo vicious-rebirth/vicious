@@ -6,6 +6,7 @@ import { V368 } from "./v368";
 
 export class V503 extends Class {
   __id = 503;
+  __offset = 0x29b50;
 
   base = field(V368);
   f_1 = field(AssetFromTypeWrap);

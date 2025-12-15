@@ -6,6 +6,7 @@ import { StaticLight } from "./staticLight";
 
 export class V79 extends Class {
   __id = 79;
+  __offset = 0x113cf0;
 
   base = field(StaticLight);
   f_0x7c = field(F32);

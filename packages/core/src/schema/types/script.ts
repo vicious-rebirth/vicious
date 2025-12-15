@@ -6,6 +6,7 @@ import { ID } from "./id";
 
 export class Script extends Class {
   __id = 105;
+  __offset = 0x4f920;
 
   base = field(Base);
   _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 0));

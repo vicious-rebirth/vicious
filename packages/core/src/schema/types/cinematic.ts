@@ -14,6 +14,7 @@ import { Script } from "./script";
 
 export class CinematicGroup extends Class {
   __id = 360;
+  __offset = 0x1a330;
 
   base = field(Group);
 }
@@ -22,6 +23,7 @@ export class Cinematic extends Class {
   __id = 363;
   __folder = "Cinematic";
   __ext = "cin";
+  __offset = 0x1bf50;
 
   base = field(LocalizedObject);
   content = field(CinematicContent);
@@ -31,6 +33,7 @@ export class CinematicContent extends Class {
   __id = 355;
   __folder = "Cinematics";
   __ext = "cin";
+  __offset = 0x21610;
 
   base = field(Object);
   keyframes = field(AssetFromTypeSizedList);
@@ -52,6 +55,7 @@ export class CinematicContent extends Class {
 
 export class CinematicFrame extends Class {
   __id = 356;
+  __offset = 0x62be0;
 
   base = field(Base);
   name = field(StringBuffer, {

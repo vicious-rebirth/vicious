@@ -12,12 +12,14 @@ export class Expression extends Class {
 
 export class ExpressionWrap extends Struct {
   __metadata = true;
+  __offset = 0x1a410;
 
   base = field(Expression);
 }
 
 export class ExpressionList extends Struct {
   __metadata = true;
+  __offset = 0x280e0;
 
   base = field(Expression);
   children = field(AssetFromTypeSizedList);

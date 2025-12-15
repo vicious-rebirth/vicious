@@ -8,6 +8,7 @@ import { V422 } from "./v422";
 
 export class V310 extends Class {
   __id = 310;
+  __offset = 0x7c4c0;
 
   base = field(Action);
   f_0x08 = field(U32);

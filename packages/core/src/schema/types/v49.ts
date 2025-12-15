@@ -7,6 +7,7 @@ import { V34 } from "./v34";
 
 export class V49 extends Class {
   __id = 49;
+  __offset = 0xebba0;
 
   base = field(V34);
   f_0x45 = field(BOOL);
