@@ -1,4 +1,4 @@
-import { Class, Codec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { AssetFromType } from "./asset";
 import { F32, I32, U32, U16, BOOL } from "./atomic";
@@ -135,7 +135,7 @@ export class Animation extends Class {
   });
 }
 
-export class AnimationIndexBuffer extends Codec {
+export class AnimationIndexBuffer extends Struct {
   count = field(U32);
   buffer = field(U8Buffer, {
     custom: (ctx) => {

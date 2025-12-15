@@ -1,4 +1,4 @@
-import { Class, Codec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { AssetReference } from "./asset";
 import { ANY, U32, BOOL } from "./atomic";
@@ -27,14 +27,14 @@ export class Group extends Class {
   });
 }
 
-export class GroupEntry extends Codec {
+export class GroupEntry extends Struct {
   enabled = field(BOOL);
   asset = field(AssetReference, {
     condition: (ctx) => ctx.neq(this.enabled, 0),
   });
 }
 
-export class GroupListEntry extends Codec {
+export class GroupListEntry extends Struct {
   enabled = field(BOOL);
   type = field(U32, { condition: (ctx) => ctx.neq(this.enabled, 0) });
   object = field(ANY, {
@@ -45,7 +45,7 @@ export class GroupListEntry extends Codec {
   });
 }
 
-export class GroupList extends Codec {
+export class GroupList extends Struct {
   count = field(U32);
   list = field((ctx) => ctx.list(GroupListEntry), {
     custom: (ctx) => {

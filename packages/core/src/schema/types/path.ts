@@ -1,4 +1,4 @@
-import { Class, Codec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { F32, U32 } from "./atomic";
 import { Group } from "./group";
@@ -21,7 +21,7 @@ export class Path extends Class {
   maxKey = field(F32);
 }
 
-export class PathBody extends Codec {
+export class PathBody extends Struct {
   count = field(U32);
   frames = field((ctx) => ctx.list(PathFrame), {
     custom: (ctx) => {
@@ -34,7 +34,7 @@ export class PathBody extends Codec {
   });
 }
 
-export class PathFrame extends Codec {
+export class PathFrame extends Struct {
   position = field(Vector3);
   f_1 = field(U32);
   key = field(F32);

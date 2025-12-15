@@ -1,4 +1,4 @@
-import { Class, MetadataCodec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { AssetReferenceSuffix } from "./asset";
 import { U32, BOOL } from "./atomic";
@@ -21,7 +21,9 @@ export class VoiceOver extends Class {
   });
 }
 
-export class VoiceOverBody extends MetadataCodec {
+export class VoiceOverBody extends Struct {
+  __metadata = true;
+
   f_0x60 = field(U32);
   f_0x64 = field(AssetReferenceSuffix, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),

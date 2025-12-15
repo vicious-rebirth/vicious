@@ -1,4 +1,4 @@
-import { Class, Codec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { AssetReference } from "./asset";
 import { F32, I32, U32, U8 } from "./atomic";
@@ -45,7 +45,7 @@ export class Font extends Class {
   });
 }
 
-export class FontGlyphs extends Codec {
+export class FontGlyphs extends Struct {
   count = field(I32, { skip: true });
   list = field((ctx) => ctx.list(FontGlyph), {
     custom: (ctx) => {
@@ -58,7 +58,7 @@ export class FontGlyphs extends Codec {
   });
 }
 
-export class FontGlyph extends Codec {
+export class FontGlyph extends Struct {
   f_1 = field(U8);
   f_2 = field(U8);
   f_3 = field(U8);

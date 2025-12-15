@@ -1,4 +1,4 @@
-import { Class, Codec, deprecated, field } from "../core";
+import { Class, Struct, deprecated, field } from "../core";
 
 import { U32, U8 } from "./atomic";
 import { Base } from "./base";
@@ -29,7 +29,7 @@ export class V71 extends Class {
   f_0x0c = field((ctx) => ctx.array(V71_1, 5));
 }
 
-export class V71_1 extends Codec {
+export class V71_1 extends Struct {
   f_1 = field(U32);
   f_2 = field((ctx) => ctx.array(U8, 16));
 }

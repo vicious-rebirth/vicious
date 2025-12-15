@@ -1,4 +1,4 @@
-import { Class, Codec, MetadataCodec, deprecated, field } from "../core";
+import { Class, Struct, deprecated, field } from "../core";
 
 import { I32, U32, U16, U8, BOOL } from "./atomic";
 import { U8Buffer } from "./buffer";
@@ -71,7 +71,7 @@ export class DynamicMesh extends Class {
   body = field(DynamicMeshBody);
 }
 
-export class DynamicMeshEntry extends Codec {
+export class DynamicMeshEntry extends Struct {
   version = field(U32, { skip: true });
   f_0x00 = field(U32);
   transform = field(Transform);
@@ -86,7 +86,7 @@ export class DynamicMeshEntry extends Codec {
   });
 }
 
-export class DynamicMeshEntries extends Codec {
+export class DynamicMeshEntries extends Struct {
   version = field(U32, { skip: true });
   count = field(U32);
   list = field((ctx) => ctx.list(DynamicMeshEntry), {
@@ -105,7 +105,7 @@ export class DynamicMeshEntries extends Codec {
   });
 }
 
-export class DynamicMeshEntry2 extends Codec {
+export class DynamicMeshEntry2 extends Struct {
   version = field(U32, { skip: true });
   f_0x00 = field(U32);
   transform = field(Transform);
@@ -121,7 +121,7 @@ export class DynamicMeshEntry2 extends Codec {
   });
 }
 
-export class DynamicMeshEntries2 extends Codec {
+export class DynamicMeshEntries2 extends Struct {
   version = field(U32, { skip: true });
   count = field(U32);
   list = field((ctx) => ctx.list(DynamicMeshEntry2), {
@@ -140,13 +140,13 @@ export class DynamicMeshEntries2 extends Codec {
   });
 }
 
-export class DynamicMeshHelperPoint extends Codec {
+export class DynamicMeshHelperPoint extends Struct {
   parentIndex = field(I32);
   transform = field(Transform);
   label = field(Label);
 }
 
-export class DynamicMeshHelperPointList extends Codec {
+export class DynamicMeshHelperPointList extends Struct {
   count = field(U32);
   list = field((ctx) => ctx.list(DynamicMeshHelperPoint), {
     custom: (ctx) => {
@@ -159,7 +159,7 @@ export class DynamicMeshHelperPointList extends Codec {
   });
 }
 
-export class MeshRange extends Codec {
+export class MeshRange extends Struct {
   vertexOffset = field(U16);
   vertexCount = field(U16);
   indexOffset = field(U32);
@@ -167,7 +167,7 @@ export class MeshRange extends Codec {
   helperPointIndex = field(U16);
 }
 
-export class SkinMeshFrame extends Codec {
+export class SkinMeshFrame extends Struct {
   bufferCount = field(U32);
   f_2 = field(U32);
   buffer = field(U8Buffer, {
@@ -180,7 +180,7 @@ export class SkinMeshFrame extends Codec {
   });
 }
 
-export class MeshSection extends Codec {
+export class MeshSection extends Struct {
   riggedRangeCount = field(U8);
   riggedRanges = field((ctx) => ctx.list(MeshRange), {
     custom: (ctx) => {
@@ -219,7 +219,9 @@ export class MeshSection extends Codec {
   });
 }
 
-export class DynamicMeshBody extends MetadataCodec {
+export class DynamicMeshBody extends Struct {
+  __metadata = true;
+
   enabled = field(BOOL);
   meshSections = field((ctx) => ctx.array(MeshSection, 32), {
     condition: (ctx) => ctx.neq(this.enabled, 0),

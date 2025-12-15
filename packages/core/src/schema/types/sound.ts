@@ -1,4 +1,4 @@
-import { Class, MetadataCodec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { F32, U32, U8, BOOL } from "./atomic";
 import { U8Buffer } from "./buffer";
@@ -36,7 +36,9 @@ export class Sound extends Class {
   });
 }
 
-export class SoundBuffer extends MetadataCodec {
+export class SoundBuffer extends Struct {
+  __metadata = true;
+
   disabled = field(BOOL, { skip: true });
   enabled = field(BOOL);
   sampleRate = field(U32, { condition: (ctx) => ctx.neq(this.enabled, 0) });

@@ -2,8 +2,7 @@ import { U32 } from "../schema/types/atomic";
 import {
   FieldReference,
   Definition,
-  Codec,
-  MetadataCodec,
+  Struct,
   Class,
   Type,
   TypeContext,
@@ -23,14 +22,12 @@ export abstract class Backend {
   protected variableCount: number = 0;
 
   public visit(obj: Definition): void {
-    if (obj instanceof Class) {
-      this.visitClass(obj);
-    } else if (obj instanceof MetadataCodec) {
-      this.visitMetadataStruct(obj);
-    } else if (obj instanceof Atom) {
+    if (obj instanceof Atom) {
       this.visitAtom(obj);
-    } else if (obj instanceof Codec) {
+    } else if (obj instanceof Struct) {
       this.visitStruct(obj);
+    } else if (obj instanceof Class) {
+      this.visitClass(obj);
     }
   }
 
@@ -41,11 +38,8 @@ export abstract class Backend {
   protected abstract enterClass(cls: Class): void;
   protected abstract exitClass(cls: Class): void;
 
-  protected abstract enterMetadataStruct(struct: MetadataCodec): void;
-  protected abstract exitMetadataStruct(struct: MetadataCodec): void;
-
-  protected abstract enterStruct(struct: Codec): void;
-  protected abstract exitStruct(struct: Codec): void;
+  protected abstract enterStruct(struct: Struct): void;
+  protected abstract exitStruct(struct: Struct): void;
 
   protected abstract exitAtom(atom: Atom): void;
 
@@ -190,26 +184,20 @@ export abstract class Backend {
     this.exitClass(cls);
   }
 
-  protected visitMetadataStruct(struct: MetadataCodec): void {
-    this.variableCount = 0;
-
-    this.enterMetadataStruct(struct);
-
-    this.visitMetadataHeader();
-
-    this.visitStructFields(struct);
-
-    this.visitMetadataFooter();
-
-    this.exitMetadataStruct(struct);
-  }
-
-  protected visitStruct(struct: Codec): void {
+  protected visitStruct(struct: Struct): void {
     this.variableCount = 0;
 
     this.enterStruct(struct);
 
+    if (struct.__metadata) {
+      this.visitMetadataHeader();
+    }
+
     this.visitStructFields(struct);
+
+    if (struct.__metadata) {
+      this.visitMetadataFooter();
+    }
 
     this.exitStruct(struct);
   }

@@ -1,10 +1,10 @@
-import { Codec, MetadataCodec, field } from "../core";
+import { Struct, field } from "../core";
 
 import { ANY, I32, U32, I16, BOOL } from "./atomic";
 import { ID } from "./id";
 import { Label } from "./label";
 
-export class AssetReference extends Codec {
+export class AssetReference extends Struct {
   type = field(I16);
   p2 = field(I16);
   id = field(ID, { condition: (ctx) => ctx.gte(this.type, 0) });
@@ -36,12 +36,12 @@ export class AssetReference extends Codec {
   });
 }
 
-export class AssetReferenceSuffix extends Codec {
+export class AssetReferenceSuffix extends Struct {
   base = field(AssetReference);
   suffix = field(U32);
 }
 
-export class AssetFromType extends Codec {
+export class AssetFromType extends Struct {
   type = field(I32);
   asset = field(ANY, {
     condition: (ctx) => ctx.neq(this.type, -1),
@@ -51,11 +51,13 @@ export class AssetFromType extends Codec {
   });
 }
 
-export class AssetFromTypeWrap extends MetadataCodec {
+export class AssetFromTypeWrap extends Struct {
+  __metadata = true;
+
   base = field(AssetFromType);
 }
 
-export class AssetReferenceList extends Codec {
+export class AssetReferenceList extends Struct {
   consume = field(BOOL, { skip: true });
   count = field(I32, { condition: (ctx) => ctx.neq(this.consume, 0) });
   list = field((ctx) => ctx.list(AssetReference), {
@@ -70,7 +72,7 @@ export class AssetReferenceList extends Codec {
   });
 }
 
-export class AssetReferenceSizedList extends Codec {
+export class AssetReferenceSizedList extends Struct {
   base = field(AssetReferenceList, {
     custom: (ctx) => {
       ctx.set(this.base.consume, 1);
@@ -79,7 +81,7 @@ export class AssetReferenceSizedList extends Codec {
   });
 }
 
-export class AssetReferenceSuffixList extends Codec {
+export class AssetReferenceSuffixList extends Struct {
   consume = field(BOOL, { skip: true });
   count = field(I32, { condition: (ctx) => ctx.neq(this.consume, 0) });
   list = field((ctx) => ctx.list(AssetReferenceSuffix), {
@@ -94,7 +96,7 @@ export class AssetReferenceSuffixList extends Codec {
   });
 }
 
-export class AssetReferenceSuffixSizedList extends Codec {
+export class AssetReferenceSuffixSizedList extends Struct {
   base = field(AssetReferenceSuffixList, {
     custom: (ctx) => {
       ctx.set(this.base.consume, 1);
@@ -103,7 +105,7 @@ export class AssetReferenceSuffixSizedList extends Codec {
   });
 }
 
-export class AssetFromTypeList extends Codec {
+export class AssetFromTypeList extends Struct {
   consume = field(BOOL, { skip: true });
   count = field(I32, { condition: (ctx) => ctx.neq(this.consume, 0) });
   list = field((ctx) => ctx.list(AssetFromType), {
@@ -118,7 +120,7 @@ export class AssetFromTypeList extends Codec {
   });
 }
 
-export class AssetFromTypeSizedList extends Codec {
+export class AssetFromTypeSizedList extends Struct {
   base = field(AssetFromTypeList, {
     custom: (ctx) => {
       ctx.set(this.base.consume, 1);

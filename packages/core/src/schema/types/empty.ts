@@ -1,3 +1,5 @@
-import { MetadataCodec } from "../core";
+import { Struct } from "../core";
 
-export class Empty extends MetadataCodec {}
+export class Empty extends Struct {
+  __metadata = true;
+}

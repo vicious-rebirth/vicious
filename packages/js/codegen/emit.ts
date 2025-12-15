@@ -1,8 +1,7 @@
 import {
   Class,
-  Codec,
+  Struct,
   FieldReference,
-  MetadataCodec,
   VariableReference,
 } from "@repo/core/schema";
 import { Emit as CoreEmit } from "@repo/core/backend";
@@ -22,11 +21,7 @@ export abstract class Emit extends CoreEmit {
     return this.emitObject(cls, handler);
   }
 
-  protected emitMetadataStruct(struct: MetadataCodec, handler: string): string {
-    return this.emitObject(struct, handler);
-  }
-
-  protected emitStruct(struct: Codec, handler: string): string {
+  protected emitStruct(struct: Struct, handler: string): string {
     return this.emitObject(struct, handler);
   }
 

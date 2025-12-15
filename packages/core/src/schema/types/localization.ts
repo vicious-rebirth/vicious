@@ -1,16 +1,18 @@
-import { Codec, MetadataCodec, field } from "../core";
+import { Struct, field } from "../core";
 
 import { AssetReference } from "./asset";
 import { U32, BOOL } from "./atomic";
 
-export class LocalizationTable extends Codec {
+export class LocalizationTable extends Struct {
   enabled = field(BOOL);
   table = field(AssetReference, {
     condition: (ctx) => ctx.neq(this.enabled, 0),
   });
 }
 
-export class LocalizationEntry extends MetadataCodec {
+export class LocalizationEntry extends Struct {
+  __metadata = true;
+
   tables = field((ctx) => ctx.list(LocalizationTable), {
     custom: (ctx) => {
       ctx.loop((ctx) => {
@@ -31,7 +33,9 @@ export class LocalizationEntry extends MetadataCodec {
   });
 }
 
-export class Localization extends MetadataCodec {
+export class Localization extends Struct {
+  __metadata = true;
+
   count = field(U32);
   entries = field((ctx) => ctx.list(LocalizationEntry), {
     custom: (ctx) => {
@@ -44,7 +48,7 @@ export class Localization extends MetadataCodec {
   });
 }
 
-export class LocalizationFile extends Codec {
+export class LocalizationFile extends Struct {
   magicHeader = field(U32, {
     custom: (ctx) => {
       ctx.walk();

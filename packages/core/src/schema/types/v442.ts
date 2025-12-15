@@ -1,4 +1,4 @@
-import { Class, Codec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { U32, U16 } from "./atomic";
 import { Base } from "./base";
@@ -10,7 +10,7 @@ export class V442 extends Class {
   f_1 = field(V442EntryList);
 }
 
-export class V442Entry extends Codec {
+export class V442Entry extends Struct {
   f_1 = field(U16);
   f_2 = field(U16);
   f_3 = field(U16);
@@ -19,7 +19,7 @@ export class V442Entry extends Codec {
   });
 }
 
-export class V442EntryList extends Codec {
+export class V442EntryList extends Struct {
   count = field(U32);
   list = field((ctx) => ctx.list(V442Entry), {
     custom: (ctx) => {

@@ -1,8 +1,8 @@
-import { CodeContext, Codec, field } from "../core";
+import { CodeContext, Struct, field } from "../core";
 
 import { U32 } from "./atomic";
 
-export class Metadata extends Codec {
+export class Metadata extends Struct {
   header = field(MetadataHeader);
   footer = field(MetadataFooter);
 }
@@ -18,7 +18,7 @@ function alignTo4Byte(ctx: CodeContext): void {
   );
 }
 
-export class MetadataHeader extends Codec {
+export class MetadataHeader extends Struct {
   magic = field(U32, {
     custom: (ctx) => {
       alignTo4Byte(ctx);
@@ -44,7 +44,7 @@ export class MetadataHeader extends Codec {
   });
 }
 
-export class MetadataFooter extends Codec {
+export class MetadataFooter extends Struct {
   magic = field(U32, {
     custom: (ctx) => {
       alignTo4Byte(ctx);

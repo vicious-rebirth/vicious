@@ -22,7 +22,12 @@ export type TypeContext = {
 export type Type<T = any> =
   | ((ctx: TypeContext) => T)
   | (new (...args: any[]) => T);
-export type Value = Definition | number | string | ((ctx: CodeContext) => any);
+export type Value =
+  | Definition
+  | number
+  | string
+  | boolean
+  | ((ctx: CodeContext) => any);
 export type Op2 = (left: Value, right: Value) => Definition;
 
 export type CodeContext = {
@@ -128,9 +133,13 @@ export function deprecated(condition: (ctx: CodeContext) => void): undefined {
 
 export abstract class Atom extends Definition {}
 
-export abstract class Codec extends Definition {}
+export abstract class Struct extends Definition {
+  __metadata: boolean = false;
+}
 
-export abstract class MetadataCodec extends Definition {}
+export abstract class MetadataCodec extends Definition {
+  __metadata: boolean = true;
+}
 
 export abstract class Class<T = any> extends Definition {
   abstract get __id(): number;

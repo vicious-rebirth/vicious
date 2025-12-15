@@ -1,4 +1,4 @@
-import { Class, Codec, deprecated, field } from "../core";
+import { Class, Struct, deprecated, field } from "../core";
 
 import {
   AssetFromTypeSizedList,
@@ -133,7 +133,7 @@ export class EntityTemplate extends Class {
   });
 }
 
-export class EntityBody extends Codec {
+export class EntityBody extends Struct {
   count = field(U32);
   list = field((ctx) => ctx.list(AssetReferenceSizedList), {
     custom: (ctx) => {

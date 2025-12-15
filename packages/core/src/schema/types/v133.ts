@@ -1,4 +1,4 @@
-import { Class, Codec, deprecated, field } from "../core";
+import { Class, Struct, deprecated, field } from "../core";
 
 import { AssetFromType, AssetReferenceSizedList } from "./asset";
 import { F32, U32, U16, U8 } from "./atomic";
@@ -44,7 +44,7 @@ export class V133 extends Class {
   });
 }
 
-export class V133_1 extends Codec {
+export class V133_1 extends Struct {
   f_1 = field(AssetFromType);
   list = field((ctx) => ctx.list(AssetFromType), {
     condition: (ctx) => ctx.gt(this.f_1.type, 0),

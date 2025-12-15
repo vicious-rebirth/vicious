@@ -1,4 +1,4 @@
-import { Class, MetadataCodec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { BOOL } from "./atomic";
 import { U8Buffer } from "./buffer";
@@ -13,7 +13,9 @@ export class Model extends Class {
   vertexBuffer = field(VertexBuffer);
 }
 
-export class VertexBuffer extends MetadataCodec {
+export class VertexBuffer extends Struct {
+  __metadata = true;
+
   enabled = field(BOOL);
   buffer = field(U8Buffer, {
     custom: (ctx) => {

@@ -1,4 +1,4 @@
-import { Class, Codec, MetadataCodec, deprecated, field } from "../core";
+import { Class, Struct, deprecated, field } from "../core";
 
 import { I32, U32, I16, U16, U8, BOOL } from "./atomic";
 import { U8Buffer, U16Buffer } from "./buffer";
@@ -16,7 +16,7 @@ export class V20 extends Class {
   f_0x58 = field(V20_9, { condition: (ctx) => ctx.neq(this.enabled, 0) });
 }
 
-export class V20_1 extends Codec {
+export class V20_1 extends Struct {
   count = field(I32);
   list = field((ctx) => ctx.list(V20_2), {
     condition: (ctx) => ctx.gt(this.count, 0),
@@ -30,14 +30,14 @@ export class V20_1 extends Codec {
   });
 }
 
-export class V20_2 extends Codec {
+export class V20_2 extends Struct {
   f_0x00 = field(U32);
   f_0x04 = field(U32);
   f_0x08 = field(U32);
   f_0x0c = field(V20_3);
 }
 
-export class V20_3 extends Codec {
+export class V20_3 extends Struct {
   count = field(U32);
   list = field((ctx) => ctx.list(V20_4), {
     custom: (ctx) => {
@@ -50,14 +50,14 @@ export class V20_3 extends Codec {
   });
 }
 
-export class V20_4 extends Codec {
+export class V20_4 extends Struct {
   f_1 = field(I16);
   f_2 = field(I16);
   f_3 = field(Vector3);
   f_4 = field(Vector3);
 }
 
-export class V20_6 extends Codec {
+export class V20_6 extends Struct {
   meshSections = field(V20_7);
   vertices = field(U8Buffer, {
     custom: (ctx) => {
@@ -73,7 +73,7 @@ export class V20_6 extends Codec {
   });
 }
 
-export class V20_7 extends Codec {
+export class V20_7 extends Struct {
   count = field(U32);
   list = field((ctx) => ctx.list(V20_8), {
     custom: (ctx) => {
@@ -86,13 +86,15 @@ export class V20_7 extends Codec {
   });
 }
 
-export class V20_8 extends Codec {
+export class V20_8 extends Struct {
   tint = field(Color);
   index = field(U16);
   material = field(U16);
 }
 
-export class V20_5 extends MetadataCodec {
+export class V20_5 extends Struct {
+  __metadata = true;
+
   _ = field(U8, {
     deprecated: (ctx) => ctx.eq((ctx) => ctx.version(), 0),
   });
@@ -102,7 +104,9 @@ export class V20_5 extends MetadataCodec {
   });
 }
 
-export class V20_9 extends MetadataCodec {
+export class V20_9 extends Struct {
+  __metadata = true;
+
   skip = field(BOOL, {
     condition: (ctx) =>
       ctx.and(
@@ -142,11 +146,13 @@ export class V20_9 extends MetadataCodec {
   });
 }
 
-export class V20_10 extends MetadataCodec {
+export class V20_10 extends Struct {
+  __metadata = true;
+
   f_1 = field(U32);
 }
 
-export class V20_11 extends Codec {
+export class V20_11 extends Struct {
   version = field(U8, { skip: true });
   f_0x10 = field(U32);
   f_0x18 = field(U32);
@@ -185,7 +191,7 @@ export class V20_11 extends Codec {
   });
 }
 
-export class V20_11_1 extends Codec {
+export class V20_11_1 extends Struct {
   version = field(U8, { skip: true });
   count1 = field(U8, { skip: true });
   count2 = field(U32, { skip: true });
@@ -244,7 +250,7 @@ export class V20_11_1 extends Codec {
   });
 }
 
-export class V20_11_2 extends Codec {
+export class V20_11_2 extends Struct {
   version = field(U8, { skip: true });
   acc = field(U16, { skip: true });
   f_1 = field(U16, {
@@ -323,11 +329,11 @@ export class V20_11_2 extends Codec {
   });
 }
 
-export class V20_11_3 extends Codec {
+export class V20_11_3 extends Struct {
   f_1 = field((ctx) => ctx.array(U8, 6));
 }
 
-export class V20_12 extends Codec {
+export class V20_12 extends Struct {
   count = field(I32);
   list = field((ctx) => ctx.list(V20_13), {
     custom: (ctx) => {
@@ -340,14 +346,14 @@ export class V20_12 extends Codec {
   });
 }
 
-export class V20_13 extends Codec {
+export class V20_13 extends Struct {
   f_0x00 = field(U16);
   f_0x02 = field(U16);
   f_0x04 = field(Vector3);
   f_0x10 = field(Vector3);
 }
 
-export class V20_14 extends Codec {
+export class V20_14 extends Struct {
   version = field(U8, { skip: true });
   count = field(I32);
   list = field((ctx) => ctx.list(V20_15), {
@@ -366,7 +372,7 @@ export class V20_14 extends Codec {
   });
 }
 
-export class V20_15 extends Codec {
+export class V20_15 extends Struct {
   version = field(U8, { skip: true });
   f_1 = field(U8);
   count1 = field(U8);

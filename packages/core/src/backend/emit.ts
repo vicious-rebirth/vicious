@@ -2,10 +2,9 @@ import {
   Atom,
   Class,
   Definition,
-  Codec,
+  Struct,
   CodeContext,
   FieldReference,
-  MetadataCodec,
   Type,
   Value,
   VariableReference,
@@ -25,12 +24,7 @@ export abstract class Emit extends Backend {
 
   protected abstract emitClass(cls: Class, fields: string): string;
 
-  protected abstract emitMetadataStruct(
-    struct: MetadataCodec,
-    fields: string
-  ): string;
-
-  protected abstract emitStruct(struct: Codec, fields: string): string;
+  protected abstract emitStruct(struct: Struct, fields: string): string;
 
   protected abstract emitAtom(atom: Atom): string;
 
@@ -132,21 +126,11 @@ export abstract class Emit extends Backend {
     this.pushString(this.emitClass(cls, fields.join("\n")));
   }
 
-  protected enterMetadataStruct(struct: MetadataCodec): void {
+  protected enterStruct(struct: Struct): void {
     this.pushScope(struct);
   }
 
-  protected exitMetadataStruct(struct: MetadataCodec): void {
-    const [...fields] = this.popScope(struct);
-
-    this.pushString(this.emitMetadataStruct(struct, fields.join("\n")));
-  }
-
-  protected enterStruct(struct: Codec): void {
-    this.pushScope(struct);
-  }
-
-  protected exitStruct(struct: Codec): void {
+  protected exitStruct(struct: Struct): void {
     const [...fields] = this.popScope(struct);
 
     this.pushString(this.emitStruct(struct, fields.join("\n")));

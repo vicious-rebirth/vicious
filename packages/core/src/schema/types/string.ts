@@ -1,4 +1,4 @@
-import { Class, Codec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { U32, U16 } from "./atomic";
 import { Base } from "./base";
@@ -20,7 +20,7 @@ export class String extends Class {
   id = field(StringID);
 }
 
-export class StringID extends Codec {
+export class StringID extends Struct {
   index = field(U16);
   unique = field(U16);
 }

@@ -1,4 +1,4 @@
-import { Class, MetadataCodec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { U32, U8, BOOL } from "./atomic";
 import { U8Buffer } from "./buffer";
@@ -34,7 +34,9 @@ export class ImageTexture extends Class {
   });
 }
 
-export class ImageTextureBuffer extends MetadataCodec {
+export class ImageTextureBuffer extends Struct {
+  __metadata = true;
+
   format = field(U32, { skip: true });
   width = field(U32, { skip: true });
   height = field(U32, { skip: true });

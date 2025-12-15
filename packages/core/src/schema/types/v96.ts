@@ -1,4 +1,4 @@
-import { Class, MetadataCodec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { V19 } from "./v19";
 
@@ -9,4 +9,6 @@ export class V96 extends Class {
   f_1 = field(V96_1);
 }
 
-export class V96_1 extends MetadataCodec {}
+export class V96_1 extends Struct {
+  __metadata = true;
+}

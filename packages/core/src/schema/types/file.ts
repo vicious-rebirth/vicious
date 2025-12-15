@@ -1,10 +1,12 @@
-import { Codec, MetadataCodec, field } from "../core";
+import { Struct, field } from "../core";
 
 import { ANY, U32 } from "./atomic";
 import { ID } from "./id";
 import { Label } from "./label";
 
-export class AssetFileHeader extends MetadataCodec {
+export class AssetFileHeader extends Struct {
+  __metadata = true;
+
   offset = field(U32, {
     custom: (ctx) => {
       ctx.walk();
@@ -22,7 +24,9 @@ export class AssetFileHeader extends MetadataCodec {
   f_2 = field(U32);
 }
 
-export class AssetFileContent extends MetadataCodec {
+export class AssetFileContent extends Struct {
+  __metadata = true;
+
   header = field(AssetFileHeader);
   object = field(ANY, {
     custom: (ctx) => {
@@ -31,7 +35,7 @@ export class AssetFileContent extends MetadataCodec {
   });
 }
 
-export class AssetFile extends Codec {
+export class AssetFile extends Struct {
   magicHeader = field(U32, {
     custom: (ctx) => {
       ctx.walk();

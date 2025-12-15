@@ -1,4 +1,4 @@
-import { Class, MetadataCodec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { AssetFromType, AssetReference } from "./asset";
 import { F32, U32 } from "./atomic";
@@ -23,6 +23,8 @@ export class V314 extends Class {
   f_1 = field(V314_1);
 }
 
-export class V314_1 extends MetadataCodec {
+export class V314_1 extends Struct {
+  __metadata = true;
+
   f_1 = field(AssetFromType);
 }

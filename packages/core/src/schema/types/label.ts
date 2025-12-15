@@ -1,14 +1,14 @@
-import { Codec, field } from "../core";
+import { Struct, field } from "../core";
 
 import { U32, U16 } from "./atomic";
 import { StringBuffer } from "./buffer";
 
-export class LabelID extends Codec {
+export class LabelID extends Struct {
   index = field(U16);
   unique = field(U16);
 }
 
-export class Label extends Codec {
+export class Label extends Struct {
   size = field(U32);
   buffer = field(StringBuffer, {
     custom: (ctx) => {
@@ -19,7 +19,7 @@ export class Label extends Codec {
   id = field(LabelID);
 }
 
-export class LabelList extends Codec {
+export class LabelList extends Struct {
   count = field(U32);
   list = field((ctx) => ctx.list(Label), {
     custom: (ctx) => {

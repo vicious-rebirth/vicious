@@ -1,4 +1,4 @@
-import { Class, MetadataCodec, field } from "../core";
+import { Class, Struct, field } from "../core";
 
 import { AssetFromTypeSizedList } from "./asset";
 import { Base } from "./base";
@@ -10,11 +10,15 @@ export class Expression extends Class {
   base = field(Base);
 }
 
-export class ExpressionWrap extends MetadataCodec {
+export class ExpressionWrap extends Struct {
+  __metadata = true;
+
   base = field(Expression);
 }
 
-export class ExpressionList extends MetadataCodec {
+export class ExpressionList extends Struct {
+  __metadata = true;
+
   base = field(Expression);
   children = field(AssetFromTypeSizedList);
 }

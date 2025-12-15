@@ -1,4 +1,4 @@
-import { Class, MetadataCodec, deprecated, field } from "../core";
+import { Class, Struct, deprecated, field } from "../core";
 
 import { AssetFromType, AssetReference } from "./asset";
 import { U32 } from "./atomic";
@@ -18,6 +18,8 @@ export class V27 extends Class {
   f_1 = field(V27_1);
 }
 
-export class V27_1 extends MetadataCodec {
+export class V27_1 extends Struct {
+  __metadata = true;
+
   data = field(AssetFromType);
 }

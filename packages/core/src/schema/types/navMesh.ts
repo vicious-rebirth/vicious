@@ -1,4 +1,4 @@
-import { Class, Codec, deprecated, field } from "../core";
+import { Class, Struct, deprecated, field } from "../core";
 
 import { AssetReference } from "./asset";
 import { I32, U8 } from "./atomic";
@@ -38,7 +38,7 @@ export class NavMesh extends Class {
   });
 }
 
-export class NavMesh_1 extends Codec {
+export class NavMesh_1 extends Struct {
   count = field(I32);
   list = field((ctx) => ctx.list(NavMesh_2), {
     condition: (ctx) => ctx.gt(this.count, 0),
@@ -52,14 +52,14 @@ export class NavMesh_1 extends Codec {
   });
 }
 
-export class NavMesh_2 extends Codec {
+export class NavMesh_2 extends Struct {
   f_1 = field((ctx) => ctx.array(U8, 3));
   f_2 = field((ctx) => ctx.array(U8, 3));
   f_3 = field(U8);
   f_4 = field(U8);
 }
 
-export class NavMesh_3 extends Codec {
+export class NavMesh_3 extends Struct {
   count = field(I32);
   list = field((ctx) => ctx.list(NavMesh_4), {
     condition: (ctx) => ctx.gt(this.count, 0),
@@ -73,11 +73,11 @@ export class NavMesh_3 extends Codec {
   });
 }
 
-export class NavMesh_4 extends Codec {
+export class NavMesh_4 extends Struct {
   data = field((ctx) => ctx.array(U8, 6));
 }
 
-export class NavMesh_5 extends Codec {
+export class NavMesh_5 extends Struct {
   count = field(I32);
   list = field((ctx) => ctx.list(NavMesh_6), {
     condition: (ctx) => ctx.gt(this.count, 0),
@@ -91,7 +91,7 @@ export class NavMesh_5 extends Codec {
   });
 }
 
-export class NavMesh_6 extends Codec {
+export class NavMesh_6 extends Struct {
   f_1 = field(AssetReference);
   f_2 = field(U8);
   f_3 = field(U8);
