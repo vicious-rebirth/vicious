@@ -1,0 +1,18 @@
+import { ClassCodec, field } from "../core";
+
+import { F32, BOOL } from "./atomic";
+import { Base } from "./base";
+
+export class V72 extends ClassCodec {
+  __id = 72;
+
+  base = field(Base);
+  f_0x04 = field(BOOL, {
+    condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
+  });
+  f_0x08 = field(F32);
+  f_0x0c = field(F32);
+  f_0x10 = field(F32);
+  f_0x14 = field(F32);
+  f_0x18 = field(F32);
+}

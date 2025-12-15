@@ -1,0 +1,14 @@
+{
+  "name": "@repo/core",
+  "version": "0.0.0",
+  "description": "Core implementation of Vicious Engine",
+  "scripts": {
+    "debug": "tsx --inspect-brk src/test.ts",
+    "test": "tsx src/test.ts"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "tsx": "^4.21.0"
+  }
+}

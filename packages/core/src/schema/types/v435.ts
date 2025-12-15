@@ -1,0 +1,17 @@
+import { ClassCodec, field } from "../core";
+
+import { AssetFromTypeSizedList } from "./asset";
+import { U32 } from "./atomic";
+import { Base } from "./base";
+
+export class V435 extends ClassCodec {
+  __id = 435;
+
+  base = field(Base);
+  f_1 = field(U32, { condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2) });
+  f_2 = field(U32, { condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2) });
+  f_0x04 = field(AssetFromTypeSizedList);
+  f_0x0c = field(AssetFromTypeSizedList, {
+    condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
+  });
+}

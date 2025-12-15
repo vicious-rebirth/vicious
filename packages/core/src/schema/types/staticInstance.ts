@@ -1,0 +1,44 @@
+import { ClassCodec, field } from "../core";
+
+import { AssetFromType, AssetReference } from "./asset";
+import { F32, U32, BOOL } from "./atomic";
+import { Group } from "./group";
+import { Object } from "./object";
+
+export class StaticInstanceGroup extends ClassCodec {
+  __id = 104;
+
+  base = field(Group);
+}
+
+export class StaticInstance extends ClassCodec {
+  __id = 103;
+  __folder = "StaticInstances";
+  __ext = "sti";
+
+  base = field(Object);
+  f_0x40 = field(AssetReference);
+  model = field(AssetFromType);
+
+  // TODO: Something here?
+
+  f_0x48 = field(F32, {
+    condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2),
+  });
+  f_0x4c = field(U32, {
+    condition: (ctx) => ctx.gt((ctx) => ctx.version(), 3),
+  });
+  f_0x50 = field(U32, {
+    condition: (ctx) => ctx.gt((ctx) => ctx.version(), 4),
+  });
+  old = field(U32, {
+    condition: (ctx) =>
+      ctx.and(
+        (ctx) => ctx.gt((ctx) => ctx.version(), 5),
+        (ctx) => ctx.lt((ctx) => ctx.version(), 9)
+      ),
+  });
+  f_0x54 = field(BOOL, {
+    condition: (ctx) => ctx.gt((ctx) => ctx.version(), 6),
+  });
+}

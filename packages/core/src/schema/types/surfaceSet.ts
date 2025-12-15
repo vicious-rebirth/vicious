@@ -1,0 +1,20 @@
+import { ClassCodec, field } from "../core";
+
+import { AssetReferenceSizedList } from "./asset";
+import { Group } from "./group";
+import { Object } from "./object";
+
+export class SurfaceSetGroup extends ClassCodec {
+  __id = 60;
+
+  base = field(Group);
+}
+
+export class SurfaceSet extends ClassCodec {
+  __id = 59;
+  __folder = "SurfaceSet";
+  __ext = "ss";
+
+  base = field(Object);
+  materials = field(AssetReferenceSizedList);
+}
