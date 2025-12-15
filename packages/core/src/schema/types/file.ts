@@ -6,6 +6,7 @@ import { Label } from "./label";
 
 export class AssetFileHeader extends Struct {
   __metadata = true;
+  __offset = 0xc9740;
 
   offset = field(U32, {
     custom: (ctx) => {
@@ -26,6 +27,7 @@ export class AssetFileHeader extends Struct {
 
 export class AssetFileContent extends Struct {
   __metadata = true;
+  __offset = 0xca38b;
 
   header = field(AssetFileHeader);
   object = field(ANY, {
@@ -36,6 +38,8 @@ export class AssetFileContent extends Struct {
 }
 
 export class AssetFile extends Struct {
+  __offset = 0xca336;
+
   magicHeader = field(U32, {
     custom: (ctx) => {
       ctx.walk();

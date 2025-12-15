@@ -138,6 +138,8 @@ export class Animation extends Class {
 }
 
 export class AnimationIndexBuffer extends Struct {
+  __offset = 0x120f0;
+
   count = field(U32);
   buffer = field(U8Buffer, {
     custom: (ctx) => {

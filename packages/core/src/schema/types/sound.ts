@@ -40,6 +40,7 @@ export class Sound extends Class {
 
 export class SoundBuffer extends Struct {
   __metadata = true;
+  __offset = 0xdcc50;
 
   disabled = field(BOOL, { skip: true });
   enabled = field(BOOL);

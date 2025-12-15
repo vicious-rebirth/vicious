@@ -24,6 +24,8 @@ export class Path extends Class {
 }
 
 export class PathBody extends Struct {
+  __offset = 0x75870;
+
   count = field(U32);
   frames = field((ctx) => ctx.list(PathFrame), {
     custom: (ctx) => {
@@ -37,6 +39,8 @@ export class PathBody extends Struct {
 }
 
 export class PathFrame extends Struct {
+  __offset = 0xec190;
+
   position = field(Vector3);
   f_1 = field(U32);
   key = field(F32);

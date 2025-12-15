@@ -29,6 +29,8 @@ export class Group extends Class {
 }
 
 export class GroupEntry extends Struct {
+  __offset = 0xca470;
+
   enabled = field(BOOL);
   asset = field(AssetReference, {
     condition: (ctx) => ctx.neq(this.enabled, 0),
@@ -36,6 +38,8 @@ export class GroupEntry extends Struct {
 }
 
 export class GroupListEntry extends Struct {
+  __offset = 0xc9e24;
+
   enabled = field(BOOL);
   type = field(U32, { condition: (ctx) => ctx.neq(this.enabled, 0) });
   object = field(ANY, {
@@ -47,6 +51,8 @@ export class GroupListEntry extends Struct {
 }
 
 export class GroupList extends Struct {
+  __offset = 0xc9db0;
+
   count = field(U32);
   list = field((ctx) => ctx.list(GroupListEntry), {
     custom: (ctx) => {

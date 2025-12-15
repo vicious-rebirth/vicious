@@ -26,6 +26,7 @@ export class V314 extends Class {
 
 export class V314_1 extends Struct {
   __metadata = true;
+  __offset = 0xf5760;
 
   f_1 = field(AssetFromType);
 }

@@ -24,6 +24,7 @@ export class VoiceOver extends Class {
 
 export class VoiceOverBody extends Struct {
   __metadata = true;
+  __offset = 0x35c93;
 
   f_0x60 = field(U32);
   f_0x64 = field(AssetReferenceSuffix, {

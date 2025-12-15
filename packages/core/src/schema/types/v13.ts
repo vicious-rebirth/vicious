@@ -10,5 +10,5 @@ export class V13 extends Class {
 
   base = field(Texture);
   f_0x48 = field(BOOL);
-  empty = field(Empty);
+  empty = field(Empty, { offset: 0xf5bb0 });
 }

@@ -21,6 +21,7 @@ export class V27 extends Class {
 
 export class V27_1 extends Struct {
   __metadata = true;
+  __offset = 0xf4930;
 
   data = field(AssetFromType);
 }

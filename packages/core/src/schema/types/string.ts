@@ -10,7 +10,10 @@ export class String extends Class {
   __offset = 0x6fc60;
 
   base = field(Base);
-  old = field(Empty, { condition: (ctx) => ctx.lt((ctx) => ctx.version(), 2) });
+  old = field(Empty, {
+    offset: 0x6fc80,
+    condition: (ctx) => ctx.lt((ctx) => ctx.version(), 2),
+  });
   buffer = field(StringBuffer, {
     custom: (ctx) => {
       ctx.set(this.buffer.consume, 1);
@@ -22,6 +25,8 @@ export class String extends Class {
 }
 
 export class StringID extends Struct {
+  __offset = 0x6fce4;
+
   index = field(U16);
   unique = field(U16);
 }

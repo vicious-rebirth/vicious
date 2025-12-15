@@ -82,7 +82,10 @@ export type CodeContext = {
     count: Value
   ) => void;
 
-  forward: (target: Value, size: Value) => void;
+  forward: <T extends Definition | number | string>(
+    target: T[],
+    size: Value
+  ) => void;
   seek: (offset: Value) => void;
   tell: () => void;
 
@@ -100,6 +103,7 @@ export type FieldProps = {
   name?: string;
   skip?: boolean;
   todo?: boolean;
+  offset?: number;
   deprecated?: (ctx: CodeContext) => void;
   condition?: (ctx: CodeContext) => void;
   custom?: (ctx: CodeContext) => void;

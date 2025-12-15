@@ -18,6 +18,8 @@ export class V20 extends Class {
 }
 
 export class V20_1 extends Struct {
+  __offset = 0x122be0;
+
   count = field(I32);
   list = field((ctx) => ctx.list(V20_2), {
     condition: (ctx) => ctx.gt(this.count, 0),
@@ -32,6 +34,8 @@ export class V20_1 extends Struct {
 }
 
 export class V20_2 extends Struct {
+  __offset = 0x11dbd0;
+
   f_0x00 = field(U32);
   f_0x04 = field(U32);
   f_0x08 = field(U32);
@@ -39,6 +43,8 @@ export class V20_2 extends Struct {
 }
 
 export class V20_3 extends Struct {
+  __offset = 0x1154e0;
+
   count = field(U32);
   list = field((ctx) => ctx.list(V20_4), {
     custom: (ctx) => {
@@ -52,6 +58,8 @@ export class V20_3 extends Struct {
 }
 
 export class V20_4 extends Struct {
+  __offset = 0x1154ff;
+
   f_1 = field(I16);
   f_2 = field(I16);
   f_3 = field(Vector3);
@@ -59,6 +67,8 @@ export class V20_4 extends Struct {
 }
 
 export class V20_6 extends Struct {
+  __offset = 0x10b050;
+
   meshSections = field(V20_7);
   vertices = field(U8Buffer, {
     custom: (ctx) => {
@@ -75,6 +85,8 @@ export class V20_6 extends Struct {
 }
 
 export class V20_7 extends Struct {
+  __offset = 0xf80e0;
+
   count = field(U32);
   list = field((ctx) => ctx.list(V20_8), {
     custom: (ctx) => {
@@ -88,6 +100,8 @@ export class V20_7 extends Struct {
 }
 
 export class V20_8 extends Struct {
+  __offset = 0xf80ff;
+
   tint = field(Color);
   index = field(U16);
   material = field(U16);
@@ -95,6 +109,7 @@ export class V20_8 extends Struct {
 
 export class V20_5 extends Struct {
   __metadata = true;
+  __offset = 0x10b170;
 
   _ = field(U8, {
     deprecated: (ctx) => ctx.eq((ctx) => ctx.version(), 0),
@@ -107,6 +122,7 @@ export class V20_5 extends Struct {
 
 export class V20_9 extends Struct {
   __metadata = true;
+  __offset = 0x181440;
 
   skip = field(BOOL, {
     condition: (ctx) =>
@@ -149,11 +165,14 @@ export class V20_9 extends Struct {
 
 export class V20_10 extends Struct {
   __metadata = true;
+  __offset = 0x17fc10;
 
   f_1 = field(U32);
 }
 
 export class V20_11 extends Struct {
+  __offset = 0x1811b0;
+
   version = field(U8, { skip: true });
   f_0x10 = field(U32);
   f_0x18 = field(U32);
@@ -193,6 +212,8 @@ export class V20_11 extends Struct {
 }
 
 export class V20_11_1 extends Struct {
+  __offset = 0x18126f;
+
   version = field(U8, { skip: true });
   count1 = field(U8, { skip: true });
   count2 = field(U32, { skip: true });
@@ -252,6 +273,8 @@ export class V20_11_1 extends Struct {
 }
 
 export class V20_11_2 extends Struct {
+  __offset = 0x1812cc;
+
   version = field(U8, { skip: true });
   acc = field(U16, { skip: true });
   f_1 = field(U16, {
@@ -331,10 +354,14 @@ export class V20_11_2 extends Struct {
 }
 
 export class V20_11_3 extends Struct {
+  __offset = 0x1813de;
+
   f_1 = field((ctx) => ctx.array(U8, 6));
 }
 
 export class V20_12 extends Struct {
+  __offset = 0x17f000;
+
   count = field(I32);
   list = field((ctx) => ctx.list(V20_13), {
     custom: (ctx) => {
@@ -348,6 +375,8 @@ export class V20_12 extends Struct {
 }
 
 export class V20_13 extends Struct {
+  __offset = 0x181080;
+
   f_0x00 = field(U16);
   f_0x02 = field(U16);
   f_0x04 = field(Vector3);
@@ -355,6 +384,8 @@ export class V20_13 extends Struct {
 }
 
 export class V20_14 extends Struct {
+  __offset = 0x17f450;
+
   version = field(U8, { skip: true });
   count = field(I32);
   list = field((ctx) => ctx.list(V20_15), {
@@ -374,6 +405,8 @@ export class V20_14 extends Struct {
 }
 
 export class V20_15 extends Struct {
+  __offset = 0x17fcc0;
+
   version = field(U8, { skip: true });
   f_1 = field(U8);
   count1 = field(U8);

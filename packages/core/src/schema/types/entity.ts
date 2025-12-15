@@ -138,6 +138,8 @@ export class EntityTemplate extends Class {
 }
 
 export class EntityBody extends Struct {
+  __offset = 0x12d80;
+
   count = field(U32);
   list = field((ctx) => ctx.list(AssetReferenceSizedList), {
     custom: (ctx) => {

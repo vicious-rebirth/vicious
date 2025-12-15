@@ -43,11 +43,14 @@ export class Font extends Class {
     },
   });
   empty = field(Empty, {
+    offset: 0xdba30,
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2),
   });
 }
 
 export class FontGlyphs extends Struct {
+  __offset = 0xf7f90;
+
   count = field(I32, { skip: true });
   list = field((ctx) => ctx.list(FontGlyph), {
     custom: (ctx) => {
@@ -61,6 +64,8 @@ export class FontGlyphs extends Struct {
 }
 
 export class FontGlyph extends Struct {
+  __offset = 0xf7fa4;
+
   f_1 = field(U8);
   f_2 = field(U8);
   f_3 = field(U8);

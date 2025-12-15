@@ -31,6 +31,8 @@ export class V71 extends Class {
 }
 
 export class V71_1 extends Struct {
+  __offset = 0x10757d;
+
   f_1 = field(U32);
   f_2 = field((ctx) => ctx.array(U8, 16));
 }

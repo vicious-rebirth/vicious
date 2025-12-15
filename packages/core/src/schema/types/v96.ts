@@ -12,4 +12,5 @@ export class V96 extends Class {
 
 export class V96_1 extends Struct {
   __metadata = true;
+  __offset = 0x10a130;
 }

@@ -19,5 +19,5 @@ export class V287 extends Class {
   f_0xe8 = field(U32, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
   });
-  empty = field(Empty);
+  empty = field(Empty, { offset: 0xf5460 });
 }

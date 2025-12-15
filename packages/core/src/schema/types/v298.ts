@@ -12,6 +12,7 @@ export class V298 extends Class {
 
 export class V298_1 extends Struct {
   __metadata = true;
+  __offset = 0xf5ea0;
 
   _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 0));
 }

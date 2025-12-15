@@ -38,6 +38,8 @@ export class Transform extends Struct {
 }
 
 export class TransformList extends Struct {
+  __offset = 0x11de20;
+
   count = field(U32);
   list = field((ctx) => ctx.list(Transform), {
     custom: (ctx) => {

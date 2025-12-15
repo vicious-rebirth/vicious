@@ -24,6 +24,7 @@ export class V73 extends Class {
 
 export class V73_1 extends Struct {
   __metadata = true;
+  __offset = 0xf7410;
 
   _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 0));
   f_0x160 = field(AssetFromType, {

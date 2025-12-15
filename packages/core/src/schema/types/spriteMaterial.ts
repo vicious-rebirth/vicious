@@ -17,5 +17,7 @@ export class SpriteMaterial extends Class {
   f_0x64 = field(AssetFromType, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
   });
-  empty = field(Empty);
+  empty = field(Empty, {
+    offset: 0xf65f0,
+  });
 }

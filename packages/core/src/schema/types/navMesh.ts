@@ -41,6 +41,8 @@ export class NavMesh extends Class {
 }
 
 export class NavMesh_1 extends Struct {
+  __offset = 0x5e460;
+
   count = field(I32);
   list = field((ctx) => ctx.list(NavMesh_2), {
     condition: (ctx) => ctx.gt(this.count, 0),
@@ -55,6 +57,8 @@ export class NavMesh_1 extends Struct {
 }
 
 export class NavMesh_2 extends Struct {
+  __offset = 0x36d20;
+
   f_1 = field((ctx) => ctx.array(U8, 3));
   f_2 = field((ctx) => ctx.array(U8, 3));
   f_3 = field(U8);
@@ -62,6 +66,8 @@ export class NavMesh_2 extends Struct {
 }
 
 export class NavMesh_3 extends Struct {
+  __offset = 0x5e4d0;
+
   count = field(I32);
   list = field((ctx) => ctx.list(NavMesh_4), {
     condition: (ctx) => ctx.gt(this.count, 0),
@@ -76,10 +82,14 @@ export class NavMesh_3 extends Struct {
 }
 
 export class NavMesh_4 extends Struct {
+  __offset = 0x5e4d0;
+
   data = field((ctx) => ctx.array(U8, 6));
 }
 
 export class NavMesh_5 extends Struct {
+  __offset = 0x5f6e0;
+
   count = field(I32);
   list = field((ctx) => ctx.list(NavMesh_6), {
     condition: (ctx) => ctx.gt(this.count, 0),
@@ -94,6 +104,8 @@ export class NavMesh_5 extends Struct {
 }
 
 export class NavMesh_6 extends Struct {
+  __offset = 0x5f6e0;
+
   f_1 = field(AssetReference);
   f_2 = field(U8);
   f_3 = field(U8);

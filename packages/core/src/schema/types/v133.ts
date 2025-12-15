@@ -46,6 +46,8 @@ export class V133 extends Class {
 }
 
 export class V133_1 extends Struct {
+  __offset = 0x9980f;
+
   f_1 = field(AssetFromType);
   list = field((ctx) => ctx.list(AssetFromType), {
     condition: (ctx) => ctx.gt(this.f_1.type, 0),

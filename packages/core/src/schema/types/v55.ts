@@ -17,5 +17,5 @@ export class V55 extends Class {
   f_0x68 = field(AssetFromType, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
   });
-  empty = field(Empty);
+  empty = field(Empty, { offset: 0xf6020 });
 }

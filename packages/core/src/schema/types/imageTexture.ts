@@ -37,6 +37,7 @@ export class ImageTexture extends Class {
 
 export class ImageTextureBuffer extends Struct {
   __metadata = true;
+  __offset = 0xddbe0;
 
   format = field(U32, { skip: true });
   width = field(U32, { skip: true });

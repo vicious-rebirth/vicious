@@ -16,6 +16,7 @@ export class Model extends Class {
 
 export class VertexBuffer extends Struct {
   __metadata = true;
+  __offset = 0xdd910;
 
   enabled = field(BOOL);
   buffer = field(U8Buffer, {

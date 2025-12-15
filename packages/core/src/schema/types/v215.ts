@@ -11,6 +11,7 @@ export class V215 extends Class {
   base = field(Action);
   f_0x10 = field(ExpressionList);
   f_2 = field(AssetFromTypeList, {
+    offset: 0x4a470,
     custom: (ctx) => {
       ctx.set(this.f_2.count, 3);
       ctx.walk(this.f_2);

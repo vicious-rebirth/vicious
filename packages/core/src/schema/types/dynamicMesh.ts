@@ -73,6 +73,8 @@ export class DynamicMesh extends Class {
 }
 
 export class DynamicMeshEntry extends Struct {
+  __offset = 0x10dc20;
+
   version = field(U32, { skip: true });
   f_0x00 = field(U32);
   transform = field(Transform);
@@ -88,6 +90,8 @@ export class DynamicMeshEntry extends Struct {
 }
 
 export class DynamicMeshEntries extends Struct {
+  __offset = 0x75940;
+
   version = field(U32, { skip: true });
   count = field(U32);
   list = field((ctx) => ctx.list(DynamicMeshEntry), {
@@ -107,6 +111,8 @@ export class DynamicMeshEntries extends Struct {
 }
 
 export class DynamicMeshEntry2 extends Struct {
+  __offset = 0x10ddd0;
+
   version = field(U32, { skip: true });
   f_0x00 = field(U32);
   transform = field(Transform);
@@ -123,6 +129,8 @@ export class DynamicMeshEntry2 extends Struct {
 }
 
 export class DynamicMeshEntries2 extends Struct {
+  __offset = 0x759c0;
+
   version = field(U32, { skip: true });
   count = field(U32);
   list = field((ctx) => ctx.list(DynamicMeshEntry2), {
@@ -142,12 +150,16 @@ export class DynamicMeshEntries2 extends Struct {
 }
 
 export class DynamicMeshHelperPoint extends Struct {
+  __offset = 0x10db60;
+
   parentIndex = field(I32);
   transform = field(Transform);
   label = field(Label);
 }
 
 export class DynamicMeshHelperPointList extends Struct {
+  __offset = 0x758d0;
+
   count = field(U32);
   list = field((ctx) => ctx.list(DynamicMeshHelperPoint), {
     custom: (ctx) => {
@@ -161,6 +173,8 @@ export class DynamicMeshHelperPointList extends Struct {
 }
 
 export class MeshRange extends Struct {
+  __offset = 0xf7ff0;
+
   vertexOffset = field(U16);
   vertexCount = field(U16);
   indexOffset = field(U32);
@@ -169,6 +183,8 @@ export class MeshRange extends Struct {
 }
 
 export class SkinMeshFrame extends Struct {
+  __offset = 0xf8060;
+
   bufferCount = field(U32);
   f_2 = field(U32);
   buffer = field(U8Buffer, {
@@ -182,6 +198,8 @@ export class SkinMeshFrame extends Struct {
 }
 
 export class MeshSection extends Struct {
+  __offset = 0x10a2b6;
+
   riggedRangeCount = field(U8);
   riggedRanges = field((ctx) => ctx.list(MeshRange), {
     custom: (ctx) => {
@@ -222,6 +240,7 @@ export class MeshSection extends Struct {
 
 export class DynamicMeshBody extends Struct {
   __metadata = true;
+  __offset = 0x10a500;
 
   enabled = field(BOOL);
   meshSections = field((ctx) => ctx.array(MeshSection, 32), {

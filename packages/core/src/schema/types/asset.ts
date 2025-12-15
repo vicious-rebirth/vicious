@@ -5,6 +5,8 @@ import { ID } from "./id";
 import { Label } from "./label";
 
 export class AssetReference extends Struct {
+  __offset = 0xc9f90;
+
   type = field(I16);
   p2 = field(I16);
   id = field(ID, { condition: (ctx) => ctx.gte(this.type, 0) });
@@ -37,11 +39,15 @@ export class AssetReference extends Struct {
 }
 
 export class AssetReferenceSuffix extends Struct {
+  __offset = 0x1e2e0;
+
   base = field(AssetReference);
   suffix = field(U32);
 }
 
 export class AssetFromType extends Struct {
+  __offset = 0x1e3b0;
+
   type = field(I32);
   asset = field(ANY, {
     condition: (ctx) => ctx.neq(this.type, -1),
@@ -53,11 +59,14 @@ export class AssetFromType extends Struct {
 
 export class AssetFromTypeWrap extends Struct {
   __metadata = true;
+  __offset = 0x19a70;
 
   base = field(AssetFromType);
 }
 
 export class AssetReferenceList extends Struct {
+  __offset = 0x12090;
+
   consume = field(BOOL, { skip: true });
   count = field(I32, { condition: (ctx) => ctx.neq(this.consume, 0) });
   list = field((ctx) => ctx.list(AssetReference), {
@@ -73,6 +82,8 @@ export class AssetReferenceList extends Struct {
 }
 
 export class AssetReferenceSizedList extends Struct {
+  __offset = 0x10be70;
+
   base = field(AssetReferenceList, {
     custom: (ctx) => {
       ctx.set(this.base.consume, 1);
@@ -82,6 +93,8 @@ export class AssetReferenceSizedList extends Struct {
 }
 
 export class AssetReferenceSuffixList extends Struct {
+  __offset = 0x1e440;
+
   consume = field(BOOL, { skip: true });
   count = field(I32, { condition: (ctx) => ctx.neq(this.consume, 0) });
   list = field((ctx) => ctx.list(AssetReferenceSuffix), {
@@ -97,6 +110,8 @@ export class AssetReferenceSuffixList extends Struct {
 }
 
 export class AssetReferenceSuffixSizedList extends Struct {
+  __offset = 0x1e440;
+
   base = field(AssetReferenceSuffixList, {
     custom: (ctx) => {
       ctx.set(this.base.consume, 1);
@@ -121,6 +136,8 @@ export class AssetFromTypeList extends Struct {
 }
 
 export class AssetFromTypeSizedList extends Struct {
+  __offset = 0xc9b00;
+
   base = field(AssetFromTypeList, {
     custom: (ctx) => {
       ctx.set(this.base.consume, 1);

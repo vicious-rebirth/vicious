@@ -16,6 +16,7 @@ export class V45 extends Class {
 
 export class V45Body extends Struct {
   __metadata = true;
+  __offset = 0xdb790;
 
   enabled = field(BOOL);
   buffer = field(U8Buffer, {

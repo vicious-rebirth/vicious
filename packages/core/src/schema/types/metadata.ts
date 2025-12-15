@@ -19,6 +19,8 @@ function alignTo4Byte(ctx: CodeContext): void {
 }
 
 export class MetadataHeader extends Struct {
+  __offset = 0xc83d0;
+
   magic = field(U32, {
     custom: (ctx) => {
       alignTo4Byte(ctx);
@@ -45,6 +47,8 @@ export class MetadataHeader extends Struct {
 }
 
 export class MetadataFooter extends Struct {
+  __offset = 0xc8450;
+
   magic = field(U32, {
     custom: (ctx) => {
       alignTo4Byte(ctx);

@@ -4,6 +4,8 @@ import { AssetReference } from "./asset";
 import { U32, BOOL } from "./atomic";
 
 export class LocalizationTable extends Struct {
+  __offset = 0xca590;
+
   enabled = field(BOOL);
   table = field(AssetReference, {
     condition: (ctx) => ctx.neq(this.enabled, 0),
@@ -12,6 +14,7 @@ export class LocalizationTable extends Struct {
 
 export class LocalizationEntry extends Struct {
   __metadata = true;
+  __offset = 0xca570;
 
   tables = field((ctx) => ctx.list(LocalizationTable), {
     custom: (ctx) => {
@@ -35,6 +38,7 @@ export class LocalizationEntry extends Struct {
 
 export class Localization extends Struct {
   __metadata = true;
+  __offset = 0xca653;
 
   count = field(U32);
   entries = field((ctx) => ctx.list(LocalizationEntry), {
@@ -49,6 +53,8 @@ export class Localization extends Struct {
 }
 
 export class LocalizationFile extends Struct {
+  __offset = 0xca64a;
+
   magicHeader = field(U32, {
     custom: (ctx) => {
       ctx.walk();

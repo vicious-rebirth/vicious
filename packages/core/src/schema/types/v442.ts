@@ -12,6 +12,8 @@ export class V442 extends Class {
 }
 
 export class V442Entry extends Struct {
+  __offset = 0xd8bb0;
+
   f_1 = field(U16);
   f_2 = field(U16);
   f_3 = field(U16);
@@ -21,6 +23,8 @@ export class V442Entry extends Struct {
 }
 
 export class V442EntryList extends Struct {
+  __offset = 0x10b3a0;
+
   count = field(U32);
   list = field((ctx) => ctx.list(V442Entry), {
     custom: (ctx) => {

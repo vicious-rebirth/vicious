@@ -11,5 +11,7 @@ export class V94 extends Class {
   base = field(V19);
   f_0x44 = field(AssetReference);
   f_0x48 = field(AssetReference);
-  empty = field(Empty);
+  empty = field(Empty, {
+    offset: 0xf50d0,
+  });
 }
