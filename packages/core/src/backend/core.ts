@@ -1,4 +1,4 @@
-import { U32 } from "../schema";
+import { U32 } from "../schema/types/atomic";
 import {
   FieldReference,
   Codec,
@@ -12,7 +12,7 @@ import {
   VariableReference,
 } from "../schema/core";
 
-export class Backend {
+export abstract class Backend {
   public readonly codeContext = this.buildCodeContext();
   public readonly typeContext = this.buildTypeContext();
 
@@ -37,121 +37,135 @@ export class Backend {
    * Override
    */
 
-  protected enterClass(cls: ClassCodec): void {}
-  protected exitClass(cls: ClassCodec): void {}
+  protected abstract enterClass(cls: ClassCodec): void;
+  protected abstract exitClass(cls: ClassCodec): void;
 
-  protected enterMetadataStruct(struct: MetadataCodec): void {}
-  protected exitMetadataStruct(struct: MetadataCodec): void {}
+  protected abstract enterMetadataStruct(struct: MetadataCodec): void;
+  protected abstract exitMetadataStruct(struct: MetadataCodec): void;
 
-  protected enterStruct(struct: Codec): void {}
-  protected exitStruct(struct: Codec): void {}
+  protected abstract enterStruct(struct: Codec): void;
+  protected abstract exitStruct(struct: Codec): void;
 
-  protected exitAtomic(atom: AtomicCodec): void {}
+  protected abstract exitAtomic(atom: AtomicCodec): void;
 
-  protected exitMetadataHeader(): void {}
+  protected abstract exitMetadataHeader(): void;
 
-  protected exitMetadataFooter(): void {}
+  protected abstract exitMetadataFooter(): void;
 
-  protected enterStructField(field: FieldReference): void {}
-  protected exitStructField(field: FieldReference): void {}
+  protected abstract enterStructField(field: FieldReference): void;
+  protected abstract exitStructField(field: FieldReference): void;
 
-  protected enterTypeDefinition(type: Type): void {}
-  protected exitTypeDefinition(type: Type): void {}
+  protected abstract enterTypeDefinition(type: Type): void;
+  protected abstract exitTypeDefinition(type: Type): void;
 
-  protected exitType(type: new (...args: any[]) => Codec): void {}
+  protected abstract exitType(type: new (...args: any[]) => Codec): void;
 
-  protected enterArrayType(
+  protected abstract enterArrayType(
     type: new (...args: any[]) => Codec,
     count: number
-  ): void {}
-  protected exitArrayType(
+  ): void;
+  protected abstract exitArrayType(
     type: new (...args: any[]) => Codec,
     count: number
-  ): void {}
+  ): void;
 
-  protected enterListType(
+  protected abstract enterListType(
     type: new (...args: any[]) => Codec,
     maxCount?: number
-  ): void {}
-  protected exitListType(
+  ): void;
+  protected abstract exitListType(
     type: new (...args: any[]) => Codec,
     maxCount?: number
-  ): void {}
+  ): void;
 
-  protected enterBlock(code: (ctx: CodeContext) => void): void {}
-  protected exitBlock(code: (ctx: CodeContext) => void): void {}
+  protected abstract enterBlock(code: (ctx: CodeContext) => void): void;
+  protected abstract exitBlock(code: (ctx: CodeContext) => void): void;
 
-  protected enterIf(
+  protected abstract enterIf(
     condition: (ctx: CodeContext) => void,
     true_: (ctx: CodeContext) => void,
     false_?: (ctx: CodeContext) => void
-  ): void {}
-  protected exitIf(
+  ): void;
+  protected abstract exitIf(
     condition: (ctx: CodeContext) => void,
     true_: (ctx: CodeContext) => void,
     false_?: (ctx: CodeContext) => void
-  ): void {}
+  ): void;
 
-  protected enterFor(
+  protected abstract enterFor(
     v: VariableReference,
     size: Codec | number | undefined | ((ctx: CodeContext) => void),
     body: (ctx: CodeContext) => void
-  ): void {}
-  protected exitFor(
+  ): void;
+  protected abstract exitFor(
     v: VariableReference,
     size: Codec | number | undefined | ((ctx: CodeContext) => void),
     body: (ctx: CodeContext) => void
-  ): void {}
+  ): void;
 
-  protected exitBreak(): void {}
+  protected abstract exitBreak(): void;
 
-  protected exitFieldReference(field: FieldReference): void {}
-  protected exitVariableReference(v: VariableReference): void {}
-  protected exitLiteral(value: string): void {}
+  protected abstract exitFieldReference(field: FieldReference): void;
+  protected abstract exitVariableReference(v: VariableReference): void;
+  protected abstract exitLiteral(value: string): void;
 
-  protected enterVariableDefinition(v: VariableReference, data: Value): void {}
-  protected exitVariableDefinition(v: VariableReference, data: Value): void {}
+  protected abstract enterVariableDefinition(
+    v: VariableReference,
+    data: Value
+  ): void;
+  protected abstract exitVariableDefinition(
+    v: VariableReference,
+    data: Value
+  ): void;
 
-  protected enterNot(value: Value): void {}
-  protected exitNot(value: Value): void {}
+  protected abstract enterNot(value: Value): void;
+  protected abstract exitNot(value: Value): void;
 
-  protected enterOperation(operator: string, left: Value, right: Value): void {}
-  protected exitOperation(operator: string, left: Value, right: Value): void {}
+  protected abstract enterOperation(
+    operator: string,
+    left: Value,
+    right: Value
+  ): void;
+  protected abstract exitOperation(
+    operator: string,
+    left: Value,
+    right: Value
+  ): void;
 
-  protected exitVersion(): void {}
+  protected abstract exitVersion(): void;
 
-  protected exitEnd(): void {}
+  protected abstract exitEnd(): void;
 
-  protected enterIndex(target: Value, index: Value): void {}
-  protected exitIndex(target: Value, index: Value): void {}
+  protected abstract enterIndex(target: Value, index: Value): void;
+  protected abstract exitIndex(target: Value, index: Value): void;
 
-  protected enterAssign(target: Value, value: Value): void {}
-  protected exitAssign(target: Value, value: Value): void {}
+  protected abstract enterAssign(target: Value, value: Value): void;
+  protected abstract exitAssign(target: Value, value: Value): void;
 
-  protected enterAllocate(target: Value, count: Value): void {}
-  protected exitAllocate(target: Value, count: Value): void {}
+  protected abstract enterAllocate(target: Value, count: Value): void;
+  protected abstract exitAllocate(target: Value, count: Value): void;
 
-  protected enterForward(target: Value, count: Value): void {}
-  protected exitForward(target: Value, count: Value): void {}
+  protected abstract enterForward(target: Value, count: Value): void;
+  protected abstract exitForward(target: Value, count: Value): void;
 
-  protected enterSeek(offset: Value): void {}
-  protected exitSeek(offset: Value): void {}
+  protected abstract enterSeek(offset: Value): void;
+  protected abstract exitSeek(offset: Value): void;
 
-  protected exitTell(): void {}
+  protected abstract exitTell(): void;
 
-  protected enterWalk(target: Value): void {}
-  protected exitWalk(target: Value): void {}
+  protected abstract enterWalk(target: Value): void;
+  protected abstract exitWalk(target: Value): void;
 
-  protected enterWalkType(typeId: Value, target: Value): void {}
-  protected exitWalkType(typeId: Value, target: Value): void {}
+  protected abstract enterWalkType(typeId: Value, target: Value): void;
+  protected abstract exitWalkType(typeId: Value, target: Value): void;
 
-  protected enterGetAssetFromMap(id: Value): void {}
-  protected exitGetAssetFromMap(id: Value): void {}
+  protected abstract enterGetAssetFromMap(id: Value): void;
+  protected abstract exitGetAssetFromMap(id: Value): void;
 
-  protected enterSetAssetInMap(id: Value, target: Value): void {}
-  protected exitSetAssetInMap(id: Value, target: Value): void {}
+  protected abstract enterSetAssetInMap(id: Value, target: Value): void;
+  protected abstract exitSetAssetInMap(id: Value, target: Value): void;
 
-  protected exitError(scope: string, message: string): void {}
+  protected abstract exitError(scope: string, message: string): void;
 
   /**
    * Internal

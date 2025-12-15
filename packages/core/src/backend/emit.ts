@@ -8,155 +8,114 @@ import {
   Type,
   Value,
   VariableReference,
-} from "../../schema/core";
-import { Backend } from "../core";
+} from "../schema/core";
+import { Backend } from "./core";
 
-export class CodecBackend extends Backend {
+export abstract class Emit extends Backend {
   private scopes: string[][] = [[]];
 
-  public constructor(public readonly isDecoder: boolean) {
-    super();
-  }
-
   public getOutput(): string {
-    return this.scopes[0].join("");
+    return this.scopes[0]!.join("");
   }
 
   /**
    * Override
    */
 
-  protected emitClass(cls: ClassCodec, fields: string): string {
-    return "";
-  }
+  protected abstract emitClass(cls: ClassCodec, fields: string): string;
 
-  protected emitMetadataStruct(struct: MetadataCodec, fields: string): string {
-    return "";
-  }
+  protected abstract emitMetadataStruct(
+    struct: MetadataCodec,
+    fields: string
+  ): string;
 
-  protected emitStruct(struct: Codec, fields: string): string {
-    return "";
-  }
+  protected abstract emitStruct(struct: Codec, fields: string): string;
 
-  protected emitAtomic(atom: AtomicCodec): string {
-    return "";
-  }
+  protected abstract emitAtomic(atom: AtomicCodec): string;
 
-  protected emitStructField(
+  protected abstract emitStructField(
     field: FieldReference,
     type: string,
     handler?: string
-  ): string {
-    return "";
-  }
+  ): string;
 
-  protected emitArrayType(type: string, count: string): string {
-    return "";
-  }
+  protected abstract emitMetadataHeader(): string;
 
-  protected emitListType(type: string, maxCount?: number): string {
-    return "";
-  }
+  protected abstract emitMetadataFooter(): string;
 
-  protected emitType(type: string): string {
-    return "";
-  }
+  protected abstract emitArrayType(type: string, count: string): string;
 
-  protected emitIf(condition: string, true_: string, false_?: string): string {
-    return "";
-  }
+  protected abstract emitListType(type: string, maxCount?: number): string;
 
-  protected emitFor(variable: string, size: string, body: string): string {
-    return "";
-  }
+  protected abstract emitType(type: string): string;
 
-  protected emitBreak(): string {
-    return "";
-  }
+  protected abstract emitIf(
+    condition: string,
+    true_: string,
+    false_?: string
+  ): string;
 
-  protected emitFieldReference(field: FieldReference): string {
-    return "";
-  }
+  protected abstract emitFor(
+    variable: string,
+    size: string,
+    body: string
+  ): string;
 
-  protected emitVariableReference(v: VariableReference): string {
-    return "";
-  }
+  protected abstract emitBreak(): string;
 
-  protected emitVariableDefinition(
+  protected abstract emitFieldReference(field: FieldReference): string;
+
+  protected abstract emitVariableReference(v: VariableReference): string;
+
+  protected abstract emitVariableDefinition(
     v: VariableReference,
     type: string,
     data: string
-  ): string {
-    return "";
-  }
+  ): string;
 
-  protected emitLiteral(value: string): string {
-    return "";
-  }
+  protected abstract emitLiteral(value: string): string;
 
-  protected emitNot(value: string): string {
-    return "";
-  }
+  protected abstract emitNot(value: string): string;
 
-  protected emitOperation(
+  protected abstract emitOperation(
     operator: string,
     left: string,
     right: string
-  ): string {
-    return "";
-  }
+  ): string;
 
-  protected emitVersion(): string {
-    return "";
-  }
+  protected abstract emitVersion(): string;
 
-  protected emitEnd(): string {
-    return "";
-  }
+  protected abstract emitEnd(): string;
 
-  protected emitIndex(target: string, index: string): string {
-    return "";
-  }
+  protected abstract emitIndex(target: string, index: string): string;
 
-  protected emitAssign(target: string, value: string): string {
-    return "";
-  }
+  protected abstract emitAssign(target: string, value: string): string;
 
-  protected emitAllocate(target: string, type: string, count: string): string {
-    return "";
-  }
+  protected abstract emitAllocate(
+    target: string,
+    type: string,
+    count: string
+  ): string;
 
-  protected emitForward(target: string, type: string, count: string): string {
-    return "";
-  }
+  protected abstract emitForward(
+    target: string,
+    type: string,
+    count: string
+  ): string;
 
-  protected emitSeek(offset: string): string {
-    return "";
-  }
+  protected abstract emitSeek(offset: string): string;
 
-  protected emitTell(): string {
-    return "";
-  }
+  protected abstract emitTell(): string;
 
-  protected emitWalk(type: string, target: string): string {
-    return "";
-  }
+  protected abstract emitWalk(type: string, target: string): string;
 
-  protected emitWalkType(typeId: string, target: string): string {
-    return "";
-  }
+  protected abstract emitWalkType(typeId: string, target: string): string;
 
-  protected emitGetAssetFromMap(id: string): string {
-    return "";
-  }
+  protected abstract emitGetAssetFromMap(id: string): string;
 
-  protected emitSetAssetInMap(id: string, target: string): string {
-    return "";
-  }
+  protected abstract emitSetAssetInMap(id: string, target: string): string;
 
-  protected emitError(scope: string, message: string): string {
-    return "";
-  }
+  protected abstract emitError(scope: string, message: string): string;
 
   /**
    * Internal
@@ -206,13 +165,17 @@ export class CodecBackend extends Backend {
     if (field.props?.skip) {
       const [type] = out;
 
-      this.pushString(this.emitStructField(field, type));
+      this.pushString(this.emitStructField(field, type!));
     } else {
       const [type, handler] = out;
 
-      this.pushString(this.emitStructField(field, type, handler));
+      this.pushString(this.emitStructField(field, type!, handler));
     }
   }
+
+  protected enterTypeDefinition(type: Type): void {}
+
+  protected exitTypeDefinition(type: Type): void {}
 
   protected enterArrayType(
     _type: new (...args: any[]) => Codec,
@@ -227,7 +190,7 @@ export class CodecBackend extends Backend {
   ): void {
     const [type, count] = this.popScope();
 
-    this.pushString(this.emitArrayType(type, count));
+    this.pushString(this.emitArrayType(type!, count!));
   }
 
   protected enterListType(
@@ -243,11 +206,19 @@ export class CodecBackend extends Backend {
   ): void {
     const [type] = this.popScope();
 
-    this.pushString(this.emitListType(type, maxCount));
+    this.pushString(this.emitListType(type!, maxCount));
   }
 
   protected exitType(type: new (...args: any[]) => Codec): void {
     this.pushString(this.emitType(type.name));
+  }
+
+  protected exitMetadataHeader(): void {
+    this.pushString(this.emitMetadataHeader());
+  }
+
+  protected exitMetadataFooter(): void {
+    this.pushString(this.emitMetadataFooter());
   }
 
   protected enterBlock(code: (ctx: CodeContext) => void): void {
@@ -275,7 +246,7 @@ export class CodecBackend extends Backend {
   ): void {
     const [condition, true_, false_] = this.popScope();
 
-    this.pushString(this.emitIf(condition, true_, false_));
+    this.pushString(this.emitIf(condition!, true_!, false_));
   }
 
   protected enterFor(
@@ -293,7 +264,7 @@ export class CodecBackend extends Backend {
   ): void {
     const [size, body] = this.popScope();
 
-    this.pushString(this.emitFor("", size, body));
+    this.pushString(this.emitFor(v.name, size!, body!));
   }
 
   protected exitBreak(): void {
@@ -319,7 +290,7 @@ export class CodecBackend extends Backend {
   protected exitVariableDefinition(v: VariableReference, _data: Value): void {
     const [type, data] = this.popScope();
 
-    this.pushString(this.emitVariableDefinition(v, type, data));
+    this.pushString(this.emitVariableDefinition(v, type!, data!));
   }
 
   protected enterNot(_value: Value): void {
@@ -329,7 +300,7 @@ export class CodecBackend extends Backend {
   protected exitNot(_value: Value): void {
     const [value] = this.popScope();
 
-    this.pushString(this.emitNot(value));
+    this.pushString(this.emitNot(value!));
   }
 
   protected enterOperation(
@@ -343,7 +314,7 @@ export class CodecBackend extends Backend {
   protected exitOperation(operator: string, _left: Value, _right: Value): void {
     const [left, right] = this.popScope(operator);
 
-    this.pushString(this.emitOperation(operator, left, right));
+    this.pushString(this.emitOperation(operator, left!, right!));
   }
 
   protected exitVersion(): void {
@@ -361,7 +332,7 @@ export class CodecBackend extends Backend {
   protected exitIndex(_target: Value, _index: Value): void {
     const [target, index] = this.popScope();
 
-    this.pushString(this.emitIndex(target, index));
+    this.pushString(this.emitIndex(target!, index!));
   }
 
   protected enterAssign(_target: Value, _value: Value): void {
@@ -371,7 +342,7 @@ export class CodecBackend extends Backend {
   protected exitAssign(_target: Value, _value: Value): void {
     const [target, value] = this.popScope();
 
-    this.pushString(this.emitAssign(target, value));
+    this.pushString(this.emitAssign(target!, value!));
   }
 
   protected enterAllocate(_target: Value, _count: Value): void {
@@ -382,7 +353,11 @@ export class CodecBackend extends Backend {
     const [target, count] = this.popScope();
 
     this.pushString(
-      this.emitAllocate(target, this.getTypeName(this.currentReference), count)
+      this.emitAllocate(
+        target!,
+        this.getTypeName(this.currentReference),
+        count!
+      )
     );
   }
 
@@ -394,14 +369,14 @@ export class CodecBackend extends Backend {
     const [target, count] = this.popScope();
 
     this.pushString(
-      this.emitForward(target, this.getTypeName(this.currentReference), count)
+      this.emitForward(target!, this.getTypeName(this.currentReference), count!)
     );
   }
 
   protected exitSeek(_offset: Value): void {
     const [offset] = this.popScope();
 
-    this.pushString(this.emitSeek(offset));
+    this.pushString(this.emitSeek(offset!));
   }
 
   protected enterSeek(_offset: Value): void {
@@ -416,7 +391,7 @@ export class CodecBackend extends Backend {
     const [target] = this.popScope();
 
     this.pushString(
-      this.emitWalk(this.getTypeName(this.currentReference?.type), target)
+      this.emitWalk(this.getTypeName(this.currentReference?.type), target!)
     );
   }
 
@@ -427,7 +402,7 @@ export class CodecBackend extends Backend {
   protected exitWalkType(_typeId: Value, _target: Value): void {
     const [typeId, target] = this.popScope();
 
-    this.pushString(this.emitWalkType(typeId, target));
+    this.pushString(this.emitWalkType(typeId!, target!));
   }
 
   protected enterWalkType(_typeId: Value, _target: Value): void {
@@ -437,7 +412,7 @@ export class CodecBackend extends Backend {
   protected exitGetAssetFromMap(_id: Value): void {
     const [id] = this.popScope();
 
-    this.pushString(this.emitGetAssetFromMap(id));
+    this.pushString(this.emitGetAssetFromMap(id!));
   }
 
   protected enterGetAssetFromMap(_id: Value): void {
@@ -447,7 +422,7 @@ export class CodecBackend extends Backend {
   protected exitSetAssetInMap(_id: Value, _target: Value): void {
     const [id, target] = this.popScope();
 
-    this.pushString(this.emitSetAssetInMap(id, target));
+    this.pushString(this.emitSetAssetInMap(id!, target!));
   }
 
   protected enterSetAssetInMap(_id: Value, _target: Value): void {
@@ -461,7 +436,7 @@ export class CodecBackend extends Backend {
   protected pushString(str: string): void {
     str = str.trim().replace(/^\s+/gm, "");
 
-    this.scopes[this.scopes.length - 1].push(str);
+    this.scopes[this.scopes.length - 1]!.push(str);
   }
 
   protected pushScope(obj?: any): void {
