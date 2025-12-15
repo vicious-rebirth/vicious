@@ -1,4 +1,4 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { Action } from "./action";
 import { AssetReference } from "./asset";
@@ -7,7 +7,7 @@ import { FN_0x21f40 } from "./fns";
 import { V301 } from "./v301";
 import { V511 } from "./v511";
 
-export class V268 extends ClassCodec {
+export class V268 extends Class {
   __id = 268;
 
   base = field(Action);

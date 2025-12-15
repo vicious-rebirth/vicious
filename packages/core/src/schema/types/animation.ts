@@ -1,4 +1,4 @@
-import { ClassCodec, Codec, field } from "../core";
+import { Class, Codec, field } from "../core";
 
 import { AssetFromType } from "./asset";
 import { F32, I32, U32, U16, BOOL } from "./atomic";
@@ -6,13 +6,13 @@ import { U8Buffer } from "./buffer";
 import { Group } from "./group";
 import { Object } from "./object";
 
-export class AnimationGroup extends ClassCodec {
+export class AnimationGroup extends Class {
   __id = 47;
 
   base = field(Group);
 }
 
-export class Animation extends ClassCodec {
+export class Animation extends Class {
   __id = 46;
   __folder = "Animations";
   __ext = "anm";
@@ -146,7 +146,7 @@ export class AnimationIndexBuffer extends Codec {
   });
 }
 
-export class CustomAnimation extends ClassCodec {
+export class CustomAnimation extends Class {
   __id = 406;
   __folder = "CustomAnimations";
   __ext = "can";

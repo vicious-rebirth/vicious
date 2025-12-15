@@ -1,6 +1,6 @@
 import {
   Atom,
-  ClassCodec,
+  Class,
   Definition,
   Codec,
   CodeContext,
@@ -23,7 +23,7 @@ export abstract class Emit extends Backend {
    * Override
    */
 
-  protected abstract emitClass(cls: ClassCodec, fields: string): string;
+  protected abstract emitClass(cls: Class, fields: string): string;
 
   protected abstract emitMetadataStruct(
     struct: MetadataCodec,
@@ -122,11 +122,11 @@ export abstract class Emit extends Backend {
    * Internal
    */
 
-  protected enterClass(cls: ClassCodec): void {
+  protected enterClass(cls: Class): void {
     this.pushScope(cls);
   }
 
-  protected exitClass(cls: ClassCodec): void {
+  protected exitClass(cls: Class): void {
     const [...fields] = this.popScope(cls);
 
     this.pushString(this.emitClass(cls, fields.join("\n")));

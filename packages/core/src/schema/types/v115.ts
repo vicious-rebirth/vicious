@@ -1,9 +1,9 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { Action } from "./action";
 import { AssetFromType, AssetFromTypeSizedList, AssetReference } from "./asset";
 
-export class V115 extends ClassCodec {
+export class V115 extends Class {
   __id = 115;
 
   base = field(Action);

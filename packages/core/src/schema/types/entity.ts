@@ -1,4 +1,4 @@
-import { ClassCodec, Codec, deprecated, field } from "../core";
+import { Class, Codec, deprecated, field } from "../core";
 
 import {
   AssetFromTypeSizedList,
@@ -14,19 +14,19 @@ import { Transform } from "./math";
 import { Object } from "./object";
 import { V45 } from "./v45";
 
-export class EntityGroup extends ClassCodec {
+export class EntityGroup extends Class {
   __id = 141;
 
   base = field(Group);
 }
 
-export class EntityTemplateGroup extends ClassCodec {
+export class EntityTemplateGroup extends Class {
   __id = 143;
 
   base = field(Group);
 }
 
-export class Entity extends ClassCodec {
+export class Entity extends Class {
   __id = 140;
   __folder = "Entities";
   __ext = "ent";
@@ -74,7 +74,7 @@ export class Entity extends ClassCodec {
   });
 }
 
-export class EntityTemplate extends ClassCodec {
+export class EntityTemplate extends Class {
   __id = 142;
   __folder = "EntityTemplates";
   __ext = "et";

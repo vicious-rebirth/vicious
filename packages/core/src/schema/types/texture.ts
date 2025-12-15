@@ -1,16 +1,16 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { U32, U16, U8 } from "./atomic";
 import { Group } from "./group";
 import { Object } from "./object";
 
-export class TextureGroup extends ClassCodec {
+export class TextureGroup extends Class {
   __id = 11;
 
   base = field(Group);
 }
 
-export class Texture extends ClassCodec {
+export class Texture extends Class {
   __id = 10;
   __folder = "Textures";
   __ext = "txr";

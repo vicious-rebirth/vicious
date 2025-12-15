@@ -1,10 +1,10 @@
-import { ClassCodec, MetadataCodec, field } from "../core";
+import { Class, MetadataCodec, field } from "../core";
 
 import { U32, U8, BOOL } from "./atomic";
 import { U8Buffer } from "./buffer";
 import { Texture } from "./texture";
 
-export class ImageTexture extends ClassCodec {
+export class ImageTexture extends Class {
   __id = 12;
 
   base = field(Texture);

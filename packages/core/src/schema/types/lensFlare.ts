@@ -1,10 +1,10 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { AssetFromTypeSizedList } from "./asset";
 import { U32 } from "./atomic";
 import { Object } from "./object";
 
-export class LensFlare extends ClassCodec {
+export class LensFlare extends Class {
   __id = 411;
   __folder = "LensFlare";
   __ext = "lfl";

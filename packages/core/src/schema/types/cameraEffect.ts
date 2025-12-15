@@ -1,17 +1,17 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { AssetFromTypeSizedList } from "./asset";
 import { F32, BOOL } from "./atomic";
 import { Group } from "./group";
 import { Object } from "./object";
 
-export class CameraEffectGroup extends ClassCodec {
+export class CameraEffectGroup extends Class {
   __id = 433;
 
   base = field(Group);
 }
 
-export class CameraEffect extends ClassCodec {
+export class CameraEffect extends Class {
   __id = 97;
   __folder = "CameraEffects";
   __ext = "cfx";

@@ -1,16 +1,16 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { U32 } from "./atomic";
 import { Group } from "./group";
 import { Object } from "./object";
 
-export class VariableGroup extends ClassCodec {
+export class VariableGroup extends Class {
   __id = 122;
 
   base = field(Group);
 }
 
-export class Variable extends ClassCodec {
+export class Variable extends Class {
   __id = 121;
   __folder = "Variables";
   __ext = "kv";

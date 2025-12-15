@@ -1,10 +1,10 @@
-import { ClassCodec, MetadataCodec, field } from "../core";
+import { Class, MetadataCodec, field } from "../core";
 
 import { AssetReferenceSuffix } from "./asset";
 import { U32, BOOL } from "./atomic";
 import { Sound } from "./sound";
 
-export class VoiceOver extends ClassCodec {
+export class VoiceOver extends Class {
   __id = 354;
   __folder = "VoiceOvers";
   __ext = "vo";

@@ -1,10 +1,10 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { Base } from "./base";
 import { ExpressionList } from "./expression";
 import { ID } from "./id";
 
-export class Script extends ClassCodec {
+export class Script extends Class {
   __id = 105;
 
   base = field(Base);

@@ -1,16 +1,16 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { F32, U32 } from "./atomic";
 import { Group } from "./group";
 import { Object } from "./object";
 
-export class SurfaceGroup extends ClassCodec {
+export class SurfaceGroup extends Class {
   __id = 58;
 
   base = field(Group);
 }
 
-export class Surface extends ClassCodec {
+export class Surface extends Class {
   __id = 57;
   __folder = "Surfaces";
   __ext = "srf";

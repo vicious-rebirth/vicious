@@ -1,11 +1,11 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { AssetFromTypeWrap } from "./asset";
 import { U32 } from "./atomic";
 import { V108 } from "./v108";
 import { V369 } from "./v369";
 
-export class V481 extends ClassCodec {
+export class V481 extends Class {
   __id = 481;
 
   // TODO: Handle conditional parent

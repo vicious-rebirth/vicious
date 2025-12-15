@@ -4,7 +4,7 @@ import {
   Definition,
   Codec,
   MetadataCodec,
-  ClassCodec,
+  Class,
   Type,
   TypeContext,
   Atom,
@@ -23,7 +23,7 @@ export abstract class Backend {
   protected variableCount: number = 0;
 
   public visit(obj: Definition): void {
-    if (obj instanceof ClassCodec) {
+    if (obj instanceof Class) {
       this.visitClass(obj);
     } else if (obj instanceof MetadataCodec) {
       this.visitMetadataStruct(obj);
@@ -38,8 +38,8 @@ export abstract class Backend {
    * Override
    */
 
-  protected abstract enterClass(cls: ClassCodec): void;
-  protected abstract exitClass(cls: ClassCodec): void;
+  protected abstract enterClass(cls: Class): void;
+  protected abstract exitClass(cls: Class): void;
 
   protected abstract enterMetadataStruct(struct: MetadataCodec): void;
   protected abstract exitMetadataStruct(struct: MetadataCodec): void;
@@ -172,18 +172,18 @@ export abstract class Backend {
    * Internal
    */
 
-  protected visitClass(cls: ClassCodec): void {
+  protected visitClass(cls: Class): void {
     this.variableCount = 0;
 
     this.enterClass(cls);
 
-    if (cls.__id !== 1) {
+    if (cls.__metadata) {
       this.visitMetadataHeader();
     }
 
     this.visitStructFields(cls);
 
-    if (cls.__id !== 1) {
+    if (cls.__metadata) {
       this.visitMetadataFooter();
     }
 

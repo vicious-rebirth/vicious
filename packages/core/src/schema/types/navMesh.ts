@@ -1,4 +1,4 @@
-import { ClassCodec, Codec, deprecated, field } from "../core";
+import { Class, Codec, deprecated, field } from "../core";
 
 import { AssetReference } from "./asset";
 import { I32, U8 } from "./atomic";
@@ -7,13 +7,13 @@ import { Group } from "./group";
 import { Vector3 } from "./math";
 import { Object } from "./object";
 
-export class NavMeshGroup extends ClassCodec {
+export class NavMeshGroup extends Class {
   __id = 197;
 
   base = field(Group);
 }
 
-export class NavMesh extends ClassCodec {
+export class NavMesh extends Class {
   __id = 196;
   __folder = "NavMeshes";
   __ext = "nav";

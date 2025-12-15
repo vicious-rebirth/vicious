@@ -1,4 +1,4 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { Action } from "./action";
 import { AssetFromType, AssetFromTypeSizedList } from "./asset";
@@ -6,7 +6,7 @@ import { BOOL } from "./atomic";
 import { FN_0x22520 } from "./fns";
 import { V421 } from "./v421";
 
-export class V514 extends ClassCodec {
+export class V514 extends Class {
   __id = 514;
 
   base = field(Action);

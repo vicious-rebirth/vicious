@@ -1,5 +1,5 @@
 import {
-  ClassCodec,
+  Class,
   Codec,
   FieldReference,
   MetadataCodec,
@@ -18,7 +18,7 @@ export abstract class Emit extends CoreEmit {
    * Internal
    */
 
-  protected emitClass(cls: ClassCodec, handler: string): string {
+  protected emitClass(cls: Class, handler: string): string {
     return this.emitObject(cls, handler);
   }
 

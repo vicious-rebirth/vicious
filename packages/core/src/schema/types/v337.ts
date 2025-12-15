@@ -1,9 +1,9 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { Action } from "./action";
 import { FN_0x22520 } from "./fns";
 
-export class V337 extends ClassCodec {
+export class V337 extends Class {
   __id = 337;
 
   base = field(Action);

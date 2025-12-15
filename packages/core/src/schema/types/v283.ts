@@ -1,4 +1,4 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { Action } from "./action";
 import { AssetReference } from "./asset";
@@ -7,7 +7,7 @@ import { Label } from "./label";
 import { V301 } from "./v301";
 import { V421 } from "./v421";
 
-export class V283 extends ClassCodec {
+export class V283 extends Class {
   __id = 283;
 
   base = field(Action);

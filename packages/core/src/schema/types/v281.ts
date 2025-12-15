@@ -1,4 +1,4 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { Action } from "./action";
 import {
@@ -13,7 +13,7 @@ import { Script } from "./script";
 import { V166 } from "./v166";
 import { V301 } from "./v301";
 
-export class V281 extends ClassCodec {
+export class V281 extends Class {
   __id = 281;
 
   base = field(Action);

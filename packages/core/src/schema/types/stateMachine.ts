@@ -1,4 +1,4 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import {
   AssetFromTypeSizedList,
@@ -8,13 +8,13 @@ import {
 import { Group } from "./group";
 import { Object } from "./object";
 
-export class StateMachineGroup extends ClassCodec {
+export class StateMachineGroup extends Class {
   __id = 183;
 
   base = field(Group);
 }
 
-export class StateMachine extends ClassCodec {
+export class StateMachine extends Class {
   __id = 182;
   __folder = "StateMachine";
   __ext = "sm";

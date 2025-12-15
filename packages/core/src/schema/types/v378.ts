@@ -1,10 +1,10 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { U32 } from "./atomic";
 import { FN_0x22520 } from "./fns";
 import { V108 } from "./v108";
 
-export class V378 extends ClassCodec {
+export class V378 extends Class {
   __id = 378;
 
   // Should be V369

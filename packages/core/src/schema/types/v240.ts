@@ -1,4 +1,4 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { AssetFromTypeWrap } from "./asset";
 import { U32, BOOL } from "./atomic";
@@ -7,7 +7,7 @@ import { V108 } from "./v108";
 import { V301 } from "./v301";
 import { V333 } from "./v333";
 
-export class V240 extends ClassCodec {
+export class V240 extends Class {
   __id = 240;
 
   base = field(V108);

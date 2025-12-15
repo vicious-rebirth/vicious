@@ -1,9 +1,9 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { U8 } from "./atomic";
 import { ExpressionWrap } from "./expression";
 
-export class Action extends ClassCodec {
+export class Action extends Class {
   __id = 107;
 
   base = field(ExpressionWrap);

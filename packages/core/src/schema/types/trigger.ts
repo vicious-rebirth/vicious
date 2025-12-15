@@ -1,4 +1,4 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { AssetReference, AssetReferenceSuffixSizedList } from "./asset";
 import { U32, BOOL } from "./atomic";
@@ -7,13 +7,13 @@ import { Object } from "./object";
 import { Script } from "./script";
 import { V56 } from "./v56";
 
-export class TriggerGroup extends ClassCodec {
+export class TriggerGroup extends Class {
   __id = 156;
 
   base = field(Group);
 }
 
-export class Trigger extends ClassCodec {
+export class Trigger extends Class {
   __id = 155;
   __folder = "Triggers";
   __ext = "trg";

@@ -1,4 +1,4 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import {
   AssetFromTypeSizedList,
@@ -11,13 +11,13 @@ import { Dimension } from "./math";
 import { Object } from "./object";
 import { V133 } from "./v133";
 
-export class DialogGroup extends ClassCodec {
+export class DialogGroup extends Class {
   __id = 139;
 
   base = field(Group);
 }
 
-export class Dialog extends ClassCodec {
+export class Dialog extends Class {
   __id = 129;
   __folder = "Dialogs";
   __ext = "dlg";

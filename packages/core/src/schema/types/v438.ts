@@ -1,10 +1,10 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { AssetFromType, AssetFromTypeWrap } from "./asset";
 import { U32 } from "./atomic";
 import { V108 } from "./v108";
 
-export class V438 extends ClassCodec {
+export class V438 extends Class {
   __id = 438;
 
   base = field(V108);

@@ -1,8 +1,8 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { V19 } from "./v19";
 
-export class V290 extends ClassCodec {
+export class V290 extends Class {
   __id = 290;
   __todo = true;
 

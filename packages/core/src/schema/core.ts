@@ -132,10 +132,11 @@ export abstract class Codec extends Definition {}
 
 export abstract class MetadataCodec extends Definition {}
 
-export abstract class ClassCodec<T = any> extends Definition {
+export abstract class Class<T = any> extends Definition {
   abstract get __id(): number;
   __folder: string | undefined = undefined;
   __ext: string | undefined = undefined;
+  __metadata: boolean = true;
 
   abstract get base(): T;
 }

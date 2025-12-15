@@ -1,17 +1,17 @@
-import { ClassCodec, Codec, field } from "../core";
+import { Class, Codec, field } from "../core";
 
 import { F32, U32 } from "./atomic";
 import { Group } from "./group";
 import { Vector3 } from "./math";
 import { Object } from "./object";
 
-export class PathGroup extends ClassCodec {
+export class PathGroup extends Class {
   __id = 25;
 
   base = field(Group);
 }
 
-export class Path extends ClassCodec {
+export class Path extends Class {
   __id = 24;
   __folder = "Paths";
   __ext = "pth";

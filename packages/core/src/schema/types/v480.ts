@@ -1,9 +1,9 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { F32 } from "./atomic";
 import { V108 } from "./v108";
 
-export class V480 extends ClassCodec {
+export class V480 extends Class {
   __id = 480;
 
   base = field(V108);

@@ -1,6 +1,6 @@
-import { ClassCodec } from "../core";
+import { Class } from "../core";
 
-export class V418 extends ClassCodec {
+export class V418 extends Class {
   __id = 418;
 
   base = undefined;

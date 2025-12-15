@@ -1,4 +1,4 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { Action } from "./action";
 import {
@@ -9,7 +9,7 @@ import {
 } from "./asset";
 import { U32, BOOL } from "./atomic";
 
-export class V194 extends ClassCodec {
+export class V194 extends Class {
   __id = 194;
 
   base = field(Action);

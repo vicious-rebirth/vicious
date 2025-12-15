@@ -1,4 +1,4 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import {
   AssetReference,
@@ -11,7 +11,7 @@ import { LocalizedObject } from "./localizedObject";
 import { Script } from "./script";
 import { V435 } from "./v435";
 
-export class Game extends ClassCodec {
+export class Game extends Class {
   __id = 100;
   __folder = "Games";
   __ext = "gam";

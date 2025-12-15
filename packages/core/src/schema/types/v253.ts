@@ -1,11 +1,11 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { Action } from "./action";
 import { AssetFromType, AssetFromTypeWrap, AssetReference } from "./asset";
 import { U32 } from "./atomic";
 import { FN_0x22520 } from "./fns";
 
-export class V253 extends ClassCodec {
+export class V253 extends Class {
   __id = 253;
 
   base = field(Action);

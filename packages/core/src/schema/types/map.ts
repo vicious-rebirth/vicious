@@ -1,4 +1,4 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { AssetFromTypeSizedList, AssetReference } from "./asset";
 import { U32 } from "./atomic";
@@ -9,7 +9,7 @@ import { V252 } from "./v252";
 import { V405 } from "./v405";
 import { World } from "./world";
 
-export class Map extends ClassCodec {
+export class Map extends Class {
   __id = 101;
   __folder = "Maps";
   __ext = "map";

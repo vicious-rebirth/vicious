@@ -1,9 +1,9 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { F32 } from "./atomic";
 import { GeomTemplate } from "./geomTemplate";
 
-export class V34 extends ClassCodec {
+export class V34 extends Class {
   __id = 34;
 
   base = field(GeomTemplate);

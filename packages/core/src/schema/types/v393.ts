@@ -1,11 +1,11 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { Action } from "./action";
 import { U32, BOOL } from "./atomic";
 import { Vector3 } from "./math";
 import { V301 } from "./v301";
 
-export class V393 extends ClassCodec {
+export class V393 extends Class {
   __id = 393;
 
   base = field(Action);

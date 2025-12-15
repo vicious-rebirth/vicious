@@ -1,7 +1,8 @@
-import { ClassCodec } from "../core";
+import { Class } from "../core";
 
-export class Base extends ClassCodec {
+export class Base extends Class {
   __id = 1;
+  __metadata = false;
 
   base = null;
 }

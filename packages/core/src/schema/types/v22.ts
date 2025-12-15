@@ -1,8 +1,8 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { Base } from "./base";
 
-export class V22 extends ClassCodec {
+export class V22 extends Class {
   __id = 22;
 
   base = field(Base);

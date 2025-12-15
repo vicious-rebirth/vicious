@@ -1,16 +1,16 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { AssetFromType } from "./asset";
 import { Group } from "./group";
 import { Object } from "./object";
 
-export class CameraControllerGroup extends ClassCodec {
+export class CameraControllerGroup extends Class {
   __id = 204;
 
   base = field(Group);
 }
 
-export class CameraController extends ClassCodec {
+export class CameraController extends Class {
   __id = 381;
   __folder = "Camera Controllers";
   __ext = "cct";

@@ -1,4 +1,4 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { AssetFromType, AssetReferenceSuffix } from "./asset";
 import { U32, BOOL } from "./atomic";
@@ -7,7 +7,7 @@ import { Script } from "./script";
 import { V160 } from "./v160";
 import { V301 } from "./v301";
 
-export class V470 extends ClassCodec {
+export class V470 extends Class {
   __id = 470;
 
   base = field(V160);

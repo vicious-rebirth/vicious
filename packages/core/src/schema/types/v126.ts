@@ -1,9 +1,9 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { Script } from "./script";
 import { Surface } from "./surface";
 
-export class V126 extends ClassCodec {
+export class V126 extends Class {
   __id = 126;
 
   base = field(Surface);

@@ -1,10 +1,11 @@
-import { ClassCodec, MetadataCodec, field } from "../core";
+import { Class, MetadataCodec, field } from "../core";
 
 import { AssetFromTypeSizedList } from "./asset";
 import { Base } from "./base";
 
-export class Expression extends ClassCodec {
+export class Expression extends Class {
   __id = 106;
+  __metadata = false;
 
   base = field(Base);
 }
@@ -14,7 +15,6 @@ export class ExpressionWrap extends MetadataCodec {
 }
 
 export class ExpressionList extends MetadataCodec {
-  // TODO: Should be Expression
-  base = field(Base);
+  base = field(Expression);
   children = field(AssetFromTypeSizedList);
 }

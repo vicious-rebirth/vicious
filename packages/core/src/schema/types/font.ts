@@ -1,4 +1,4 @@
-import { ClassCodec, Codec, field } from "../core";
+import { Class, Codec, field } from "../core";
 
 import { AssetReference } from "./asset";
 import { F32, I32, U32, U8 } from "./atomic";
@@ -7,13 +7,13 @@ import { Empty } from "./empty";
 import { Group } from "./group";
 import { Object } from "./object";
 
-export class FontGroup extends ClassCodec {
+export class FontGroup extends Class {
   __id = 65;
 
   base = field(Group);
 }
 
-export class Font extends ClassCodec {
+export class Font extends Class {
   __id = 64;
   __folder = "Fonts";
   __ext = "fnt";

@@ -1,9 +1,9 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { F32 } from "./atomic";
 import { Sound } from "./sound";
 
-export class SoundEffect extends ClassCodec {
+export class SoundEffect extends Class {
   __id = 42;
 
   base = field(Sound);

@@ -1,11 +1,11 @@
-import { ClassCodec, Codec, field } from "../core";
+import { Class, Codec, field } from "../core";
 
 import { U32, U16 } from "./atomic";
 import { Base } from "./base";
 import { StringBuffer } from "./buffer";
 import { Empty } from "./empty";
 
-export class String extends ClassCodec {
+export class String extends Class {
   __id = 135;
 
   base = field(Base);

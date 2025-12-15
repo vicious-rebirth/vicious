@@ -1,17 +1,17 @@
-import { ClassCodec, MetadataCodec, field } from "../core";
+import { Class, MetadataCodec, field } from "../core";
 
 import { F32, U32, U8, BOOL } from "./atomic";
 import { U8Buffer } from "./buffer";
 import { Group } from "./group";
 import { Object } from "./object";
 
-export class SoundGroup extends ClassCodec {
+export class SoundGroup extends Class {
   __id = 39;
 
   base = field(Group);
 }
 
-export class Sound extends ClassCodec {
+export class Sound extends Class {
   __id = 38;
   __folder = "Sounds";
   __ext = "snd";

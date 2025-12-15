@@ -1,10 +1,10 @@
-import { ClassCodec, MetadataCodec, field } from "../core";
+import { Class, MetadataCodec, field } from "../core";
 
 import { BOOL } from "./atomic";
 import { U8Buffer } from "./buffer";
 import { V23 } from "./v23";
 
-export class V45 extends ClassCodec {
+export class V45 extends Class {
   __id = 45;
 
   base = field(V23);

@@ -1,4 +1,4 @@
-import { ClassCodec, Codec, MetadataCodec, deprecated, field } from "../core";
+import { Class, Codec, MetadataCodec, deprecated, field } from "../core";
 
 import { I32, U32, U16, U8, BOOL } from "./atomic";
 import { U8Buffer } from "./buffer";
@@ -7,7 +7,7 @@ import { Matrix3, Transform, TransformList, Vector3 } from "./math";
 import { Mesh } from "./mesh";
 import { V20_9 } from "./v20";
 
-export class DynamicMesh extends ClassCodec {
+export class DynamicMesh extends Class {
   __id = 28;
 
   base = field(Mesh);

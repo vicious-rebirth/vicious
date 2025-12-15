@@ -1,8 +1,8 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { Base } from "./base";
 
-export class V391 extends ClassCodec {
+export class V391 extends Class {
   __id = 391;
 
   base = field(Base);

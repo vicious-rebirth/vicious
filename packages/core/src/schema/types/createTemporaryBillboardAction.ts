@@ -1,10 +1,10 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { Action } from "./action";
 import { AssetFromTypeWrap, AssetReference } from "./asset";
 import { F32, BOOL } from "./atomic";
 
-export class CreateTemporaryBillboardAction extends ClassCodec {
+export class CreateTemporaryBillboardAction extends Class {
   __id = 165;
 
   base = field(Action);

@@ -1,11 +1,11 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { AssetFromType, AssetReference } from "./asset";
 import { U32 } from "./atomic";
 import { Empty } from "./empty";
 import { V63 } from "./v63";
 
-export class SpriteMaterial extends ClassCodec {
+export class SpriteMaterial extends Class {
   __id = 66;
 
   base = field(V63);

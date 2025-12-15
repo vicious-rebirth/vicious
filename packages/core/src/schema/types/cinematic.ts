@@ -1,4 +1,4 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import {
   AssetFromTypeSizedList,
@@ -12,13 +12,13 @@ import { Group } from "./group";
 import { LocalizedObject } from "./localizedObject";
 import { Script } from "./script";
 
-export class CinematicGroup extends ClassCodec {
+export class CinematicGroup extends Class {
   __id = 360;
 
   base = field(Group);
 }
 
-export class Cinematic extends ClassCodec {
+export class Cinematic extends Class {
   __id = 363;
   __folder = "Cinematic";
   __ext = "cin";
@@ -27,7 +27,7 @@ export class Cinematic extends ClassCodec {
   content = field(CinematicContent);
 }
 
-export class CinematicContent extends ClassCodec {
+export class CinematicContent extends Class {
   __id = 355;
   __folder = "Cinematics";
   __ext = "cin";
@@ -50,7 +50,7 @@ export class CinematicContent extends ClassCodec {
   });
 }
 
-export class CinematicFrame extends ClassCodec {
+export class CinematicFrame extends Class {
   __id = 356;
 
   base = field(Base);

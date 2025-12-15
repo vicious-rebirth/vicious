@@ -1,4 +1,4 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import {
   AssetFromType,
@@ -10,7 +10,7 @@ import { F32, U32, BOOL } from "./atomic";
 import { LabelList } from "./label";
 import { V34 } from "./v34";
 
-export class ModelTemplate extends ClassCodec {
+export class ModelTemplate extends Class {
   __id = 44;
 
   base = field(V34);

@@ -1,17 +1,17 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { F32, I32 } from "./atomic";
 import { Group } from "./group";
 import { Transform } from "./math";
 import { Object } from "./object";
 
-export class StaticLightGroup extends ClassCodec {
+export class StaticLightGroup extends Class {
   __id = 80;
 
   base = field(Group);
 }
 
-export class StaticLight extends ClassCodec {
+export class StaticLight extends Class {
   __id = 74;
   __folder = "StaticLight";
   __ext = "lit";

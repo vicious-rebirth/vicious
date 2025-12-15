@@ -1,10 +1,10 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { U32 } from "./atomic";
 import { Object } from "./object";
 import { Script } from "./script";
 
-export class Timer extends ClassCodec {
+export class Timer extends Class {
   __id = 221;
   __folder = "Timers";
   __ext = "tim";

@@ -1,10 +1,10 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { AssetFromType } from "./asset";
 import { U32 } from "./atomic";
 import { V133 } from "./v133";
 
-export class V134 extends ClassCodec {
+export class V134 extends Class {
   __id = 134;
 
   base = field(V133);

@@ -1,17 +1,17 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { AssetFromType, AssetReference } from "./asset";
 import { F32, U32, BOOL } from "./atomic";
 import { Group } from "./group";
 import { Object } from "./object";
 
-export class StaticInstanceGroup extends ClassCodec {
+export class StaticInstanceGroup extends Class {
   __id = 104;
 
   base = field(Group);
 }
 
-export class StaticInstance extends ClassCodec {
+export class StaticInstance extends Class {
   __id = 103;
   __folder = "StaticInstances";
   __ext = "sti";

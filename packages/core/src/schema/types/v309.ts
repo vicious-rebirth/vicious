@@ -1,9 +1,9 @@
-import { ClassCodec, field } from "../core";
+import { Class, field } from "../core";
 
 import { AssetReference } from "./asset";
 import { Texture } from "./texture";
 
-export class V309 extends ClassCodec {
+export class V309 extends Class {
   __id = 309;
 
   base = field(Texture);

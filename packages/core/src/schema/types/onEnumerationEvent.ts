@@ -1,10 +1,10 @@
-import { ClassCodec, deprecated, field } from "../core";
+import { Class, deprecated, field } from "../core";
 
 import { AssetFromType, AssetReference } from "./asset";
 import { U32 } from "./atomic";
 import { Base } from "./base";
 
-export class OnEnumerationEvent extends ClassCodec {
+export class OnEnumerationEvent extends Class {
   __id = 278;
 
   base = field(Base);

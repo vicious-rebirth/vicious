@@ -1,11 +1,11 @@
-import { ClassCodec, Codec, MetadataCodec, deprecated, field } from "../core";
+import { Class, Codec, MetadataCodec, deprecated, field } from "../core";
 
 import { I32, U32, I16, U16, U8, BOOL } from "./atomic";
 import { U8Buffer, U16Buffer } from "./buffer";
 import { Color, Vector3 } from "./math";
 import { Mesh } from "./mesh";
 
-export class V20 extends ClassCodec {
+export class V20 extends Class {
   __id = 20;
 
   base = field(Mesh);
