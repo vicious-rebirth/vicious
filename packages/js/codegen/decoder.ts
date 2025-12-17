@@ -21,7 +21,7 @@ export function buildDecoder(): string {
 
 function buildContext(): string {
   return cg`
-    export interface DecodeContext {
+    export interface DecoderContext {
       getId: (id: ID) => any;
       setId: (id: ID, type: string, obj: any) => void;
 
@@ -51,7 +51,7 @@ function buildClass(): string {
 
   return cg`
     export class Decoder {
-      public constructor(public readonly ctx: DecodeContext) {}
+      public constructor(public readonly ctx: DecoderContext) {}
 
       ${decoderFunctions.join("\n\n")}
     }
@@ -113,9 +113,9 @@ class DefinitionDecoder extends TSEmit {
     `;
   }
 
-  protected emitStructField(
+  protected emitStructField<T>(
     field: FieldReference,
-    type?: string,
+    type?: ArrayType<T> | ListType<T> | BaseType<T>,
     handler?: string
   ): string {
     const out: string[] = [];
@@ -176,15 +176,19 @@ class DefinitionDecoder extends TSEmit {
 
   protected emitAllocate<T>(
     target: string,
-    _type: ArrayType<T> | ListType<T> | BaseType<T>,
-    count: string
+    _type: ArrayType<T> | ListType<T>,
+    count?: string
   ): string {
-    return cg`${target} = new Array(${count}).fill(0).map(() => ({}));`;
+    if (count && count !== "0") {
+      return cg`${target} = new Array(${count}).fill(0).map(() => ({}));`;
+    } else {
+      return cg`${target} = [];`;
+    }
   }
 
   protected emitGrow<T>(
     target: string,
-    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _type: ArrayType<T> | ListType<T>,
     _index: string
   ): string {
     return cg`${target}.push({});`;
@@ -192,14 +196,14 @@ class DefinitionDecoder extends TSEmit {
 
   protected emitForward<T>(
     target: string,
-    type: ArrayType<T> | ListType<T> | BaseType<T>,
+    type: ArrayType<T> | ListType<T>,
     count: string
   ): string {
     const v = this.newVariable(U32);
 
     return cg`
       for (let ${v.__name} = 0; ${v.__name} < ${count}; ${v.__name}++) {
-        ${this.emitWalk((type as any).type || type, this.emitIndex(target, v.__name))}
+        ${this.emitWalk(type.type, this.emitIndex(target, v.__name))}
       }
     `;
   }

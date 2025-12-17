@@ -1,4 +1,11 @@
-import { Class, FieldReference, Struct } from "@repo/core/schema";
+import {
+  ArrayType,
+  BaseType,
+  Class,
+  FieldReference,
+  ListType,
+  Struct,
+} from "@repo/core/schema";
 import { EmptyEmit } from "@repo/core/backend";
 import { cg, getNameSortedDefinitions } from "@repo/core/util";
 
@@ -51,16 +58,18 @@ class TypeEmit extends EmptyEmit {
     `;
   }
 
-  protected emitStructField(
+  protected emitStructField<T>(
     field: FieldReference,
-    type?: string,
+    type?: ArrayType<T> | ListType<T> | BaseType<T>,
     _handler?: string
   ): string {
     if (type !== undefined) {
-      return cg`${field.__name}: ${type};`;
-    }
+      const isArray = type instanceof ArrayType || type instanceof ListType;
 
-    return "";
+      return cg`${field.__name}: ${this.getTypeName((type as any)?.type || type)}${isArray ? "[]" : ""};`;
+    } else {
+      return "";
+    }
   }
 
   protected emitType(type: string): string {

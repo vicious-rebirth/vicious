@@ -93,9 +93,9 @@ class DefinitionVisitor extends TSEmit {
     }`;
   }
 
-  protected emitStructField(
+  protected emitStructField<T>(
     _field: FieldReference,
-    _type?: string,
+    _type?: ArrayType<T> | ListType<T> | BaseType<T>,
     handler?: string
   ): string {
     return handler || "";
@@ -103,7 +103,7 @@ class DefinitionVisitor extends TSEmit {
 
   protected emitAllocate<T>(
     _target: string,
-    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _type: ArrayType<T> | ListType<T>,
     _count: string
   ): string {
     return "";
@@ -111,7 +111,7 @@ class DefinitionVisitor extends TSEmit {
 
   protected emitGrow<T>(
     _target: string,
-    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _type: ArrayType<T> | ListType<T>,
     _index: string
   ): string {
     return "";
@@ -176,14 +176,14 @@ class DefinitionVisitor extends TSEmit {
 
   protected emitForward<T>(
     target: string,
-    type: ArrayType<T> | ListType<T> | BaseType<T>,
+    type: ArrayType<T> | ListType<T>,
     count: string
   ): string {
     const v = this.newVariable(U32);
 
     return cg`
       for (let ${v.__name} = 0; ${v.__name} < ${count}; ${v.__name}++) {
-        ${this.emitWalk((type as any).type || type, this.emitIndex(target, v.__name))}
+        ${this.emitWalk(type.type, this.emitIndex(target, v.__name))}
       }
     `;
   }
@@ -209,7 +209,7 @@ class DefinitionVisitor extends TSEmit {
   }
 
   protected emitEnd(): string {
-    return "1";
+    return "0";
   }
 
   protected emitError(scope: string, message: string): string {

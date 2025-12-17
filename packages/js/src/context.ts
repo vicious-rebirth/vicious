@@ -1,7 +1,7 @@
 import {
   ID,
   U32,
-  DecodeContext,
+  DecoderContext,
   BOOL,
   I8,
   U8,
@@ -10,7 +10,7 @@ import {
   I32,
   F32,
   ANY,
-  EncodeContext,
+  EncoderContext,
 } from "./generated";
 import { idToString } from "./util";
 
@@ -77,7 +77,7 @@ class ArrayBufferBase {
 
 export class ArrayBufferReader
   extends ArrayBufferBase
-  implements DecodeContext
+  implements DecoderContext
 {
   public readANY(): ANY {}
 
@@ -137,7 +137,7 @@ export class ArrayBufferReader
 
 export class ArrayBufferWriter
   extends ArrayBufferBase
-  implements EncodeContext
+  implements EncoderContext
 {
   public writeANY(): ANY {}
 

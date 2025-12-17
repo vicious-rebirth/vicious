@@ -7,7 +7,7 @@ import {
 import { Emit } from "@repo/core/backend";
 import { cg } from "@repo/core/util";
 
-export abstract class TSEmit extends Emit {
+export abstract class CEmit extends Emit {
   /**
    * Override
    */
@@ -26,12 +26,12 @@ export abstract class TSEmit extends Emit {
     return this.emitObject(struct, handler);
   }
 
-  protected emitArrayType(type: string, _count: string): string {
-    return cg`${type}[]`;
+  protected emitArrayType(type: string, count: string): string {
+    return cg`${type}[${count}]`;
   }
 
   protected emitListType(type: string, _maxCount?: number): string {
-    return cg`${type}[]`;
+    return cg`${type} *`;
   }
 
   protected emitType(type: string): string {
@@ -63,13 +63,13 @@ export abstract class TSEmit extends Emit {
   ): string {
     if (size !== undefined) {
       return cg`
-        for (let ${variable} = 0; ${variable} < ${size}; ${variable}++) {
+        for (U32 ${variable} = 0; ${variable} < ${size}; ${variable}++) {
           ${body}
         }
       `;
     } else {
       return cg`
-        for (let ${variable} = 0;; ${variable}++) {
+        for (U32 ${variable} = 0;; ${variable}++) {
           ${body}
         }
       `;
@@ -81,7 +81,7 @@ export abstract class TSEmit extends Emit {
   }
 
   protected emitFieldReference(field: FieldReference): string {
-    return cg`self.${field.__name}`;
+    return cg`self->${field.__name}`;
   }
 
   protected emitVariableReference(v: VariableReference): string {
@@ -90,10 +90,10 @@ export abstract class TSEmit extends Emit {
 
   protected emitVariableDefinition(
     v: VariableReference,
-    _type: string,
+    type: string,
     data: string
   ): string {
-    return cg`let ${v.__name} = ${data};`;
+    return cg`${type} ${v.__name} = ${data};`;
   }
 
   protected emitLiteral(value: string): string {
@@ -129,7 +129,7 @@ export abstract class TSEmit extends Emit {
   }
 
   protected emitIndex(target: string, index: string): string {
-    return cg`${target}[${index}]!`;
+    return cg`${target}[${index}]`;
   }
 
   protected emitAssign(target: string, value: string): string {
@@ -137,15 +137,15 @@ export abstract class TSEmit extends Emit {
   }
 
   protected emitSeek(offset: string): string {
-    return cg`this.ctx.seek(${offset});`;
+    return cg`ctx->seek(ctx, ${offset});`;
   }
 
   protected emitTell(): string {
-    return cg`this.ctx.tell()`;
+    return cg`ctx->tell(ctx)`;
   }
 
   protected emitGetAssetFromMap(id: string): string {
-    return cg`this.ctx.getId(${id})`;
+    return cg`ctx->getId(ctx, ${id})`;
   }
 
   protected emitSetAssetInMap(
@@ -153,10 +153,10 @@ export abstract class TSEmit extends Emit {
     type: string,
     target: string
   ): string {
-    return cg`this.ctx.setId(${id}, getClassFromID(${type}), ${target});`;
+    return cg`ctx->setId(ctx, ${id}, ${type}, &${target});`;
   }
 
   protected emitError(scope: string, message: string): string {
-    return cg`this.ctx.error("${scope}", "${message}");`;
+    return cg`ctx->error(ctx, "${scope}", "${message}");`;
   }
 }

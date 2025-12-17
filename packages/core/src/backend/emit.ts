@@ -38,9 +38,9 @@ export abstract class Emit extends Backend {
 
   protected abstract emitAtom(atom: Atom): string;
 
-  protected abstract emitStructField(
+  protected abstract emitStructField<T>(
     field: FieldReference,
-    type?: string,
+    type?: ArrayType<T> | ListType<T> | BaseType<T>,
     handler?: string
   ): string;
 
@@ -101,19 +101,19 @@ export abstract class Emit extends Backend {
 
   protected abstract emitAllocate<T>(
     target: string,
-    type: ArrayType<T> | ListType<T> | BaseType<T>,
-    count: string
+    type: ArrayType<T> | ListType<T>,
+    count?: string
   ): string;
 
   protected abstract emitGrow<T>(
     target: string,
-    type: ArrayType<T> | ListType<T> | BaseType<T>,
+    type: ArrayType<T> | ListType<T>,
     index: string
   ): string;
 
   protected abstract emitForward<T>(
     target: string,
-    type: ArrayType<T> | ListType<T> | BaseType<T>,
+    type: ArrayType<T> | ListType<T>,
     count: string
   ): string;
 
@@ -178,9 +178,15 @@ export abstract class Emit extends Backend {
 
       this.pushString(this.emitStructField(field, undefined, handler));
     } else {
-      const [type, handler] = this.popScope(field);
+      const [_type, handler] = this.popScope(field);
 
-      this.pushString(this.emitStructField(field, type, handler));
+      this.pushString(
+        this.emitStructField(
+          field,
+          field.__type ? this.getType(field.__type) : undefined,
+          handler
+        )
+      );
     }
   }
 
@@ -409,9 +415,7 @@ export abstract class Emit extends Backend {
   protected exitAllocate(target: Value, _count?: Value): void {
     const [target_, count_] = this.popScope();
 
-    this.pushString(
-      this.emitAllocate(target_!, this.getType(target), count_ || "0")
-    );
+    this.pushString(this.emitAllocate(target_!, this.getType(target), count_));
   }
 
   protected enterGrow(_target: Value, _index: Value): void {
@@ -570,9 +574,9 @@ export class EmptyEmit extends Emit {
     return "";
   }
 
-  protected emitStructField(
+  protected emitStructField<T>(
     _field: FieldReference,
-    _type?: string,
+    _type?: ArrayType<T> | ListType<T> | BaseType<T>,
     _handler?: string
   ): string {
     return "";
@@ -668,7 +672,7 @@ export class EmptyEmit extends Emit {
 
   protected emitAllocate<T>(
     _target: string,
-    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _type: ArrayType<T> | ListType<T>,
     _count: string
   ): string {
     return "";
@@ -676,7 +680,7 @@ export class EmptyEmit extends Emit {
 
   protected emitGrow<T>(
     _target: string,
-    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _type: ArrayType<T> | ListType<T>,
     _index: string
   ): string {
     return "";
@@ -684,7 +688,7 @@ export class EmptyEmit extends Emit {
 
   protected emitForward<T>(
     _target: string,
-    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _type: ArrayType<T> | ListType<T>,
     _count: string
   ): string {
     return "";

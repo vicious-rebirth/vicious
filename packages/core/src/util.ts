@@ -1,5 +1,6 @@
 import * as schema from "./schema/types";
 import { Definition, Class, Atom, Struct } from "./schema/core";
+import { EmptyEmit } from "./backend";
 
 export function cg(strings: TemplateStringsArray, ...values: unknown[]) {
   let result = "";
@@ -51,6 +52,76 @@ export function getNameSortedDefinitions(): Definition[] {
   return getDefinitions().sort((a, b) =>
     a.constructor.name.localeCompare(b.constructor.name)
   );
+}
+
+export function getDependencySortedDefinitions(): Definition[] {
+  const definitions = getDefinitions();
+
+  class DependencyVisit extends EmptyEmit {
+    public readonly dependencies = new Set<string>();
+
+    protected emitType(type: string): string {
+      this.dependencies.add(type);
+
+      return "";
+    }
+  }
+
+  const definitionDependencies = Object.fromEntries(
+    definitions.map((d) => {
+      const backend = new DependencyVisit();
+      backend.visit(d);
+      return [
+        d.constructor.name,
+        {
+          obj: d,
+          dependencies: new Set([
+            ...backend.dependencies,
+            ...((d as any)?.__metadata ? ["Metadata"] : []),
+          ]),
+        },
+      ];
+    })
+  );
+
+  const dependencyTree: Record<string, string[]> = {};
+  for (const [name, { dependencies }] of Object.entries(
+    definitionDependencies
+  )) {
+    if (dependencies.size === 0) {
+      dependencyTree["_"] = [...(dependencyTree["_"] || []), name];
+    } else {
+      for (const dependency of dependencies) {
+        dependencyTree[dependency] = [
+          ...(dependencyTree[dependency] || []),
+          name,
+        ];
+      }
+    }
+  }
+
+  const sortedDependencyTree = Object.fromEntries(
+    Object.entries(dependencyTree).map(([k, vs]) => [k, vs.sort()])
+  );
+
+  const queue = sortedDependencyTree["_"]!;
+
+  const out: Definition[] = [];
+  while (true) {
+    const next = queue.shift();
+    if (!next) break;
+
+    out.push(definitionDependencies[next]!.obj);
+
+    for (const dependency of sortedDependencyTree[next] || []) {
+      const set = definitionDependencies[dependency]!.dependencies;
+      set.delete(next);
+
+      if (set.size === 0) queue.push(dependency);
+    }
+  }
+
+  return out;
 }
 
 export function getIDSortedClasses(): Class[] {

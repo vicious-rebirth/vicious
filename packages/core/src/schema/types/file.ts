@@ -30,9 +30,9 @@ export class AssetFileContent extends Struct {
   __offset = 0xca38b;
 
   header = field(AssetFileHeader);
-  object = field(ANY, {
+  asset = field(ANY, {
     custom: (ctx) => {
-      ctx.walkId(this.header.type, this.object);
+      ctx.walkId(this.header.type, this.asset);
     },
   });
 }

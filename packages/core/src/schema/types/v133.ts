@@ -49,7 +49,7 @@ export class V133_1 extends Struct {
   __offset = 0x9980f;
 
   f_1 = field(AssetFromType);
-  list = field((ctx) => ctx.list(AssetFromType), {
+  list = field((ctx) => ctx.list(AssetFromType, 64), {
     condition: (ctx) => ctx.gt(this.f_1.type, 0),
     custom: (ctx) => {
       ctx.allocate(this.list);

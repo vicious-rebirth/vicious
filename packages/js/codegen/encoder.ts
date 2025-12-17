@@ -21,7 +21,7 @@ export function buildEncoder(): string {
 
 function buildContext(): string {
   return cg`
-    export interface EncodeContext {
+    export interface EncoderContext {
       getId: (id: ID) => any;
       setId: (id: ID, type: string, obj: any) => void;
 
@@ -50,7 +50,7 @@ function buildClass(): string {
 
   return cg`
     export class Encoder {
-      public constructor(public readonly ctx: EncodeContext) {}
+      public constructor(public readonly ctx: EncoderContext) {}
 
       ${functions.join("\n\n")}
     }
@@ -108,9 +108,9 @@ class DefinitionEncoder extends TSEmit {
     `;
   }
 
-  protected emitStructField(
+  protected emitStructField<T>(
     _field: FieldReference,
-    _type?: string,
+    _type?: ArrayType<T> | ListType<T> | BaseType<T>,
     handler?: string
   ): string {
     return handler || "";
@@ -118,7 +118,7 @@ class DefinitionEncoder extends TSEmit {
 
   protected emitAllocate<T>(
     _target: string,
-    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _type: ArrayType<T> | ListType<T>,
     _count: string
   ): string {
     return "";
@@ -126,7 +126,7 @@ class DefinitionEncoder extends TSEmit {
 
   protected emitGrow<T>(
     _target: string,
-    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _type: ArrayType<T> | ListType<T>,
     _index: string
   ): string {
     return "";
@@ -137,7 +137,6 @@ class DefinitionEncoder extends TSEmit {
       this.encodeMetadataHeader((self as any).metadata.header);
       const __start = this.ctx.tell() - 12;
       const __version = (self as any).metadata.header.version;
-      const __end = (self as any).metadata.header.end;
     `;
   }
 
@@ -174,7 +173,7 @@ class DefinitionEncoder extends TSEmit {
 
   protected emitForward<T>(
     target: string,
-    type: ArrayType<T> | ListType<T> | BaseType<T>,
+    type: ArrayType<T> | ListType<T>,
     count: string
   ): string {
     const v = this.newVariable(U32);
@@ -184,6 +183,12 @@ class DefinitionEncoder extends TSEmit {
         ${this.emitWalk((type as any).type || type, this.emitIndex(target, v.__name))}
       }
     `;
+  }
+
+  protected emitAssign(target: string, value: string): string {
+    if (target.startsWith("self.")) return "";
+
+    return super.emitAssign(target, value);
   }
 }
 

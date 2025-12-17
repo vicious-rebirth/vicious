@@ -16,7 +16,7 @@ export class LocalizationEntry extends Struct {
   __metadata = true;
   __offset = 0xca570;
 
-  tables = field((ctx) => ctx.list(LocalizationTable), {
+  tables = field((ctx) => ctx.list(LocalizationTable, 64), {
     custom: (ctx) => {
       ctx.allocate(this.tables);
 

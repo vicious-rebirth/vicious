@@ -1,0 +1,19 @@
+{
+  "name": "@repo/c",
+  "version": "0.0.0",
+  "description": "C implementation of Vicious Engine",
+  "scripts": {
+    "codegen": "tsx codegen/main.ts",
+    "codegen:debug": "tsx --inspect-brk codegen/main.ts",
+    "setup": "cmake -G Ninja -S . -B build",
+    "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build",
+    "build": "cmake --build build"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@repo/core": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^25.0.3",
+    "tsx": "^4.21.0"
+  }
+}

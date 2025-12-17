@@ -9,7 +9,7 @@ export class Group extends Class {
   __offset = 0xca470;
 
   base = field(Base);
-  list = field((ctx) => ctx.list(GroupEntry), {
+  list = field((ctx) => ctx.list(GroupEntry, 512), {
     custom: (ctx) => {
       ctx.allocate(this.list);
 

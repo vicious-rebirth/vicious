@@ -1,0 +1,15 @@
+{
+  "name": "@repo/pack",
+  "version": "0.0.0",
+  "description": "Tool to package/unpackage assets for Vicious Engine",
+  "scripts": {
+    "setup": "cmake -G Ninja -S . -B build",
+    "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build",
+    "build": "cmake --build build"
+  },
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "@repo/c": "workspace:*"
+  }
+}
