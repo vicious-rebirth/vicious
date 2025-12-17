@@ -14,6 +14,7 @@ export class V112 extends Class {
   f_0x0c = field(AssetFromTypeList, {
     offset: 0x34eda,
     custom: (ctx) => {
+      ctx.set(this.f_0x0c.consume, false);
       ctx.set(this.f_0x0c.count, 3);
       ctx.walk(this.f_0x0c);
     },

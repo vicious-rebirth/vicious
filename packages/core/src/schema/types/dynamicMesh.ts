@@ -58,6 +58,7 @@ export class DynamicMesh extends Class {
         (ctx) => ctx.gt(this.f_0x7c, 0)
       ),
     custom: (ctx) => {
+      ctx.set(this.f_0x84.consume, false);
       ctx.set(this.f_0x84.size, (ctx) => ctx.mul(this.f_0x7c, 4));
       ctx.walk(this.f_0x84);
     },
@@ -188,6 +189,7 @@ export class SkinMeshFrame extends Struct {
   buffer = field(U8Buffer, {
     condition: (ctx) => ctx.gt((ctx) => ctx.shl(this.bufferCount, 2), 0),
     custom: (ctx) => {
+      ctx.set(this.buffer.consume, false);
       ctx.set(this.buffer.size, (ctx) => ctx.shl(this.bufferCount, 3));
 
       ctx.walk();
@@ -261,6 +263,7 @@ export class DynamicMeshBody extends Struct {
         (ctx) => ctx.gt((ctx) => ctx.shl(this.riggedBufferCount, 5), 0)
       ),
     custom: (ctx) => {
+      ctx.set(this.riggedVertexBuffer.consume, false);
       ctx.set(this.riggedVertexBuffer.size, (ctx) =>
         ctx.shl(this.riggedBufferCount, 5)
       );
@@ -275,6 +278,7 @@ export class DynamicMeshBody extends Struct {
         (ctx) => ctx.gt((ctx) => ctx.shl(this.riggedBufferCount, 2), 0)
       ),
     custom: (ctx) => {
+      ctx.set(this.riggedJointWeightBuffer.consume, false);
       ctx.set(this.riggedJointWeightBuffer.size, (ctx) =>
         ctx.shl(this.riggedBufferCount, 2)
       );
@@ -292,6 +296,7 @@ export class DynamicMeshBody extends Struct {
         (ctx) => ctx.gt((ctx) => ctx.mul(this.staticVertexBufferCount, 16), 0)
       ),
     custom: (ctx) => {
+      ctx.set(this.staticVertexBuffer.consume, false);
       ctx.set(this.staticVertexBuffer.size, (ctx) =>
         ctx.mul(this.staticVertexBufferCount, 16)
       );
@@ -309,6 +314,7 @@ export class DynamicMeshBody extends Struct {
         (ctx) => ctx.gt((ctx) => ctx.mul(this.indexBufferCount, 2), 0)
       ),
     custom: (ctx) => {
+      ctx.set(this.indexBuffer.consume, false);
       ctx.set(this.indexBuffer.size, (ctx) =>
         ctx.mul(this.indexBufferCount, 2)
       );

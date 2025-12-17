@@ -18,7 +18,11 @@ export class LocalizationEntry extends Struct {
 
   tables = field((ctx) => ctx.list(LocalizationTable), {
     custom: (ctx) => {
+      ctx.allocate(this.tables);
+
       ctx.loop((ctx) => {
+        ctx.grow(this.tables, (ctx) => ctx.iterator());
+
         ctx.walk((ctx) => ctx.index(this.tables, (ctx) => ctx.iterator()));
 
         ctx.if(

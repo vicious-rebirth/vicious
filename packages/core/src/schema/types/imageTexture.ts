@@ -72,6 +72,7 @@ export class ImageTextureBuffer extends Struct {
         ctx.set(height, (ctx) => ctx.div(height, 2));
       });
 
+      ctx.set(this.pixels.consume, false);
       ctx.set(this.pixels.size, size);
       ctx.walk();
     },
@@ -83,6 +84,7 @@ export class ImageTextureBuffer extends Struct {
         (ctx) => ctx.eq(this.format, 3)
       ),
     custom: (ctx) => {
+      ctx.set(this.palette.consume, false);
       ctx.set(this.palette.size, 1024);
       ctx.walk();
     },

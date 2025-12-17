@@ -38,6 +38,7 @@ export class Font extends Class {
   f_2 = field(U8Buffer, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 3),
     custom: (ctx) => {
+      ctx.set(this.f_2.consume, false);
       ctx.set(this.f_2.size, 256);
       ctx.walk();
     },

@@ -22,6 +22,23 @@ export type TypeContext = {
 export type Type<T = any> =
   | ((ctx: TypeContext) => T)
   | (new (...args: any[]) => T);
+
+export type BaseType<T = any> = new (...args: any[]) => T;
+
+export class ArrayType<T = any> {
+  public constructor(
+    public readonly type: BaseType<T>,
+    public readonly count: number
+  ) {}
+}
+
+export class ListType<T = any> {
+  public constructor(
+    public readonly type: BaseType<T>,
+    public readonly maxCount?: number
+  ) {}
+}
+
 export type Value =
   | Definition
   | number
@@ -81,7 +98,11 @@ export type CodeContext = {
   set: (target: Value, value: Value) => void;
   allocate: <T extends Definition | number | string>(
     target: T[],
-    count: Value
+    count?: Value
+  ) => void;
+  grow: <T extends Definition | number | string>(
+    target: T[],
+    index: Value
   ) => void;
 
   forward: <T extends Definition | number | string>(
@@ -94,7 +115,7 @@ export type CodeContext = {
   walk: (target?: Value) => void;
 
   getId: (id: Value) => Definition;
-  setId: (id: Value, target: Value) => void;
+  setId: (id: Value, type: Value, target: Value) => void;
   walkId: (id: Value, target?: Value) => void;
 
   error: (message: string) => void;
@@ -156,10 +177,14 @@ export class VariableReference<T = any> {
   }
 }
 
-export class IndexReference {
+export class IndexReference<T = any> {
   public constructor(
-    public readonly __parent: any,
-    public readonly __index: any
+    public readonly __parent:
+      | FieldReference<T>
+      | VariableReference<T>
+      | PropertyReference<T>
+      | IndexReference<T>,
+    public readonly __index: Value
   ) {
     return new Proxy(this, {
       get(target, prop, receiver) {
@@ -171,15 +196,19 @@ export class IndexReference {
           return Reflect.get(target, prop, receiver);
         }
 
-        return new PropertyReference(target, prop);
+        return new PropertyReference<T>(target, prop);
       },
     });
   }
 }
 
-export class PropertyReference {
+export class PropertyReference<T = any> {
   public constructor(
-    public readonly __parent: any,
+    public readonly __parent:
+      | FieldReference<T>
+      | VariableReference<T>
+      | PropertyReference<T>
+      | IndexReference<T>,
     public readonly __prop: string
   ) {
     return new Proxy(this, {
@@ -192,7 +221,7 @@ export class PropertyReference {
           return Reflect.get(target, prop, receiver);
         }
 
-        return new PropertyReference(target, prop);
+        return new PropertyReference<T>(target, prop);
       },
     });
   }

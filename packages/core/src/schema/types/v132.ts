@@ -13,6 +13,7 @@ export class V132 extends Class {
   f_0x24 = field(U32);
   f_0x28 = field(AssetReferenceSuffixList, {
     custom: (ctx) => {
+      ctx.set(this.f_0x28.consume, false);
       ctx.set(this.f_0x28.count, 4);
       ctx.walk();
     },

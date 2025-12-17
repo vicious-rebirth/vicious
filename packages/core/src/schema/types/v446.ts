@@ -20,7 +20,7 @@ export class V446 extends Class {
         (ctx) => {
           const tmp = ctx.var(U32, 0);
           ctx.walk(tmp);
-          ctx.set(this.f_0x18, tmp);
+          ctx.set(this.f_0x18, (ctx) => ctx.neq(tmp, 0));
         },
         (ctx) => ctx.walk()
       );

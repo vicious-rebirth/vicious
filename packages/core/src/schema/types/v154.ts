@@ -13,6 +13,8 @@ export class V154 extends Class {
   f_0x00 = field(AssetFromTypeSizedList);
   f_0x0c = field(AssetReferenceList, {
     custom: (ctx) => {
+      ctx.set(this.f_0x0c.consume, false);
+
       ctx.if(
         (ctx) => ctx.gte((ctx) => ctx.version(), 2),
         (ctx) => {

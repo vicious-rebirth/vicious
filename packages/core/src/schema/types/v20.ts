@@ -153,6 +153,7 @@ export class V20_9 extends Struct {
         (ctx) => ctx.gt((ctx) => ctx.end(), 0)
       ),
     custom: (ctx) => {
+      ctx.set(this.f_2.consume, false);
       ctx.set(this.f_2.size, (ctx) =>
         ctx.sub(
           (ctx) => ctx.end(),

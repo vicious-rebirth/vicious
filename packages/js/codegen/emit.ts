@@ -109,7 +109,7 @@ export abstract class TSEmit extends Emit {
   }
 
   protected emitDot(target: string, prop: string): string {
-    return cg`(${target}).${prop}`;
+    return cg`${target}.${prop}`;
   }
 
   protected emitOperation(
@@ -129,7 +129,7 @@ export abstract class TSEmit extends Emit {
   }
 
   protected emitIndex(target: string, index: string): string {
-    return cg`${target}[${index}]`;
+    return cg`${target}[${index}]!`;
   }
 
   protected emitAssign(target: string, value: string): string {
@@ -137,22 +137,26 @@ export abstract class TSEmit extends Emit {
   }
 
   protected emitSeek(offset: string): string {
-    return cg`ctx.seek(${offset});`;
+    return cg`this.ctx.seek(${offset});`;
   }
 
   protected emitTell(): string {
-    return cg`ctx.tell()`;
+    return cg`this.ctx.tell()`;
   }
 
   protected emitGetAssetFromMap(id: string): string {
-    return cg`ctx.getId(${id})`;
+    return cg`this.ctx.getId(${id})`;
   }
 
-  protected emitSetAssetInMap(id: string, target: string): string {
-    return cg`ctx.setId(${id}, ${target})`;
+  protected emitSetAssetInMap(
+    id: string,
+    type: string,
+    target: string
+  ): string {
+    return cg`this.ctx.setId(${id}, getClassFromID(${type}), ${target})`;
   }
 
   protected emitError(scope: string, message: string): string {
-    return cg`throw \"${scope}: ${message}\";`;
+    return cg`this.ctx.error("${scope}", "${message}");`;
   }
 }

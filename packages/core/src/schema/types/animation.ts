@@ -64,6 +64,7 @@ export class Animation extends Class {
         (ctx) => ctx.gt(this.jointFlagCount, 0)
       ),
     custom: (ctx) => {
+      ctx.set(this.jointFlags.consume, false);
       ctx.set(this.jointFlags.size, this.jointFlagCount);
       ctx.walk();
     },
@@ -75,6 +76,7 @@ export class Animation extends Class {
         (ctx) => ctx.gt((ctx) => ctx.mul(this.rotationCount, 4), 0)
       ),
     custom: (ctx) => {
+      ctx.set(this.rotationBuffer.consume, false);
       ctx.set(this.rotationBuffer.size, (ctx) =>
         ctx.mul(this.rotationCount, 8)
       );
@@ -88,6 +90,7 @@ export class Animation extends Class {
         (ctx) => ctx.gt((ctx) => ctx.mul(this.positionCount, 3), 0)
       ),
     custom: (ctx) => {
+      ctx.set(this.positionBuffer.consume, false);
       ctx.set(this.positionBuffer.size, (ctx) =>
         ctx.mul(this.positionCount, 6)
       );
@@ -101,6 +104,7 @@ export class Animation extends Class {
         (ctx) => ctx.gt((ctx) => ctx.mul(this.scaleCount, 3), 0)
       ),
     custom: (ctx) => {
+      ctx.set(this.scaleBuffer.consume, false);
       ctx.set(this.scaleBuffer.size, (ctx) => ctx.mul(this.scaleCount, 6));
       ctx.walk();
     },
@@ -118,9 +122,10 @@ export class Animation extends Class {
     condition: (ctx) =>
       ctx.and(
         (ctx) => ctx.gt((ctx) => ctx.version(), 2),
-        (ctx) => ctx.gt(this.f_0x4f, 0)
+        (ctx) => ctx.isTrue(this.f_0x4f)
       ),
     custom: (ctx) => {
+      ctx.set(this.f_0x74.consume, false);
       ctx.set(this.f_0x74.size, (ctx) => ctx.shl(this.frameCount, 2));
       ctx.walk();
     },
@@ -143,6 +148,7 @@ export class AnimationIndexBuffer extends Struct {
   count = field(U32);
   buffer = field(U8Buffer, {
     custom: (ctx) => {
+      ctx.set(this.buffer.consume, false);
       ctx.set(this.buffer.size, (ctx) => ctx.mul(this.count, 2));
 
       ctx.walk();

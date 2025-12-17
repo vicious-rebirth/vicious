@@ -65,6 +65,7 @@ export class Entity extends Class {
   f_0x44 = field(AssetReferenceSuffixList, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 5),
     custom: (ctx) => {
+      ctx.set(this.f_0x44.consume, false);
       ctx.set(this.f_0x44.count, 2);
       ctx.walk(this.f_0x44);
     },

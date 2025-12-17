@@ -1,4 +1,12 @@
-import { Atom, Class, FieldReference, U32 } from "@repo/core/schema";
+import {
+  ArrayType,
+  Atom,
+  BaseType,
+  Class,
+  FieldReference,
+  ListType,
+  U32,
+} from "@repo/core/schema";
 import {
   cg,
   getIDSortedClasses,
@@ -8,55 +16,77 @@ import { TSEmit } from "./emit";
 import { EmptyEmit } from "@repo/core/backend";
 
 export function buildDecoder(): string {
-  return cg`
-    ${buildContext()}
-
-    ${buildClass()}
-  `;
+  return [buildContext(), buildClass()].join("\n\n");
 }
 
 function buildContext(): string {
   return cg`
     export interface DecodeContext {
+      getId: (id: ID) => any;
+      setId: (id: ID, type: string, obj: any) => void;
+
       seek: (offset: number) => void;
       tell: () => number;
+
+      readANY: () => ANY;
+      readBOOL: () => BOOL;
+      readU8: () => U8;
+      readI8: () => I8;
+      readU16: () => U16;
+      readI16: () => I16;
+      readU32: () => U32;
+      readI32: () => I32;
+      readF32: () => F32;
+
+      error: (scope: string, message: string) => void;
     }
   `;
 }
 
 function buildClass(): string {
-  const decoderFunctions = [...buildDefinitionDecoders(), buildSwitchDecoder()];
+  const decoderFunctions = [
+    ...buildDefinitionDecoders(),
+    buildSwitchDecoder(),
+  ].filter((v) => v);
 
   return cg`
     export class Decoder {
+      public constructor(public readonly ctx: DecodeContext) {}
+
       ${decoderFunctions.join("\n\n")}
     }
   `;
 }
 
 function buildDefinitionDecoders(): string[] {
-  const decoder = new DefinitionDecoder();
-
   return getNameSortedDefinitions().map((definition) => {
-    decoder.visit(definition);
-    return decoder.popOutput();
+    const backend = new DefinitionDecoder();
+
+    backend.visit(definition);
+
+    return backend.output;
   });
 }
 
 function buildSwitchDecoder(): string {
-  const decoder = new SwitchDecoder();
+  const cases: string[] = getIDSortedClasses()
+    .map((cls) => {
+      const backend = new SwitchDecoder();
 
-  const cases: string[] = getIDSortedClasses().map((cls) => {
-    decoder.visit(cls);
+      backend.visit(cls);
 
-    return decoder.popOutput();
-  });
+      return backend.output;
+    })
+    .filter((v) => v);
 
   return cg`
-    public decodeType(typeId: number, ctx: DecodeContext, self?: any = {}): any {
+    public decodeType(typeId: number, self: any = {}): any {
       switch (typeId) {
         ${cases.join("\n")}
       }
+
+      debugger;
+      return null;
     }
   `;
 }
@@ -66,7 +96,7 @@ class DefinitionDecoder extends TSEmit {
     const typeName = obj.constructor.name;
 
     return cg`
-      public decode${typeName}(ctx: DecodeContext, self: any = {}): ${typeName} {
+      public decode${typeName}(self: any = {}): ${typeName} {
         ${handler}
         return self as ${typeName};
       }
@@ -77,8 +107,8 @@ class DefinitionDecoder extends TSEmit {
     const typeName = atom.constructor.name;
 
     return cg`
-      public decode${typeName}(ctx: DecodeContext, self: any = {}): ${typeName} {
-        return ctx.read${atom.constructor.name}(ctx);
+      public decode${typeName}(self: any = {}): ${typeName} {
+        return this.ctx.read${atom.constructor.name}();
       }
     `;
   }
@@ -105,7 +135,7 @@ class DefinitionDecoder extends TSEmit {
     return cg`
       self.metadata ??= {};
       self.metadata.header ??= {};
-      self.metadata.header = this.decodeMetadataHeader(ctx, self.metadata.header);
+      self.metadata.header = this.decodeMetadataHeader(self.metadata.header);
       const __version = self.metadata.header.version;
       const __end = self.metadata.header.end;
     `;
@@ -114,28 +144,62 @@ class DefinitionDecoder extends TSEmit {
   protected emitMetadataFooter(): string {
     return cg`
       self.metadata.footer ??= {};
-      self.metadata.footer = this.decodeMetadataFooter(ctx, self.metadata.footer);
+      self.metadata.footer = this.decodeMetadataFooter(self.metadata.footer);
     `;
   }
 
-  protected emitWalk(type: string, target: string): string {
-    return cg`${target} = this.decode${type}(ctx, ${target});`;
+  protected emitWalk<T>(
+    type: ArrayType<T> | BaseType<T>,
+    target: string
+  ): string {
+    if (type instanceof ArrayType) {
+      const v = this.newVariable(U32);
+
+      return cg`
+        ${target} = new Array(${type.count}).fill(0).map(() => ({}));
+        for (let ${v.__name} = 0; ${v.__name} < ${type.count}; ${v.__name}++) {
+          ${this.emitWalk(type.type, this.emitIndex(target, v.__name))}
+        }
+      `;
+    } else {
+      return cg`
+        ${target} = this.decode${this.getTypeName(type)}(${target});
+      `;
+    }
   }
 
   protected emitWalkType(typeId: string, target: string): string {
-    return cg`${target} = this.decodeType(${typeId}, ctx, ${target});`;
+    return cg`
+      ${target} = this.decodeType(${typeId}, ${target});
+    `;
   }
 
-  protected emitAllocate(target: string, _type: string, count: string): string {
+  protected emitAllocate<T>(
+    target: string,
+    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    count: string
+  ): string {
     return cg`${target} = new Array(${count}).fill(0).map(() => ({}));`;
   }
 
-  protected emitForward(target: string, type: string, count: string): string {
+  protected emitGrow<T>(
+    target: string,
+    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _index: string
+  ): string {
+    return cg`${target}.push({});`;
+  }
+
+  protected emitForward<T>(
+    target: string,
+    type: ArrayType<T> | ListType<T> | BaseType<T>,
+    count: string
+  ): string {
     const v = this.newVariable(U32);
 
     return cg`
       for (let ${v.__name} = 0; ${v.__name} < ${count}; ${v.__name}++) {
-        ${this.emitWalk(type, this.emitIndex(target, v.__name))}
+        ${this.emitWalk((type as any).type || type, this.emitIndex(target, v.__name))}
       }
     `;
   }
@@ -143,6 +207,6 @@ class DefinitionDecoder extends TSEmit {
 
 class SwitchDecoder extends EmptyEmit {
   protected emitClass(cls: Class, _fields: string): string {
-    return cg`case ${cls.__id}: return this.decode${cls.constructor.name}(ctx, self);`;
+    return cg`case ${cls.__id}: return this.decode${cls.constructor.name}(self);`;
   }
 }

@@ -52,7 +52,11 @@ export class V133_1 extends Struct {
   list = field((ctx) => ctx.list(AssetFromType), {
     condition: (ctx) => ctx.gt(this.f_1.type, 0),
     custom: (ctx) => {
+      ctx.allocate(this.list);
+
       ctx.loop((ctx) => {
+        ctx.grow(this.list, (ctx) => ctx.iterator());
+
         ctx.walk((ctx) => ctx.index(this.list, (ctx) => ctx.iterator()));
 
         ctx.if(

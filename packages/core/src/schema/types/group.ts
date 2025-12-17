@@ -11,8 +11,13 @@ export class Group extends Class {
   base = field(Base);
   list = field((ctx) => ctx.list(GroupEntry), {
     custom: (ctx) => {
+      ctx.allocate(this.list);
+
       ctx.loop((ctx) => {
+        ctx.grow(this.list, (ctx) => ctx.iterator());
+
         ctx.walk((ctx) => ctx.index(this.list, (ctx) => ctx.iterator()));
+
         ctx.if(
           (ctx) =>
             ctx.isFalse(
@@ -38,7 +43,7 @@ export class GroupListEntry extends Struct {
   __offset = 0xc9e24;
 
   enabled = field(BOOL);
-  type = field(U32, { condition: (ctx) => ctx.isFalse(this.enabled) });
+  type = field(U32, { condition: (ctx) => ctx.isTrue(this.enabled) });
   object = field(ANY, {
     condition: (ctx) => ctx.isTrue(this.enabled),
     custom: (ctx) => {

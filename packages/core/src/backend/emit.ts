@@ -10,17 +10,22 @@ import {
   VariableReference,
   PropertyReference,
   IndexReference,
+  ArrayType,
+  ListType,
+  BaseType,
 } from "../schema/core";
 import { Backend } from "./core";
 
 export abstract class Emit extends Backend {
   private scopes: string[][] = [[]];
 
-  public popOutput(): string {
-    const output = this.scopes.pop();
-    this.scopes.push([]);
+  public get output(): string {
+    if (this.scopes.length > 1) {
+      debugger;
+      throw "broken scopes";
+    }
 
-    return output!.join("");
+    return this.scopes[0]!.join("");
   }
 
   /**
@@ -94,15 +99,21 @@ export abstract class Emit extends Backend {
 
   protected abstract emitAssign(target: string, value: string): string;
 
-  protected abstract emitAllocate(
+  protected abstract emitAllocate<T>(
     target: string,
-    type: string,
+    type: ArrayType<T> | ListType<T> | BaseType<T>,
     count: string
   ): string;
 
-  protected abstract emitForward(
+  protected abstract emitGrow<T>(
     target: string,
-    type: string,
+    type: ArrayType<T> | ListType<T> | BaseType<T>,
+    index: string
+  ): string;
+
+  protected abstract emitForward<T>(
+    target: string,
+    type: ArrayType<T> | ListType<T> | BaseType<T>,
     count: string
   ): string;
 
@@ -110,13 +121,20 @@ export abstract class Emit extends Backend {
 
   protected abstract emitTell(): string;
 
-  protected abstract emitWalk(type: string, target: string): string;
+  protected abstract emitWalk<T>(
+    type: ArrayType<T> | BaseType<T>,
+    target: string
+  ): string;
 
   protected abstract emitWalkType(typeId: string, target: string): string;
 
   protected abstract emitGetAssetFromMap(id: string): string;
 
-  protected abstract emitSetAssetInMap(id: string, target: string): string;
+  protected abstract emitSetAssetInMap(
+    id: string,
+    type: string,
+    target: string
+  ): string;
 
   protected abstract emitError(scope: string, message: string): string;
 
@@ -131,7 +149,7 @@ export abstract class Emit extends Backend {
   protected exitClass(cls: Class): void {
     const [...fields] = this.popScope(cls);
 
-    this.pushString(this.emitClass(cls, fields.join("\n")));
+    this.pushString(this.emitClass(cls, fields.filter((v) => v).join("\n")));
   }
 
   protected enterStruct(struct: Struct): void {
@@ -141,7 +159,9 @@ export abstract class Emit extends Backend {
   protected exitStruct(struct: Struct): void {
     const [...fields] = this.popScope(struct);
 
-    this.pushString(this.emitStruct(struct, fields.join("\n")));
+    this.pushString(
+      this.emitStruct(struct, fields.filter((v) => v).join("\n"))
+    );
   }
 
   protected exitAtom(atom: Atom): void {
@@ -219,7 +239,17 @@ export abstract class Emit extends Backend {
   protected exitBlock(code: (ctx: CodeContext) => void): void {
     const [...lines] = this.popScope(code);
 
-    this.pushString(lines.join("\n"));
+    this.pushString(lines.filter((v) => v).join("\n"));
+  }
+
+  protected enterCondition(code: (ctx: CodeContext) => void): void {
+    this.pushScope(code);
+  }
+
+  protected exitCondition(code: (ctx: CodeContext) => void): void {
+    const [value] = this.popScope(code);
+
+    this.pushString(value!);
   }
 
   protected enterIf(
@@ -327,8 +357,6 @@ export abstract class Emit extends Backend {
   protected exitIsFalse(_value: Value): void {
     const [value] = this.popScope();
 
-    if (value === undefined) debugger;
-
     this.pushString(this.emitIsFalse(value!));
   }
 
@@ -374,16 +402,26 @@ export abstract class Emit extends Backend {
     this.pushString(this.emitAssign(target!, value!));
   }
 
-  protected enterAllocate(_target: Value, _count: Value): void {
+  protected enterAllocate(_target: Value, _count?: Value): void {
     this.pushScope();
   }
 
-  protected exitAllocate(target: Value, _count: Value): void {
-    const [target_, count] = this.popScope();
+  protected exitAllocate(target: Value, _count?: Value): void {
+    const [target_, count_] = this.popScope();
 
     this.pushString(
-      this.emitAllocate(target_!, this.getTypeName(target), count!)
+      this.emitAllocate(target_!, this.getType(target), count_ || "0")
     );
+  }
+
+  protected enterGrow(_target: Value, _index: Value): void {
+    this.pushScope();
+  }
+
+  protected exitGrow(target: Value, _index: Value): void {
+    const [target_, index_] = this.popScope();
+
+    this.pushString(this.emitGrow(target_!, this.getType(target), index_!));
   }
 
   protected enterForward(_target: Value, _count: Value): void {
@@ -393,9 +431,7 @@ export abstract class Emit extends Backend {
   protected exitForward(target: Value, _count: Value): void {
     const [target_, count] = this.popScope();
 
-    this.pushString(
-      this.emitForward(target_!, this.getTypeName(target), count!)
-    );
+    this.pushString(this.emitForward(target_!, this.getType(target), count!));
   }
 
   protected exitSeek(_offset: Value): void {
@@ -412,13 +448,17 @@ export abstract class Emit extends Backend {
     this.pushString(this.emitTell());
   }
 
+  protected enterWalk(_target: Value): void {
+    this.pushScope();
+  }
+
   protected exitWalk(target: Value): void {
     const [target_] = this.popScope();
 
-    this.pushString(this.emitWalk(this.getTypeName(target), target_!));
+    this.pushString(this.emitWalk(this.getType(target) as any, target_!));
   }
 
-  protected enterWalk(_target: Value): void {
+  protected enterWalkType(_typeId: Value, _target: Value): void {
     this.pushScope();
   }
 
@@ -428,7 +468,7 @@ export abstract class Emit extends Backend {
     this.pushString(this.emitWalkType(typeId!, target!));
   }
 
-  protected enterWalkType(_typeId: Value, _target: Value): void {
+  protected enterGetAssetFromMap(_id: Value): void {
     this.pushScope();
   }
 
@@ -438,18 +478,14 @@ export abstract class Emit extends Backend {
     this.pushString(this.emitGetAssetFromMap(id!));
   }
 
-  protected enterGetAssetFromMap(_id: Value): void {
+  protected enterSetAssetInMap(_id: Value, _type: Value, _target: Value): void {
     this.pushScope();
   }
 
-  protected exitSetAssetInMap(_id: Value, _target: Value): void {
-    const [id, target] = this.popScope();
+  protected exitSetAssetInMap(_id: Value, _type: Value, _target: Value): void {
+    const [id, type, target] = this.popScope();
 
-    this.pushString(this.emitSetAssetInMap(id!, target!));
-  }
-
-  protected enterSetAssetInMap(_id: Value, _target: Value): void {
-    this.pushScope();
+    this.pushString(this.emitSetAssetInMap(id!, type!, target!));
   }
 
   protected exitError(scope: string, message: string): void {
@@ -468,15 +504,27 @@ export abstract class Emit extends Backend {
     return this.scopes.pop()!;
   }
 
-  protected getTypeName(target?: any): string {
+  protected getType<T = any>(
+    target: any
+  ): ArrayType<T> | ListType<T> | BaseType<T> {
     if (target instanceof FieldReference) {
-      return this.getTypeName(target.__type);
+      return this.getType(target.__type!);
     } else if (target instanceof VariableReference) {
-      return this.getTypeName(target.__type);
-    } else if (target instanceof PropertyReference) {
-      return this.getTypeName(target.__parent);
+      return this.getType(target.__type);
+    } else if (target instanceof ArrayType) {
+      return target;
+    } else if (target instanceof ListType) {
+      return target;
+    }
+
+    if (target instanceof PropertyReference) {
+      const out = this.getType(target.__parent);
+
+      return this.getType(new (out as any)()[target.__prop]);
     } else if (target instanceof IndexReference) {
-      return this.getTypeName(target.__parent);
+      const out = this.getType(target.__parent);
+
+      return this.getType((out as any).type);
     }
 
     if (typeof target !== "function") {
@@ -488,21 +536,24 @@ export abstract class Emit extends Backend {
       .call(target)
       .startsWith("class ");
     if (!isClass) {
-      return this.getTypeName(
-        target({
-          array: (type: any) => type,
-          list: (type: any) => type,
-          index: (target: any) => target,
-        })
-      );
+      const out = (target as any)({
+        array: (type: any, count: number) => new ArrayType(type, count),
+        list: (type: any, maxCount?: number) => new ListType(type, maxCount),
+        index: (target: any, value: any) => new IndexReference(target, value),
+      });
+
+      if (out instanceof ArrayType || out instanceof ListType) {
+        return out;
+      }
+
+      return this.getType(out);
     }
 
-    if (!target?.name) {
-      debugger;
-      throw `no target name: ${target}`;
-    }
+    return target as any;
+  }
 
-    return target.name;
+  protected getTypeName<T>(type: BaseType<T>): string {
+    return type.name;
   }
 }
 
@@ -615,17 +666,25 @@ export class EmptyEmit extends Emit {
     return "";
   }
 
-  protected emitAllocate(
+  protected emitAllocate<T>(
     _target: string,
-    _type: string,
+    _type: ArrayType<T> | ListType<T> | BaseType<T>,
     _count: string
   ): string {
     return "";
   }
 
-  protected emitForward(
+  protected emitGrow<T>(
     _target: string,
-    _type: string,
+    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _index: string
+  ): string {
+    return "";
+  }
+
+  protected emitForward<T>(
+    _target: string,
+    _type: ArrayType<T> | ListType<T> | BaseType<T>,
     _count: string
   ): string {
     return "";
@@ -639,7 +698,10 @@ export class EmptyEmit extends Emit {
     return "";
   }
 
-  protected emitWalk(_type: string, _target: string): string {
+  protected emitWalk<T>(
+    _type: ArrayType<T> | ListType<T> | BaseType<T>,
+    _target: string
+  ): string {
     return "";
   }
 

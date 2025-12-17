@@ -76,6 +76,9 @@ export abstract class Backend {
   protected abstract enterBlock(code: (ctx: CodeContext) => void): void;
   protected abstract exitBlock(code: (ctx: CodeContext) => void): void;
 
+  protected abstract enterCondition(code: (ctx: CodeContext) => void): void;
+  protected abstract exitCondition(code: (ctx: CodeContext) => void): void;
+
   protected abstract enterIf(
     condition: (ctx: CodeContext) => void,
     true_: (ctx: CodeContext) => void,
@@ -148,8 +151,11 @@ export abstract class Backend {
   protected abstract enterAssign(target: Value, value: Value): void;
   protected abstract exitAssign(target: Value, value: Value): void;
 
-  protected abstract enterAllocate(target: Value, count: Value): void;
-  protected abstract exitAllocate(target: Value, count: Value): void;
+  protected abstract enterAllocate(target: Value, count?: Value): void;
+  protected abstract exitAllocate(target: Value, count?: Value): void;
+
+  protected abstract enterGrow(target: Value, index: Value): void;
+  protected abstract exitGrow(target: Value, index: Value): void;
 
   protected abstract enterForward(target: Value, count: Value): void;
   protected abstract exitForward(target: Value, count: Value): void;
@@ -168,8 +174,16 @@ export abstract class Backend {
   protected abstract enterGetAssetFromMap(id: Value): void;
   protected abstract exitGetAssetFromMap(id: Value): void;
 
-  protected abstract enterSetAssetInMap(id: Value, target: Value): void;
-  protected abstract exitSetAssetInMap(id: Value, target: Value): void;
+  protected abstract enterSetAssetInMap(
+    id: Value,
+    type: Value,
+    target: Value
+  ): void;
+  protected abstract exitSetAssetInMap(
+    id: Value,
+    type: Value,
+    target: Value
+  ): void;
 
   protected abstract exitError(scope: string, message: string): void;
 
@@ -233,6 +247,13 @@ export abstract class Backend {
 
       if (field instanceof FieldReference) {
         field.__name = name;
+      }
+    }
+
+    for (const name of Object.getOwnPropertyNames(obj)) {
+      const field = obj[name];
+
+      if (field instanceof FieldReference) {
         this.visitStructField(field);
       }
     }
@@ -423,6 +444,14 @@ export abstract class Backend {
     return ref;
   }
 
+  protected visitCondition(code: (ctx: CodeContext) => void): void {
+    this.enterCondition(code);
+
+    this.visitCode(code);
+
+    this.exitCondition(code);
+  }
+
   protected visitBlock(code: (ctx: CodeContext) => void): void {
     this.enterBlock(code);
 
@@ -438,7 +467,7 @@ export abstract class Backend {
   ): void {
     this.enterIf(condition, true_, false_);
 
-    this.visitBlock(condition);
+    this.visitCondition(condition);
     this.visitBlock(true_);
     if (false_) this.visitBlock(false_);
 
@@ -532,13 +561,22 @@ export abstract class Backend {
     return out;
   }
 
-  protected visitAllocate(target: Value, count: Value): void {
+  protected visitAllocate(target: Value, count?: Value): void {
     this.enterAllocate(target, count);
 
     this.visitValue(target);
-    this.visitValue(count);
+    if (count !== undefined) this.visitValue(count);
 
     this.exitAllocate(target, count);
+  }
+
+  protected visitGrow(target: Value, index: Value): void {
+    this.enterGrow(target, index);
+
+    this.visitValue(target);
+    this.visitValue(index);
+
+    this.exitGrow(target, index);
   }
 
   protected visitForward(target: Value, count: Value): void {
@@ -591,13 +629,14 @@ export abstract class Backend {
     this.exitGetAssetFromMap(id);
   }
 
-  protected visitSetAssetInMap(id: Value, target: Value): void {
-    this.enterSetAssetInMap(id, target);
+  protected visitSetAssetInMap(id: Value, type: Value, target: Value): void {
+    this.enterSetAssetInMap(id, type, target);
 
     this.visitValue(id);
+    this.visitValue(type);
     this.visitValue(target);
 
-    this.exitSetAssetInMap(id, target);
+    this.exitSetAssetInMap(id, type, target);
   }
 
   protected visitError(scope: string, message: string): void {
@@ -613,95 +652,64 @@ export abstract class Backend {
       array: (type, count) => this.visitArrayType(type, count) as any,
       list: (type, maxCount) => this.visitListType(type, maxCount) as any,
 
-      if: (
-        condition: (ctx: CodeContext) => void,
-        true_: (ctx: CodeContext) => void,
-        false_?: (ctx: CodeContext) => void
-      ) => this.visitIf(condition, true_, false_) as any,
+      if: (condition, true_, false_?) =>
+        this.visitIf(condition, true_, false_) as any,
 
-      for: (
-        size: Definition | number | ((ctx: CodeContext) => void),
-        body: (ctx: CodeContext) => void
-      ) => this.visitFor(size, body) as any,
+      for: (size, body) => this.visitFor(size, body) as any,
 
-      loop: (body: (ctx: CodeContext) => void) =>
-        this.visitFor(undefined, body) as any,
+      loop: (body) => this.visitFor(undefined, body) as any,
 
       iterator: () => this.visitIterator() as any,
 
       break: () => this.visitBreak() as any,
 
-      var: (type: Type, data: Value) =>
-        this.visitVariableDefinition(type, data) as any,
+      var: (type, data) => this.visitVariableDefinition(type, data) as any,
 
-      isTrue: (value: Value) => this.visitIsTrue(value) as any,
-      isFalse: (value: Value) => this.visitIsFalse(value) as any,
+      isTrue: (value) => this.visitIsTrue(value) as any,
+      isFalse: (value) => this.visitIsFalse(value) as any,
 
-      add: (left: Value, right: Value) =>
-        this.visitOperation("+", left, right) as any,
-      sub: (left: Value, right: Value) =>
-        this.visitOperation("-", left, right) as any,
-      mul: (left: Value, right: Value) =>
-        this.visitOperation("*", left, right) as any,
-      div: (left: Value, right: Value) =>
-        this.visitOperation("/", left, right) as any,
-      shl: (left: Value, right: Value) =>
-        this.visitOperation("<<", left, right) as any,
-      shr: (left: Value, right: Value) =>
-        this.visitOperation(">>", left, right) as any,
-      band: (left: Value, right: Value) =>
-        this.visitOperation("&", left, right) as any,
-      bor: (left: Value, right: Value) =>
-        this.visitOperation("|", left, right) as any,
-      xor: (left: Value, right: Value) =>
-        this.visitOperation("^", left, right) as any,
-      eq: (left: Value, right: Value) =>
-        this.visitOperation("==", left, right) as any,
-      neq: (left: Value, right: Value) =>
-        this.visitOperation("!=", left, right) as any,
-      lt: (left: Value, right: Value) =>
-        this.visitOperation("<", left, right) as any,
-      lte: (left: Value, right: Value) =>
-        this.visitOperation("<=", left, right) as any,
-      gt: (left: Value, right: Value) =>
-        this.visitOperation(">", left, right) as any,
-      gte: (left: Value, right: Value) =>
-        this.visitOperation(">=", left, right) as any,
-      and: (left: Value, right: Value) =>
-        this.visitOperation("&&", left, right) as any,
-      or: (left: Value, right: Value) =>
-        this.visitOperation("||", left, right) as any,
+      add: (left, right) => this.visitOperation("+", left, right) as any,
+      sub: (left, right) => this.visitOperation("-", left, right) as any,
+      mul: (left, right) => this.visitOperation("*", left, right) as any,
+      div: (left, right) => this.visitOperation("/", left, right) as any,
+      shl: (left, right) => this.visitOperation("<<", left, right) as any,
+      shr: (left, right) => this.visitOperation(">>", left, right) as any,
+      band: (left, right) => this.visitOperation("&", left, right) as any,
+      bor: (left, right) => this.visitOperation("|", left, right) as any,
+      xor: (left, right) => this.visitOperation("^", left, right) as any,
+      eq: (left, right) => this.visitOperation("==", left, right) as any,
+      neq: (left, right) => this.visitOperation("!=", left, right) as any,
+      lt: (left, right) => this.visitOperation("<", left, right) as any,
+      lte: (left, right) => this.visitOperation("<=", left, right) as any,
+      gt: (left, right) => this.visitOperation(">", left, right) as any,
+      gte: (left, right) => this.visitOperation(">=", left, right) as any,
+      and: (left, right) => this.visitOperation("&&", left, right) as any,
+      or: (left, right) => this.visitOperation("||", left, right) as any,
 
       version: () => this.visitVersion() as any,
       end: () => this.visitEnd() as any,
 
-      index: (target: Value[], value: Value) =>
-        this.visitIndex(target as any, value) as any,
+      index: (target, value) => this.visitIndex(target as any, value) as any,
 
-      set: (target: Value, value: Value) =>
-        this.visitAssign(target, value) as any,
-      allocate: <T extends Definition | number | string>(
-        target: T[],
-        count: Value
-      ) => this.visitAllocate(target as any, count) as any,
-      forward: <T extends Definition | number | string>(
-        target: T[],
-        count: Value
-      ) => this.visitForward(target as any, count),
+      set: (target, value) => this.visitAssign(target, value) as any,
+      allocate: (target, count) =>
+        this.visitAllocate(target as any, count) as any,
+      grow: (target, index) =>
+        this.visitGrow(target as any, index as any) as any,
 
-      seek: (offset: Value) => this.visitSeek(offset),
+      forward: (target, count) => this.visitForward(target as any, count),
+      seek: (offset) => this.visitSeek(offset),
       tell: () => this.visitTell(),
 
-      walk: (target?: Value) => this.visitWalk(target) as any,
-      walkId: (id: Value, target?: Value) =>
-        this.visitWalkType(id, target) as any,
+      walk: (target) => this.visitWalk(target) as any,
+      walkId: (id, target) => this.visitWalkType(id, target) as any,
 
-      getId: (id: Value) => this.visitGetAssetFromMap(id) as any,
-      setId: (id: Value, target: Value) =>
-        this.visitSetAssetInMap(id, target) as any,
+      getId: (id) => this.visitGetAssetFromMap(id) as any,
+      setId: (id, type, target) =>
+        this.visitSetAssetInMap(id, type, target) as any,
 
-      error: (message: string) => this.visitError("ERROR", message),
-      todo: (message: string) => this.visitError("TODO", message),
+      error: (message) => this.visitError("ERROR", message),
+      todo: (message) => this.visitError("TODO", message),
     };
   }
 }

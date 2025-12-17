@@ -30,7 +30,7 @@ export class AssetReference extends Struct {
         (ctx) => ctx.isTrue(this.first),
         (ctx) => {
           ctx.walkId(this.type, this.asset);
-          ctx.setId(this.id, this.asset);
+          ctx.setId(this.id, this.type, this.asset);
         },
         (ctx) => ctx.set(this.asset, (ctx) => ctx.getId(this.id))
       );

@@ -16,6 +16,7 @@ export class Label extends Struct {
   size = field(U32);
   buffer = field(StringBuffer, {
     custom: (ctx) => {
+      ctx.set(this.buffer.consume, false);
       ctx.set(this.buffer.size, 20);
       ctx.walk();
     },
