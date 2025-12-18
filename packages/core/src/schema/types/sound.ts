@@ -1,5 +1,5 @@
 import { Class, Struct, field } from "../core";
-import { BOOL, F32, U8, U32 } from "./atomic";
+import { BOOL, F32, U8, U16, U32 } from "./atomic";
 import { U8Buffer } from "./buffer";
 import { Group } from "./group";
 import { Object } from "./object";
@@ -44,7 +44,7 @@ export class SoundBuffer extends Struct {
   disabled = field(BOOL, { skip: true });
   enabled = field(BOOL);
   sampleRate = field(U32, { condition: (ctx) => ctx.isTrue(this.enabled) });
-  F_2 = field((ctx) => ctx.array(U8, 18), {
+  fmtChunk = field(WAVFmtChunk, {
     condition: (ctx) =>
       ctx.and(
         (ctx) => ctx.isTrue(this.enabled),
@@ -62,4 +62,14 @@ export class SoundBuffer extends Struct {
       ctx.walk();
     },
   });
+}
+
+export class WAVFmtChunk extends Struct {
+  format = field(U16);
+  channels = field(U16);
+  sampleRate = field(U32);
+  byteRate = field(U32);
+  blockAlign = field(U16);
+  bitsPerSample = field(U16);
+  cbSize = field(U16);
 }

@@ -37,6 +37,12 @@ function buildContext(): string {
     typedef struct VisitorContext {
       void (*log)(struct VisitorContext *ctx, const char *scope, const char *message);
 
+      BOOL (*enterField)(struct VisitorContext *ctx, const char *name, I32 index);
+      void (*exitField)(struct VisitorContext *ctx, const char *name, I32 index);
+
+      BOOL (*enterType)(struct VisitorContext *ctx, const char *name);
+      void (*exitType)(struct VisitorContext *ctx, const char *name);
+
       ${getNameSortedDefinitions()
         .map((d) => {
           const backend = new VisitorFunctionDefinition();
@@ -129,13 +135,15 @@ class DefinitionVisitorImplementation extends CEmit {
 
     return cg`
       void visit${typeName}(VisitorContext *ctx, ${typeName} *self) {
-        if (ctx->enter${typeName}){
-          if (!ctx->enter${typeName}(ctx, self)) return;
-        }
+        if (ctx->enterType && !ctx->enterType(ctx, "${typeName}")) return;
+        if (ctx->enter${typeName} && !ctx->enter${typeName}(ctx, self)) goto exit;
 
         ${handler}
 
         if (ctx->exit${typeName}) ctx->exit${typeName}(ctx, self);
+
+      exit:
+        if (ctx->exitType) ctx->exitType(ctx, "${typeName}");
       }
     `;
   }
@@ -172,6 +180,27 @@ class DefinitionVisitorImplementation extends CEmit {
     `;
   }
 
+  private wrapWalk(target: string, payload: string) {
+    let fieldName = target;
+    let fieldIndex = "-1";
+
+    const match = target.match(/self->([^\[]+)(\[(.+)\])?/);
+    if (match) {
+      fieldName = match![1] || target;
+      fieldIndex = match?.[3] || "-1";
+    }
+
+    // Skip for parent
+    if (fieldName === "base") return payload;
+
+    return cg`
+      if (!ctx->enterField || ctx->enterField(ctx, "${fieldName}", ${fieldIndex})) {
+        ${payload}
+        if (ctx->exitField) ctx->exitField(ctx, "${fieldName}", ${fieldIndex});
+      }
+    `;
+  }
+
   protected emitWalk<T>(
     type: ArrayType<T> | BaseType<T>,
     target: string
@@ -185,16 +214,15 @@ class DefinitionVisitorImplementation extends CEmit {
         }
       `;
     } else {
-      return cg`
-        visit${this.getTypeName(type)}(ctx, &${target});
-      `;
+      return this.wrapWalk(
+        target,
+        `visit${this.getTypeName(type)}(ctx, &${target});`
+      );
     }
   }
 
   protected emitWalkType(typeId: string, target: string): string {
-    return cg`
-      visitType(ctx, ${typeId}, ${target});
-    `;
+    return this.wrapWalk(target, `visitType(ctx, ${typeId}, ${target});`);
   }
 
   protected emitAllocate<T>(

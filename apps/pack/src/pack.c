@@ -8,12 +8,18 @@
 #define ARENA_SIZE 32 * 1024 * 1024
 #define POOL_SIZE 8192
 
+#ifdef DISABLE_LOG
+#define LOG(format, ...)
+#else
+#define LOG(format, ...) printf(format, __VA_ARGS__)
+#endif
+
 typedef struct {
     VisitorContext ctx;
 
     AssetPool *pool;
     Arena *arena;
-    const char *inputPath;
+    const char *projectPath;
 } PackVisitor;
 
 static bool packVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
@@ -30,7 +36,7 @@ static bool packVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
 
     char path[1024];
     snprintf(path, sizeof(path), "%s/%s/%08X%08X_%s.%s", 
-        ctx->inputPath, 
+        ctx->projectPath, 
         folder,
         self->id.low,
         self->id.high,
@@ -54,7 +60,7 @@ static bool packVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
 
     poolInsert(ctx->pool, *(uint64_t *)&self->id, self->type, self->asset);
 
-    printf("pack: %s\n", path);
+    LOG("pack: %s\n", path);
     visitAssetFile((VisitorContext *)ctx, &assetFile);
     
     self->first = true;
@@ -69,8 +75,7 @@ VisitorContext PACK_VISITOR_CONTEXT = {
 int main(int argc, char **argv) {
     bool isError = false;
 
-
-    FILE *inFile = NULL;
+    FILE *file = NULL;
     FILE *outFile = NULL;
     Arena arena = { 0 };
     AssetPool pool = { 0 };
@@ -81,19 +86,19 @@ int main(int argc, char **argv) {
 
     if (argc < 2) goto usage;
 
-    const char *inputFile = argv[1];
+    const char *filePath = argv[1];
 
-    const char *inExt = strrchr(inputFile, '.');
-    if (inExt == NULL) goto usage;
+    const char *ext = strrchr(filePath, '.');
+    if (ext == NULL) goto usage;
 
-    bool isLoc = strcmp(inExt, ".loc") == 0;
+    bool isLoc = strcmp(ext, ".loc") == 0;
 
-    const char *inputPath = argc > 2 ? argv[2] : "out";
+    const char *projectPath = argc > 2 ? argv[2] : "out";
 
-    visitor.inputPath = inputPath;
+    visitor.projectPath = projectPath;
 
-    inFile = fopen(inputFile, "rb");
-    if (inFile == NULL) goto error;
+    file = fopen(filePath, "rb");
+    if (file == NULL) goto error;
 
     if (!poolNew(&pool, POOL_SIZE)) goto error;
     if (!arenaNew(&arena, ARENA_SIZE)) goto error;
@@ -102,7 +107,7 @@ int main(int argc, char **argv) {
     visitor.pool = &pool;
 
     StdDecoder decoder;
-    stdDecoder(&decoder, inFile, &pool, &arena);
+    stdDecoder(&decoder, file, &pool, &arena);
 
     AssetFile assetFile;
     LocalizationFile locFile;
@@ -118,7 +123,7 @@ int main(int argc, char **argv) {
     char path[1024];
 
     snprintf(path, sizeof(path), "%s/%s",
-        inputPath,
+        projectPath,
         "Pack"
     );
     mkdir(path, 0755);
@@ -126,26 +131,26 @@ int main(int argc, char **argv) {
     const char *folder = isLoc ? "Localizations" : getClassFolder(assetFile.content.header.type);
 
     snprintf(path, sizeof(path), "%s/%s/%s",
-        inputPath,
+        projectPath,
         "Pack",
         folder
     );
     mkdir(path, 0755);
 
     if (isLoc) {
-        const char *fileName = strrchr(inputFile, '/');
+        const char *fileName = strrchr(filePath, '/');
         if (fileName) fileName += 1;
-        else fileName = inputFile;
+        else fileName = filePath;
 
         snprintf(path, sizeof(path), "%s/%s/%s/%s",
-            inputPath,
+            projectPath,
             "Pack",
             folder,
             fileName
         );
     } else {
         snprintf(path, sizeof(path), "%s/%s/%s/%08X%08X.%s",
-            inputPath,
+            projectPath,
             "Pack",
             folder,
             assetFile.content.header.id.low,
@@ -160,9 +165,9 @@ int main(int argc, char **argv) {
     StdEncoder encoder;
     stdEncoder(&encoder, outFile, &pool);
 
-    printf("pack: %s\n", path);
+    LOG("pack: %s\n", path);
     if (isLoc) {
-       encodeLocalizationFile((EncoderContext *)&encoder, &locFile); 
+        encodeLocalizationFile((EncoderContext *)&encoder, &locFile); 
     } else {
         encodeAssetFile((EncoderContext *)&encoder, &assetFile);
     }
@@ -170,7 +175,7 @@ int main(int argc, char **argv) {
     goto done;
 
 usage:
-    printf("usage: %s input_file [input_path]\n", argv[0]);
+    printf("usage: %s file_path [project_path]\n", argv[0]);
 
 error:
     isError = true;
@@ -180,7 +185,7 @@ done:
     poolDestroy(&pool);
 
     if (outFile != NULL) fclose(outFile);
-    if (inFile != NULL) fclose(inFile);
+    if (file != NULL) fclose(file);
 
     return isError ? 1 : 0;
 }

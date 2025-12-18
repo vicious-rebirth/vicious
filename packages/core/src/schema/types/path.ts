@@ -41,6 +41,6 @@ export class PathFrame extends Struct {
   __offset = 0xec190;
 
   position = field(Vector3);
-  f_1 = field(U32);
+  angle = field(F32);
   key = field(F32);
 }

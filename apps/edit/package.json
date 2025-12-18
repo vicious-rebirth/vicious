@@ -1,0 +1,16 @@
+{
+  "name": "@repo/edit",
+  "version": "0.0.0",
+  "description": "Tool to modify properties of assets for Vicious Engine",
+  "scripts": {
+    "setup": "cmake -G Ninja -S . -B build",
+    "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build",
+    "build": "cmake --build build",
+    "edit": "build/edit"
+  },
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "@repo/c": "workspace:*"
+  }
+}

@@ -15,14 +15,14 @@ import {
 import { idToString } from "./util";
 
 export class AssetStore {
-  private store: Record<string, { type: string; asset: any }> = {};
+  public readonly entries: Record<string, { type: string; asset: any }> = {};
 
   public setId(id: ID, type: string, asset: any): void {
-    this.store[idToString(id)] = { type, asset };
+    this.entries[idToString(id)] = { type, asset };
   }
 
   public getId(id: ID): { type: string; asset: any } | null {
-    return this.store[idToString(id)] || null;
+    return this.entries[idToString(id)] || null;
   }
 }
 

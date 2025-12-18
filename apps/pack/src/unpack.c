@@ -8,6 +8,12 @@
 #define ARENA_SIZE 32 * 1024 * 1024
 #define POOL_SIZE 8192
 
+#ifdef DISABLE_LOG
+#define LOG(format, ...)
+#else
+#define LOG(format, ...) printf(format, __VA_ARGS__)
+#endif
+
 const AssetFile REFERENCE_FILE = {
     .magicHeader = 0xfaaffaaf,
     .version = 2,
@@ -49,8 +55,8 @@ const AssetFile REFERENCE_FILE = {
 typedef struct {
     VisitorContext ctx;
 
-    const char *inputFile;
-    const char *outputPath;
+    const char *filePath;
+    const char *projectPath;
 } PackVisitor;
 
 static bool unpackVisitorAssetFile(PackVisitor *ctx, AssetFile *self) {
@@ -58,11 +64,11 @@ static bool unpackVisitorAssetFile(PackVisitor *ctx, AssetFile *self) {
 
     const char *folder = getClassFolder(self->content.header.type);
 
-    snprintf(path, sizeof(path), "%s/%s", ctx->outputPath, folder);
+    snprintf(path, sizeof(path), "%s/%s", ctx->projectPath, folder);
     mkdir(path, 0755);
 
     snprintf(path, sizeof(path), "%s/%s/%08X%08X_%s.%s", 
-        ctx->outputPath, 
+        ctx->projectPath, 
         folder, 
         self->content.header.id.low,
         self->content.header.id.high,
@@ -76,7 +82,7 @@ static bool unpackVisitorAssetFile(PackVisitor *ctx, AssetFile *self) {
     StdEncoder encoder;
     stdEncoder(&encoder, file, NULL);
 
-    printf("unpack: %s\n", path);
+    LOG("unpack: %s\n", path);
     encodeAssetFile((EncoderContext *)&encoder, self);
 
     fclose(file);
@@ -87,15 +93,15 @@ static bool unpackVisitorAssetFile(PackVisitor *ctx, AssetFile *self) {
 static bool unpackVisitorLocalizationFile(PackVisitor *ctx, LocalizationFile *self) {
     char path[1024];
 
-    snprintf(path, sizeof(path), "%s/Localizations", ctx->outputPath);
+    snprintf(path, sizeof(path), "%s/Localizations", ctx->projectPath);
     mkdir(path, 0755);
 
-    const char *fileName = strrchr(ctx->inputFile, '/');
+    const char *fileName = strrchr(ctx->filePath, '/');
     if (fileName) fileName += 1;
-    else fileName = ctx->inputFile;
+    else fileName = ctx->filePath;
 
     snprintf(path, sizeof(path), "%s/Localizations/%s", 
-        ctx->outputPath,
+        ctx->projectPath,
         fileName
     );
 
@@ -105,7 +111,7 @@ static bool unpackVisitorLocalizationFile(PackVisitor *ctx, LocalizationFile *se
     StdEncoder encoder;
     stdEncoder(&encoder, file, NULL);
 
-    printf("unpack: %s\n", path);
+    LOG("unpack: %s\n", path);
     encodeLocalizationFile((EncoderContext *)&encoder, self);
 
     fclose(file);
@@ -145,14 +151,14 @@ int main(int argc, char **argv) {
 
     if (argc < 2) goto usage;
 
-    const char *inputFile = argv[1];
+    const char *filePath = argv[1];
 
-    const char *ext = strrchr(inputFile, '.');
+    const char *ext = strrchr(filePath, '.');
     if (ext == NULL) goto usage;
 
     bool isLoc = strcmp(ext, ".loc") == 0;
 
-    inFile = fopen(inputFile, "rb");
+    inFile = fopen(filePath, "rb");
     if (inFile == NULL) goto error;
 
     if (!poolNew(&pool, POOL_SIZE)) goto error;
@@ -161,13 +167,13 @@ int main(int argc, char **argv) {
     StdDecoder decoder;
     stdDecoder(&decoder, inFile, &pool, &arena);
 
-    const char *outputPath = argc > 2 ? argv[2] : "out";
-    mkdir(outputPath, 0755);
+    const char *projectPath = argc > 2 ? argv[2] : "out";
+    mkdir(projectPath, 0755);
 
     PackVisitor visitor = {
         .ctx = PACK_VISITOR_CONTEXT,
-        .inputFile = inputFile,
-        .outputPath = outputPath,
+        .filePath = filePath,
+        .projectPath = projectPath,
     };
 
     if (isLoc) {
@@ -182,7 +188,7 @@ int main(int argc, char **argv) {
 
     return 0;
 usage:
-    printf("usage: %s input_file [output_path]\n", argv[0]);
+    printf("usage: %s file_path [project_path]\n", argv[0]);
 
 error:
     arenaDestroy(&arena);

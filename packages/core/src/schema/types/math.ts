@@ -31,9 +31,21 @@ export class Matrix3 extends Struct {
   r22 = field(F32);
 }
 
+export class Rotation3 extends Struct {
+  r00 = field(F32);
+  r10 = field(F32);
+  r20 = field(F32);
+  r01 = field(F32);
+  r11 = field(F32);
+  r21 = field(F32);
+  r02 = field(F32);
+  r12 = field(F32);
+  r22 = field(F32);
+}
+
 export class Transform extends Struct {
   position = field(Vector3);
-  rotation = field(Matrix3);
+  rotation = field(Rotation3);
 }
 
 export class TransformList extends Struct {
