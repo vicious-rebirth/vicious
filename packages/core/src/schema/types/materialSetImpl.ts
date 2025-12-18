@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { MaterialSet } from "./materialSet";
 
 export class MaterialSetImpl extends Class {

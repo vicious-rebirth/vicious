@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { FN_0x224c0, FN_0x22080 } from "./fns";
 import { V300 } from "./v300";
 

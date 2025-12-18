@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { ExpressionList } from "./expression";
 import { V343 } from "./v343";
 

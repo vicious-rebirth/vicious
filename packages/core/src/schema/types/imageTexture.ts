@@ -1,6 +1,5 @@
 import { Class, Struct, field } from "../core";
-
-import { U32, U8, BOOL } from "./atomic";
+import { BOOL, U8, U32 } from "./atomic";
 import { U8Buffer } from "./buffer";
 import { Texture } from "./texture";
 

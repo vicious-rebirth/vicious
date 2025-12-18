@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { Action } from "./action";
 import { AssetReferenceSuffix } from "./asset";
 import { U32 } from "./atomic";

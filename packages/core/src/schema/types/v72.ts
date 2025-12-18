@@ -1,6 +1,5 @@
 import { Class, field } from "../core";
-
-import { F32, BOOL } from "./atomic";
+import { BOOL, F32 } from "./atomic";
 import { Base } from "./base";
 
 export class V72 extends Class {

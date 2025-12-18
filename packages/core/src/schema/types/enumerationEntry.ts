@@ -1,6 +1,5 @@
 import { Class, field } from "../core";
-
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 import { Named } from "./named";
 
 export class EnumerationEntry extends Class {

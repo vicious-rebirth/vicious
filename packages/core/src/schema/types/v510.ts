@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { U32 } from "./atomic";
 import { V109 } from "./v109";
 

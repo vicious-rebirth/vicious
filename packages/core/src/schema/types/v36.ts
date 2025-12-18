@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { SurfaceSet } from "./surfaceSet";
 
 export class V36 extends Class {

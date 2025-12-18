@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { BOOL } from "./atomic";
 import { Empty } from "./empty";
 import { Texture } from "./texture";

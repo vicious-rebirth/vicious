@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { Action } from "./action";
 import {
   AssetFromType,
@@ -7,7 +6,7 @@ import {
   AssetFromTypeWrap,
   AssetReference,
 } from "./asset";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 
 export class V194 extends Class {
   __id = 194;

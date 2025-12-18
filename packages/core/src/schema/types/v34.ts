@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { F32 } from "./atomic";
 import { GeomTemplate } from "./geomTemplate";
 

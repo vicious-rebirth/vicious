@@ -1,10 +1,11 @@
 import { writeFile } from "fs/promises";
-import { buildDecoderDeclaration, buildDecoderImplementation } from "./decoder";
-import { buildTypes } from "./type";
 import * as path from "path";
+
+import { buildDecoderDeclaration, buildDecoderImplementation } from "./decoder";
 import { buildEncoderDeclaration, buildEncoderImplementation } from "./encoder";
-import { buildVisitorDeclaration, buildVisitorImplementation } from "./visitor";
+import { buildTypes } from "./type";
 import { buildUtilDeclaration, buildUtilImplementation } from "./util";
+import { buildVisitorDeclaration, buildVisitorImplementation } from "./visitor";
 
 async function main() {
   await Promise.all([

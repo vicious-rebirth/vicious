@@ -1,5 +1,4 @@
 import { Class, Struct, field } from "../core";
-
 import { BOOL } from "./atomic";
 import { U8Buffer } from "./buffer";
 import { V23 } from "./v23";

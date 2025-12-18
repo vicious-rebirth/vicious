@@ -1,6 +1,6 @@
-import * as schema from "./schema/types";
-import { Definition, Class, Atom, Struct } from "./schema/core";
 import { EmptyEmit } from "./backend";
+import { Atom, Class, Definition, Struct } from "./schema/core";
+import * as schema from "./schema/types";
 
 export function cg(strings: TemplateStringsArray, ...values: unknown[]) {
   let result = "";

@@ -1,3 +1,5 @@
+import { TSEmit } from "./emit";
+import { EmptyEmit } from "@repo/core/backend";
 import {
   ArrayType,
   Atom,
@@ -7,13 +9,11 @@ import {
   ListType,
   U32,
 } from "@repo/core/schema";
-import { TSEmit } from "./emit";
 import {
   cg,
   getIDSortedClasses,
   getNameSortedDefinitions,
 } from "@repo/core/util";
-import { EmptyEmit } from "@repo/core/backend";
 
 export function buildVisitor(): string {
   return buildClass();

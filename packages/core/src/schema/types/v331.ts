@@ -1,8 +1,7 @@
 import { Class, field } from "../core";
-
 import { Action } from "./action";
 import { AssetFromTypeWrap } from "./asset";
-import { U32, U8 } from "./atomic";
+import { U8, U32 } from "./atomic";
 
 export class V331 extends Class {
   __id = 331;

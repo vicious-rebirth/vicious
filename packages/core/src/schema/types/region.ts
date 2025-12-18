@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { World } from "./world";
 
 export class Region extends Class {

@@ -1,3 +1,5 @@
+import { CEmit } from "./emit";
+import { EmptyEmit } from "@repo/core/backend";
 import {
   ArrayType,
   Atom,
@@ -13,8 +15,6 @@ import {
   getIDSortedClasses,
   getNameSortedDefinitions,
 } from "@repo/core/util";
-import { CEmit } from "./emit";
-import { EmptyEmit } from "@repo/core/backend";
 
 export function buildDecoderDeclaration(): string {
   return [buildDeclarations().join("\n")].join("\n");

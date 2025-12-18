@@ -1,7 +1,6 @@
 import { Class, Struct, field } from "../core";
-
 import { AssetReferenceSuffix } from "./asset";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 import { Sound } from "./sound";
 
 export class VoiceOver extends Class {

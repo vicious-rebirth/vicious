@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { U8 } from "./atomic";
 import { ExpressionWrap } from "./expression";
 

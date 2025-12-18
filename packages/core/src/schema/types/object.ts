@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { Named } from "./named";
 
 export class Object extends Class {

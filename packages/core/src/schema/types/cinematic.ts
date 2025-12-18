@@ -1,16 +1,15 @@
 import { Class, field } from "../core";
-import { Object } from "./object";
-
 import {
   AssetFromTypeSizedList,
   AssetReference,
   AssetReferenceSuffix,
 } from "./asset";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 import { Base } from "./base";
 import { StringBuffer } from "./buffer";
 import { Group } from "./group";
 import { LocalizedObject } from "./localizedObject";
+import { Object } from "./object";
 import { Script } from "./script";
 
 export class CinematicGroup extends Class {

@@ -1,7 +1,6 @@
 import { Class, field } from "../core";
-
 import { AssetReference } from "./asset";
-import { U32, U16 } from "./atomic";
+import { U16, U32 } from "./atomic";
 import { Base } from "./base";
 import { Label } from "./label";
 

@@ -1,6 +1,5 @@
 import { Class, Struct, deprecated, field } from "../core";
-
-import { I32, U32, U16, U8, BOOL } from "./atomic";
+import { BOOL, I32, U8, U16, U32 } from "./atomic";
 import { U8Buffer } from "./buffer";
 import { Label } from "./label";
 import { Matrix3, Transform, TransformList, Vector3 } from "./math";

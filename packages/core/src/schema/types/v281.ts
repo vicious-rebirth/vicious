@@ -1,12 +1,11 @@
 import { Class, deprecated, field } from "../core";
-
 import { Action } from "./action";
 import {
   AssetFromType,
   AssetFromTypeWrap,
   AssetReferenceSuffix,
 } from "./asset";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 import { FN_0x5e2d0 } from "./fns";
 import { Label } from "./label";
 import { Script } from "./script";

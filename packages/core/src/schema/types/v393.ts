@@ -1,7 +1,6 @@
 import { Class, field } from "../core";
-
 import { Action } from "./action";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 import { Vector3 } from "./math";
 import { V301 } from "./v301";
 

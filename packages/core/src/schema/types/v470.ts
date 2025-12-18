@@ -1,7 +1,6 @@
 import { Class, field } from "../core";
-
 import { AssetFromType, AssetReferenceSuffix } from "./asset";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 import { FN_0x5e2d0 } from "./fns";
 import { Script } from "./script";
 import { V160 } from "./v160";

@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { BOOL } from "./atomic";
 import { V108 } from "./v108";
 import { V301 } from "./v301";

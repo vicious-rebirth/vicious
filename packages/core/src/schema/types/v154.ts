@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { AssetFromTypeSizedList, AssetReferenceList } from "./asset";
 import { F32, U32 } from "./atomic";
 import { Base } from "./base";

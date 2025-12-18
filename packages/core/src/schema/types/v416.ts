@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { Action } from "./action";
 import { AssetFromTypeWrap } from "./asset";
 import { V166 } from "./v166";

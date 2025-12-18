@@ -1,5 +1,4 @@
 import { Struct, field } from "../core";
-
 import { U32 } from "./atomic";
 
 export class ID extends Struct {

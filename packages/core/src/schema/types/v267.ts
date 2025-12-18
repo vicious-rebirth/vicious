@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { Action } from "./action";
 import { AssetFromType, AssetFromTypeSizedList } from "./asset";
 import { FN_0x21f40 } from "./fns";

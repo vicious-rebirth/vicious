@@ -1,7 +1,6 @@
 import { Class, field } from "../core";
-
 import { AssetReference } from "./asset";
-import { F32, U32, BOOL } from "./atomic";
+import { BOOL, F32, U32 } from "./atomic";
 import { V34 } from "./v34";
 
 export class V53 extends Class {

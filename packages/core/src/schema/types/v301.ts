@@ -1,7 +1,6 @@
 import { Class, field } from "../core";
-
 import { AssetReference } from "./asset";
-import { U32, U8 } from "./atomic";
+import { U8, U32 } from "./atomic";
 import { FN_0x21c40, FN_0x22080 } from "./fns";
 import { V300 } from "./v300";
 import { V421 } from "./v421";

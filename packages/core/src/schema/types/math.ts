@@ -1,5 +1,4 @@
 import { Struct, field } from "../core";
-
 import { F32, U8, U32 } from "./atomic";
 
 export class Color extends Struct {

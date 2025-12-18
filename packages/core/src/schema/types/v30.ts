@@ -1,7 +1,6 @@
 import { Class, deprecated, field } from "../core";
-
 import { AssetReference, AssetReferenceSizedList } from "./asset";
-import { F32, BOOL } from "./atomic";
+import { BOOL, F32 } from "./atomic";
 import { F32Buffer } from "./buffer";
 import { V33 } from "./v33";
 

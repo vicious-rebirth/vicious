@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { Action } from "./action";
 import { ExpressionList } from "./expression";
 import { FN_0x22520 } from "./fns";

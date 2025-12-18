@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { AssetReference } from "./asset";
 import { Empty } from "./empty";
 import { V19 } from "./v19";

@@ -1,8 +1,7 @@
 import { Class, deprecated, field } from "../core";
-
 import { Action } from "./action";
 import { AssetFromType, AssetFromTypeSizedList } from "./asset";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 import { FN_0x21f40 } from "./fns";
 import { V301 } from "./v301";
 

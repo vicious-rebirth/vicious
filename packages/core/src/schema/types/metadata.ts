@@ -1,5 +1,4 @@
 import { CodeContext, Struct, field } from "../core";
-
 import { U32 } from "./atomic";
 
 export class Metadata extends Struct {

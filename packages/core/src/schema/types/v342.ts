@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { Action } from "./action";
 import { AssetFromTypeWrap } from "./asset";
 import { U32 } from "./atomic";

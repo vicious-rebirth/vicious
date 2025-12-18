@@ -1,8 +1,7 @@
 import { Class, deprecated, field } from "../core";
-
 import { Action } from "./action";
 import { AssetFromTypeWrap, AssetReference } from "./asset";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 import { Label } from "./label";
 import { V301 } from "./v301";
 import { V333 } from "./v333";

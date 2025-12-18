@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { Action } from "./action";
 import { AssetFromType, AssetReference } from "./asset";
 import { ExpressionList } from "./expression";

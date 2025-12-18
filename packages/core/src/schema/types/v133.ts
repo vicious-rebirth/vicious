@@ -1,7 +1,6 @@
 import { Class, Struct, deprecated, field } from "../core";
-
 import { AssetFromType, AssetReferenceSizedList } from "./asset";
-import { F32, U32, U16, U8 } from "./atomic";
+import { F32, U8, U16, U32 } from "./atomic";
 import { V132 } from "./v132";
 
 export class V133 extends Class {

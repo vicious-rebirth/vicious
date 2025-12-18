@@ -1,7 +1,6 @@
 import { Class, deprecated, field } from "../core";
-
 import { AssetReference, AssetReferenceSuffixSizedList } from "./asset";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 import { Group } from "./group";
 import { Object } from "./object";
 import { Script } from "./script";

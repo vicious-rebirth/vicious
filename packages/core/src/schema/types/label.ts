@@ -1,6 +1,5 @@
 import { Struct, field } from "../core";
-
-import { U32, U16 } from "./atomic";
+import { U16, U32 } from "./atomic";
 import { StringBuffer } from "./buffer";
 
 export class LabelID extends Struct {

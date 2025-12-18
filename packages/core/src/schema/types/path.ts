@@ -1,5 +1,4 @@
 import { Class, Struct, field } from "../core";
-
 import { F32, U32 } from "./atomic";
 import { Group } from "./group";
 import { Vector3 } from "./math";

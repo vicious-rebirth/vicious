@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { Action } from "./action";
 import { AssetFromTypeWrap, AssetReference } from "./asset";
 import { BOOL } from "./atomic";

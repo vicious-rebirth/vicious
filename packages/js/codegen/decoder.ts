@@ -1,3 +1,5 @@
+import { TSEmit } from "./emit";
+import { EmptyEmit } from "@repo/core/backend";
 import {
   ArrayType,
   Atom,
@@ -12,8 +14,6 @@ import {
   getIDSortedClasses,
   getNameSortedDefinitions,
 } from "@repo/core/util";
-import { TSEmit } from "./emit";
-import { EmptyEmit } from "@repo/core/backend";
 
 export function buildDecoder(): string {
   return [buildContext(), buildClass()].join("\n\n");

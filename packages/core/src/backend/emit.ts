@@ -1,18 +1,18 @@
 import {
+  ArrayType,
   Atom,
+  BaseType,
   Class,
-  Definition,
-  Struct,
   CodeContext,
+  Definition,
   FieldReference,
+  IndexReference,
+  ListType,
+  PropertyReference,
+  Struct,
   Type,
   Value,
   VariableReference,
-  PropertyReference,
-  IndexReference,
-  ArrayType,
-  ListType,
-  BaseType,
 } from "../schema/core";
 import { Backend } from "./core";
 

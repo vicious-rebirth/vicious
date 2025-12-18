@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { U32 } from "./atomic";
 import { Group } from "./group";
 import { Object } from "./object";

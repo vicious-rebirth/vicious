@@ -1,6 +1,5 @@
 import { Class, Struct, field } from "../core";
-
-import { U32, U16 } from "./atomic";
+import { U16, U32 } from "./atomic";
 import { Base } from "./base";
 
 export class V442 extends Class {

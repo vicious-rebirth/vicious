@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { AssetFromTypeWrap } from "./asset";
 import { V109 } from "./v109";
 import { V301 } from "./v301";

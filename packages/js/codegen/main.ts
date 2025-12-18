@@ -4,8 +4,8 @@ import path from "path";
 import { buildDecoder } from "./decoder";
 import { buildEncoder } from "./encoder";
 import { buildTypes } from "./type";
-import { buildVisitor } from "./visitor";
 import { buildUtils } from "./util";
+import { buildVisitor } from "./visitor";
 
 function main() {
   const out = [

@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { AssetFromTypeSizedList } from "./asset";
 import { U16 } from "./atomic";
 import { V260 } from "./v260";

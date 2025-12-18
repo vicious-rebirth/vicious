@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { F32, U32 } from "./atomic";
 import { V154 } from "./v154";
 

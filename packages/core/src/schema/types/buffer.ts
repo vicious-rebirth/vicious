@@ -1,6 +1,5 @@
 import { Struct, field } from "../core";
-
-import { F32, U32, U16, U8, BOOL } from "./atomic";
+import { BOOL, F32, U8, U16, U32 } from "./atomic";
 
 export class U8Buffer extends Struct {
   consume = field(BOOL, { skip: true });

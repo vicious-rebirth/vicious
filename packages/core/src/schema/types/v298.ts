@@ -1,5 +1,4 @@
 import { Class, Struct, deprecated, field } from "../core";
-
 import { V19 } from "./v19";
 
 export class V298 extends Class {

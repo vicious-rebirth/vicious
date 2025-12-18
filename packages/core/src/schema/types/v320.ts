@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { AssetFromType } from "./asset";
 import { BOOL } from "./atomic";
 import { FN_0x21f40 } from "./fns";

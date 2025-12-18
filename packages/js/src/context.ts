@@ -1,16 +1,16 @@
 import {
-  ID,
-  U32,
-  DecoderContext,
-  BOOL,
-  I8,
-  U8,
-  I16,
-  U16,
-  I32,
-  F32,
   ANY,
+  BOOL,
+  DecoderContext,
   EncoderContext,
+  F32,
+  I8,
+  I16,
+  I32,
+  ID,
+  U8,
+  U16,
+  U32,
 } from "./generated";
 import { idToString } from "./util";
 

@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { Action } from "./action";
 import { BOOL } from "./atomic";
 import { Label } from "./label";

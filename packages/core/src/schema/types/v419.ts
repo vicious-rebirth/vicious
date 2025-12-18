@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { Base } from "./base";
 import { Script } from "./script";
 

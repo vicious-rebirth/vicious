@@ -1,3 +1,6 @@
+import { readFile, writeFile } from "fs/promises";
+import { parseArgs } from "util";
+
 import {
   ArrayBufferReader,
   ArrayBufferWriter,
@@ -5,8 +8,6 @@ import {
   Decoder,
   Encoder,
 } from "@repo/js";
-import { parseArgs } from "util";
-import { readFile, writeFile } from "fs/promises";
 
 async function main(): Promise<void> {
   const { positionals } = parseArgs({

@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { AssetReferenceSizedList } from "./asset";
 import { Group } from "./group";
 import { Object } from "./object";

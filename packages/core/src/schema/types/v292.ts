@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { V19 } from "./v19";
 
 export class V292 extends Class {

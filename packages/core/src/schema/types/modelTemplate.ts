@@ -1,12 +1,11 @@
 import { Class, field } from "../core";
-
 import {
   AssetFromType,
   AssetFromTypeSizedList,
   AssetReference,
   AssetReferenceSizedList,
 } from "./asset";
-import { F32, U32, BOOL } from "./atomic";
+import { BOOL, F32, U32 } from "./atomic";
 import { LabelList } from "./label";
 import { V34 } from "./v34";
 

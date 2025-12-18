@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { Base } from "./base";
 
 export class V391 extends Class {

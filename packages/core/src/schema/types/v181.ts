@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { AssetFromTypeSizedList, AssetReference } from "./asset";
 import { U32 } from "./atomic";
 import { Named } from "./named";

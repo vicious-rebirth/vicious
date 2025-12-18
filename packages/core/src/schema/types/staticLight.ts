@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { F32, I32 } from "./atomic";
 import { Group } from "./group";
 import { Transform } from "./math";

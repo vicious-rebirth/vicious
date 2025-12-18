@@ -1,7 +1,6 @@
 import { Class, Struct, field } from "../core";
-
 import { AssetReference } from "./asset";
-import { ANY, U32, BOOL } from "./atomic";
+import { ANY, BOOL, U32 } from "./atomic";
 import { Base } from "./base";
 
 export class Group extends Class {

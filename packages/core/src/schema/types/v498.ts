@@ -1,7 +1,6 @@
 import { Class, field } from "../core";
-
 import { AssetFromTypeWrap } from "./asset";
-import { U32, U8 } from "./atomic";
+import { U8, U32 } from "./atomic";
 import { FN_0x5e2d0 } from "./fns";
 import { Label } from "./label";
 import { V380 } from "./v380";

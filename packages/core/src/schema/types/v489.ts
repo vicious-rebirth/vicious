@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { FN_0x22080, FN_0x22520 } from "./fns";
 import { V300 } from "./v300";
 

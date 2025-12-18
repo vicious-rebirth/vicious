@@ -1,18 +1,18 @@
-import { U32 } from "../schema/types/atomic";
 import {
-  FieldReference,
-  Definition,
-  Struct,
+  Atom,
   Class,
+  CodeContext,
+  Definition,
+  FieldReference,
+  IndexReference,
+  PropertyReference,
+  Struct,
   Type,
   TypeContext,
-  Atom,
-  CodeContext,
   Value,
   VariableReference,
-  PropertyReference,
-  IndexReference,
 } from "../schema/core";
+import { U32 } from "../schema/types/atomic";
 
 export abstract class Backend {
   public readonly context = this.buildContext();

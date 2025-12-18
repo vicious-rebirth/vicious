@@ -1,5 +1,4 @@
 import { Class, Struct, deprecated, field } from "../core";
-
 import { AssetReference } from "./asset";
 import { I32, U8 } from "./atomic";
 import { U8Buffer } from "./buffer";

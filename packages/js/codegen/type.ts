@@ -1,3 +1,4 @@
+import { EmptyEmit } from "@repo/core/backend";
 import {
   ArrayType,
   BaseType,
@@ -6,7 +7,6 @@ import {
   ListType,
   Struct,
 } from "@repo/core/schema";
-import { EmptyEmit } from "@repo/core/backend";
 import { cg, getNameSortedDefinitions } from "@repo/core/util";
 
 export function buildTypes(): string {

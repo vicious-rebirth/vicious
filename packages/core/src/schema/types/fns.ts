@@ -1,7 +1,6 @@
 import { Struct, field } from "../core";
-
 import { AssetFromType, AssetReference } from "./asset";
-import { I32, U32, U8 } from "./atomic";
+import { I32, U8, U32 } from "./atomic";
 import { V421 } from "./v421";
 
 export class FN_0x22520 extends Struct {

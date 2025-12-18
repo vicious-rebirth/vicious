@@ -1,7 +1,6 @@
 import { Class, deprecated, field } from "../core";
-
 import { AssetFromTypeWrap } from "./asset";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 import { Label } from "./label";
 import { V108 } from "./v108";
 import { V301 } from "./v301";

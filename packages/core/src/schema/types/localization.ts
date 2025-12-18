@@ -1,7 +1,6 @@
 import { Struct, field } from "../core";
-
 import { AssetReference } from "./asset";
-import { U32, BOOL } from "./atomic";
+import { BOOL, U32 } from "./atomic";
 
 export class LocalizationTable extends Struct {
   __offset = 0xca590;

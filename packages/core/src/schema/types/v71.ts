@@ -1,6 +1,5 @@
 import { Class, Struct, deprecated, field } from "../core";
-
-import { U32, U8 } from "./atomic";
+import { U8, U32 } from "./atomic";
 import { Base } from "./base";
 
 export class V71 extends Class {

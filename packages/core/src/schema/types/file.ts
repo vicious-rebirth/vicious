@@ -1,5 +1,4 @@
 import { Struct, field } from "../core";
-
 import { ANY, U32 } from "./atomic";
 import { ID } from "./id";
 import { Label } from "./label";

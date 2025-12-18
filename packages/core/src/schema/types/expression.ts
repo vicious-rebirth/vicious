@@ -1,5 +1,4 @@
 import { Class, Struct, field } from "../core";
-
 import { AssetFromTypeSizedList } from "./asset";
 import { Base } from "./base";
 

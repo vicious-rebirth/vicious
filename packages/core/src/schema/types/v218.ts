@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { AssetReferenceSuffixSizedList } from "./asset";
 import { V217 } from "./v217";
 

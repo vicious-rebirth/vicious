@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { Action } from "./action";
 import { FN_0x22520 } from "./fns";
 

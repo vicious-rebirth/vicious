@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { AssetFromTypeSizedList } from "./asset";
 import { GroupList } from "./group";
 import { IDList } from "./id";

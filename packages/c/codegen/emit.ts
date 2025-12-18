@@ -1,10 +1,10 @@
+import { Emit } from "@repo/core/backend";
 import {
   Class,
-  Struct,
   FieldReference,
+  Struct,
   VariableReference,
 } from "@repo/core/schema";
-import { Emit } from "@repo/core/backend";
 import { cg } from "@repo/core/util";
 
 export abstract class CEmit extends Emit {

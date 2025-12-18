@@ -1,8 +1,7 @@
 import { Class, field } from "../core";
-
 import { Action } from "./action";
 import { AssetFromTypeWrap, AssetReference } from "./asset";
-import { F32, BOOL } from "./atomic";
+import { BOOL, F32 } from "./atomic";
 
 export class CreateTemporaryBillboardAction extends Class {
   __id = 165;

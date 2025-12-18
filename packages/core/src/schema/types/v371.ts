@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { AssetReferenceSizedList } from "./asset";
 import { U32 } from "./atomic";
 import { V512 } from "./v512";

@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { Script } from "./script";
 import { Surface } from "./surface";
 

@@ -1,5 +1,4 @@
 import { Class, deprecated, field } from "../core";
-
 import { Base } from "./base";
 import { ExpressionList } from "./expression";
 import { ID } from "./id";

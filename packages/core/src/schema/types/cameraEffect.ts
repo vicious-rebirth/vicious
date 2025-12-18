@@ -1,7 +1,6 @@
 import { Class, field } from "../core";
-
 import { AssetFromTypeSizedList } from "./asset";
-import { F32, BOOL } from "./atomic";
+import { BOOL, F32 } from "./atomic";
 import { Group } from "./group";
 import { Object } from "./object";
 

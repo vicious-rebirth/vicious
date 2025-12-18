@@ -1,5 +1,4 @@
 import { Class, Struct, deprecated, field } from "../core";
-
 import {
   AssetFromTypeSizedList,
   AssetReference,
@@ -7,7 +6,7 @@ import {
   AssetReferenceSuffixList,
   AssetReferenceSuffixSizedList,
 } from "./asset";
-import { I32, U32, U8 } from "./atomic";
+import { I32, U8, U32 } from "./atomic";
 import { Group } from "./group";
 import { Label } from "./label";
 import { Transform } from "./math";

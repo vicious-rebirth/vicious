@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { AssetFromTypeWrap } from "./asset";
 import { F32, U32 } from "./atomic";
 import { FN_0x5e2d0 } from "./fns";

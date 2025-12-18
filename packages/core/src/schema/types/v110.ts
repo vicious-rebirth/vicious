@@ -1,5 +1,4 @@
 import { Class, field } from "../core";
-
 import { AssetFromType } from "./asset";
 import { U32 } from "./atomic";
 import { V108 } from "./v108";
