@@ -80,7 +80,7 @@ size_t poolKey(const AssetPool *pool, uint64_t id) {
     return id % pool->capacity;
 }
 
-void *poolGet(const AssetPool *pool, uint64_t id) {
+void *poolGetAsset(const AssetPool *pool, uint64_t id) {
     size_t key = poolKey(pool, id);
 
     const AssetPool *poolPtr = pool;
@@ -99,6 +99,27 @@ void *poolGet(const AssetPool *pool, uint64_t id) {
     }
 
     return NULL;
+}
+
+uint32_t poolGetType(const AssetPool *pool, uint64_t id) {
+    size_t key = poolKey(pool, id);
+
+    const AssetPool *poolPtr = pool;
+    while (poolPtr != NULL) {
+        for (size_t i = 0; i < pool->capacity; i++) {
+            AssetPoolEntry *entry = &pool->entries[(i + key) % pool->capacity];
+            if (entry->state == 0) break;
+
+            if (
+                entry->state == 1
+                && entry->id == id
+            ) return entry->type;
+        }
+
+        poolPtr = poolPtr->parent;
+    }
+
+    return 0;
 }
 
 bool poolInsert(AssetPool *pool, uint64_t id, uint32_t type, void *asset) {

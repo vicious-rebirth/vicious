@@ -35,7 +35,7 @@ function buildDeclarations(): string[] {
 function buildContext(): string {
   return cg`
     typedef struct VisitorContext {
-      void (*error)(struct VisitorContext *ctx, const char *scope, const char *message);
+      void (*log)(struct VisitorContext *ctx, const char *scope, const char *message);
 
       ${getNameSortedDefinitions()
         .map((d) => {
@@ -129,13 +129,13 @@ class DefinitionVisitorImplementation extends CEmit {
 
     return cg`
       void visit${typeName}(VisitorContext *ctx, ${typeName} *self) {
-        if (ctx->enter${typeName} != 0){
+        if (ctx->enter${typeName}){
           if (!ctx->enter${typeName}(ctx, self)) return;
         }
 
         ${handler}
 
-        if (ctx->exit${typeName} != 0) ctx->exit${typeName}(ctx, self);
+        if (ctx->exit${typeName}) ctx->exit${typeName}(ctx, self);
       }
     `;
   }
@@ -145,7 +145,7 @@ class DefinitionVisitorImplementation extends CEmit {
 
     return cg`
       void visit${typeName}(VisitorContext *ctx, ${typeName} *self) {
-        if (ctx->visit${typeName} != 0) ctx->visit${typeName}(ctx, self);
+        if (ctx->visit${typeName}) ctx->visit${typeName}(ctx, self);
       }
     `;
   }
@@ -244,7 +244,11 @@ class DefinitionVisitorImplementation extends CEmit {
   }
 
   protected emitEnd(): string {
-    return "0";
+    return "1";
+  }
+
+  protected emitLog(scope: string, message: string): string {
+    return cg`if (ctx->log) ctx->log(ctx, "${scope}", "${message}");`;
   }
 }
 

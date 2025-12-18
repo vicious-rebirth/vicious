@@ -9,14 +9,17 @@ import { parseArgs } from "util";
 import { readFile, writeFile } from "fs/promises";
 
 async function main(): Promise<void> {
-  const { values } = parseArgs({
-    options: {
-      input: { type: "string", short: "i" },
-      output: { type: "string", short: "o" },
-    },
+  const { positionals } = parseArgs({
+    allowPositionals: true,
   });
 
-  const { input, output } = values;
+  const [input, output] = positionals;
+
+  if (!input || !output) {
+    console.log(`usage: test input_file output_file`);
+
+    return;
+  }
 
   const store = new AssetStore();
 
@@ -34,6 +37,7 @@ async function main(): Promise<void> {
     encoder.encodeLocalizationFile(out);
   } else {
     const out = decoder.decodeAssetFile();
+    debugger;
     encoder.encodeAssetFile(out);
   }
 

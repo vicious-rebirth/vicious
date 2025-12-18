@@ -35,7 +35,7 @@ function buildDeclarations(): string[] {
 function buildContext(): string {
   return cg`
     typedef struct EncoderContext {
-      void (*error)(struct EncoderContext *ctx, const char *scope, const char *message);
+      void (*log)(struct EncoderContext *ctx, const char *scope, const char *message);
 
       U32 (*tell)(struct EncoderContext *ctx);
       void (*seek)(struct EncoderContext *ctx, U32 offset);
@@ -233,7 +233,7 @@ class DefinitionEncoderImplementation extends CEmit {
   }
 
   protected emitEnd(): string {
-    return "0";
+    return "1";
   }
 }
 

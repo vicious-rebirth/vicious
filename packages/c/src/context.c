@@ -1,6 +1,6 @@
 #include <vicious/context.h>
 
-static void stdDecoderError(StdDecoder *self, const char *scope, const char *message) {
+static void stdDecoderLog(StdDecoder *self, const char *scope, const char *message) {
     printf("%s: %s\n", scope, message);
 }
 
@@ -13,7 +13,7 @@ static void stdDecoderSeek(StdDecoder *self, U32 offset) {
 }
 
 static void *stdDecoderGetId(StdDecoder *self, ID id) {
-    return poolGet(self->pool, *(uint64_t *)&id);
+    return poolGetAsset(self->pool, *(uint64_t *)&id);
 }
 
 static void stdDecoderSetId(StdDecoder *self, ID id, U32 typeId, void *asset) {
@@ -33,7 +33,7 @@ static void stdDecoderRead(StdDecoder *self, void *ptr, U32 size, U32 count) {
 }
 
 static DecoderContext STD_DECODER = {
-    .error = (void *)stdDecoderError,
+    .log = (void *)stdDecoderLog,
     .tell = (void *)stdDecoderTell,
     .seek = (void *)stdDecoderSeek,
     .getId = (void *)stdDecoderGetId,
@@ -49,7 +49,7 @@ void stdDecoder(StdDecoder *self, FILE *file, AssetPool *pool, Arena *arena) {
     self->pool = pool;
 }
 
-static void stdEncoderError(StdEncoder *self, const char *scope, const char *message) {
+static void stdEncoderLog(StdEncoder *self, const char *scope, const char *message) {
     printf("%s: %s\n", scope, message);
 }
 
@@ -62,7 +62,7 @@ static void stdEncoderSeek(StdEncoder *self, U32 offset) {
 }
 
 static void *stdEncoderGetId(StdEncoder *self, ID id) {
-    return poolGet(self->pool, *(uint64_t *)&id);
+    return poolGetAsset(self->pool, *(uint64_t *)&id);
 }
 
 static void stdEncoderWrite(StdEncoder *self, void *ptr, U32 size, U32 count) {
@@ -70,7 +70,7 @@ static void stdEncoderWrite(StdEncoder *self, void *ptr, U32 size, U32 count) {
 }
 
 static EncoderContext STD_ENCODER = {
-    .error = (void *)stdEncoderError,
+    .log = (void *)stdEncoderLog,
     .tell = (void *)stdEncoderTell,
     .seek = (void *)stdEncoderSeek,
     .getId = (void *)stdEncoderGetId,

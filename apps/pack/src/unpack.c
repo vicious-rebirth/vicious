@@ -8,41 +8,75 @@
 #define ARENA_SIZE 32 * 1024 * 1024
 #define POOL_SIZE 8192
 
+const AssetFile REFERENCE_FILE = {
+    .magicHeader = 0xfaaffaaf,
+    .version = 2,
+    .content = {
+        .metadata = {
+            .header = {
+                .magic = 0xbbbbbbbb,
+                .version = 1,
+                .end = 0
+            },
+            .footer = {
+                .magic = 0xbebebebe
+            }
+        },
+        .header = {
+           .metadata = {
+                .header = {
+                    .magic = 0xbbbbbbbb,
+                    .version = 1,
+                    .end = 0
+                },
+                .footer = {
+                    .magic = 0xbebebebe
+                }
+           },
+           .offset = 0x20,
+           // TODO: This changes
+           .f_1 = 0,
+           .id = { 0 },
+           .label = { 0 },
+           .type = 0,
+           .f_2 = 0
+        },
+        .asset = NULL
+    },
+    .magicFooter = 0xfeeffeef 
+};
+
 typedef struct {
     VisitorContext ctx;
 
+    const char *inputFile;
     const char *outputPath;
-    const AssetFile *rootFile;
-} UnpackVisitor;
+} PackVisitor;
 
-static void unpackVisitorError(UnpackVisitor *ctx, const char *scope, const char *message) {
-    printf("%s: %s\n", scope, message);
-}
+static bool unpackVisitorAssetFile(PackVisitor *ctx, AssetFile *self) {
+    char path[1024];
 
-static bool unpackVisitorAssetFile(UnpackVisitor *ctx, AssetFile *self) {
     const char *folder = getClassFolder(self->content.header.type);
-    const char *ext = getClassExtension(self->content.header.type);
 
-    char buffer[1024];
-    snprintf(buffer, sizeof(buffer), "%s/%s", ctx->outputPath, folder);
-    mkdir(buffer, 0755);
+    snprintf(path, sizeof(path), "%s/%s", ctx->outputPath, folder);
+    mkdir(path, 0755);
 
-    snprintf(buffer, sizeof(buffer), "%s/%s/%08X%08X_%s.%s", 
+    snprintf(path, sizeof(path), "%s/%s/%08X%08X_%s.%s", 
         ctx->outputPath, 
         folder, 
         self->content.header.id.low,
         self->content.header.id.high,
         self->content.header.label.buffer.data, 
-        ext
+        getClassExtension(self->content.header.type)
     );
-    printf("Unpack: %s\n", buffer);
 
-    FILE *file = fopen(buffer, "w");
+    FILE *file = fopen(path, "wb");
     if (file == NULL) return false;
 
     StdEncoder encoder;
     stdEncoder(&encoder, file, NULL);
 
+    printf("unpack: %s\n", path);
     encodeAssetFile((EncoderContext *)&encoder, self);
 
     fclose(file);
@@ -50,12 +84,41 @@ static bool unpackVisitorAssetFile(UnpackVisitor *ctx, AssetFile *self) {
     return false;
 }
 
-static bool unpackVisitorAssetReference(UnpackVisitor *ctx, AssetReference *self) {
+static bool unpackVisitorLocalizationFile(PackVisitor *ctx, LocalizationFile *self) {
+    char path[1024];
+
+    snprintf(path, sizeof(path), "%s/Localizations", ctx->outputPath);
+    mkdir(path, 0755);
+
+    const char *fileName = strrchr(ctx->inputFile, '/');
+    if (fileName) fileName += 1;
+    else fileName = ctx->inputFile;
+
+    snprintf(path, sizeof(path), "%s/Localizations/%s", 
+        ctx->outputPath,
+        fileName
+    );
+
+    FILE *file = fopen(path, "wb");
+    if (file == NULL) return false;
+
+    StdEncoder encoder;
+    stdEncoder(&encoder, file, NULL);
+
+    printf("unpack: %s\n", path);
+    encodeLocalizationFile((EncoderContext *)&encoder, self);
+
+    fclose(file);
+
+    return false;
+}
+
+static bool unpackVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
     if (self->type == -1) return false;
     if (!self->first) return false;
     if (self->asset == 0) return false;
 
-    AssetFile assetFile = *ctx->rootFile;
+    AssetFile assetFile = REFERENCE_FILE;
 
     assetFile.content.header.id = self->id;
     assetFile.content.header.label = self->label;
@@ -69,24 +132,16 @@ static bool unpackVisitorAssetReference(UnpackVisitor *ctx, AssetReference *self
     return false;
 }
 
-VisitorContext UNPACK_VISITOR_CONTEXT = {
-    .error = (void *)unpackVisitorError,
+VisitorContext PACK_VISITOR_CONTEXT = {
     .exitAssetReference = (void *)unpackVisitorAssetReference,
+    .exitLocalizationFile = (void *)unpackVisitorLocalizationFile,
     .exitAssetFile = (void *)unpackVisitorAssetFile
 };
 
 int main(int argc, char **argv) {
-    AssetFile assetFile = { 0 };
-
-    StdDecoder decoder;
-    FILE *file = NULL;
+    FILE *inFile = NULL;
     Arena arena = { 0 };
     AssetPool pool = { 0 };
-
-    UnpackVisitor unpackVisitor = {
-        .ctx = UNPACK_VISITOR_CONTEXT,
-        .rootFile = &assetFile
-    };
 
     if (argc < 2) goto usage;
 
@@ -96,24 +151,34 @@ int main(int argc, char **argv) {
     if (ext == NULL) goto usage;
 
     bool isLoc = strcmp(ext, ".loc") == 0;
-    if (isLoc) goto usage;
 
-    const char *outputPath = argc > 2 ? argv[2] : "out";
-    mkdir(outputPath, 0755);
-
-    unpackVisitor.outputPath = outputPath;
-
-    file = fopen(inputFile, "r");
-    if (file == NULL) goto error;
+    inFile = fopen(inputFile, "rb");
+    if (inFile == NULL) goto error;
 
     if (!poolNew(&pool, POOL_SIZE)) goto error;
     if (!arenaNew(&arena, ARENA_SIZE)) goto error;
 
-    stdDecoder(&decoder, file, &pool, &arena);
+    StdDecoder decoder;
+    stdDecoder(&decoder, inFile, &pool, &arena);
 
-    decodeAssetFile((DecoderContext *)&decoder, &assetFile);
+    const char *outputPath = argc > 2 ? argv[2] : "out";
+    mkdir(outputPath, 0755);
 
-    visitAssetFile((VisitorContext *)&unpackVisitor, &assetFile);
+    PackVisitor visitor = {
+        .ctx = PACK_VISITOR_CONTEXT,
+        .inputFile = inputFile,
+        .outputPath = outputPath,
+    };
+
+    if (isLoc) {
+        LocalizationFile locFile;
+        decodeLocalizationFile((DecoderContext *)&decoder, &locFile);
+        visitLocalizationFile((VisitorContext *)&visitor, &locFile);
+    } else {
+        AssetFile assetFile;
+        decodeAssetFile((DecoderContext *)&decoder, &assetFile);
+        visitAssetFile((VisitorContext *)&visitor, &assetFile);
+    }
 
     return 0;
 usage:
@@ -123,7 +188,7 @@ error:
     arenaDestroy(&arena);
     poolDestroy(&pool);
 
-    if (file != NULL) fclose(file);
+    if (inFile != NULL) fclose(inFile);
 
     return 1;
 }

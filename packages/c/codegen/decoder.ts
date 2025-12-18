@@ -35,7 +35,7 @@ function buildDeclarations(): string[] {
 function buildContext(): string {
   return cg`
     typedef struct DecoderContext {
-      void (*error)(struct DecoderContext *ctx, const char *scope, const char *message);
+      void (*log)(struct DecoderContext *ctx, const char *scope, const char *message);
 
       U32 (*tell)(struct DecoderContext *ctx);
       void (*seek)(struct DecoderContext *ctx, U32 offset);

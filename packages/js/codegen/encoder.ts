@@ -99,7 +99,7 @@ class DefinitionEncoder extends TSEmit {
   }
 
   protected emitAtom(atom: Atom): string {
-    const typeName = atom.constructor.name;
+    const typeName = (atom.constructor as any).name;
 
     return cg`
       public encode${typeName}(self: ${typeName}): void {
@@ -190,10 +190,14 @@ class DefinitionEncoder extends TSEmit {
 
     return super.emitAssign(target, value);
   }
+
+  protected emitEnd(): string {
+    return "1";
+  }
 }
 
 class SwitchEncoder extends EmptyEmit {
   protected emitClass(cls: Class, _fields: string): string {
-    return cg`case ${cls.__id}: return this.encode${cls.constructor.name}(self);`;
+    return cg`case ${cls.__id}: return this.encode${(cls.constructor as any).name}(self);`;
   }
 }

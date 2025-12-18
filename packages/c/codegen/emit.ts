@@ -156,7 +156,7 @@ export abstract class CEmit extends Emit {
     return cg`ctx->setId(ctx, ${id}, ${type}, &${target});`;
   }
 
-  protected emitError(scope: string, message: string): string {
-    return cg`ctx->error(ctx, "${scope}", "${message}");`;
+  protected emitLog(scope: string, message: string): string {
+    return cg`ctx->log(ctx, "${scope}", "${message}");`;
   }
 }

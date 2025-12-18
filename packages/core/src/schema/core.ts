@@ -118,6 +118,7 @@ export type CodeContext = {
   setId: (id: Value, type: Value, target: Value) => void;
   walkId: (id: Value, target?: Value) => void;
 
+  info: (message: string) => void;
   error: (message: string) => void;
   todo: (message: string) => void;
 };

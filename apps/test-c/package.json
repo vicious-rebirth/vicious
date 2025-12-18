@@ -1,13 +1,12 @@
 {
-  "name": "@repo/pack",
+  "name": "@repo/test-c",
   "version": "0.0.0",
-  "description": "Tool to package/unpackage assets for Vicious Engine",
+  "description": "Test for C codec",
   "scripts": {
     "setup": "cmake -G Ninja -S . -B build",
     "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build",
     "build": "cmake --build build",
-    "pack": "build/pack",
-    "unpack": "build/unpack"
+    "test": "build/test"
   },
   "license": "MIT",
   "devDependencies": {},

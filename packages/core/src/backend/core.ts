@@ -185,7 +185,7 @@ export abstract class Backend {
     target: Value
   ): void;
 
-  protected abstract exitError(scope: string, message: string): void;
+  protected abstract exitLog(scope: string, message: string): void;
 
   /**
    * Internal
@@ -266,34 +266,28 @@ export abstract class Backend {
 
     this.visitTypeDefinition(field.__type);
 
-    if (field.__props?.deprecated) {
-      const condition = field.__props?.deprecated;
+    if (!field.__props?.skip) {
+      this.visitBlock((ctx) => {
+        const custom = field.__props?.custom;
 
-      this.visitBlock((ctx) => {
-        ctx.if(
-          (ctx) => condition(ctx),
-          (ctx) => ctx.todo("deprecated")
-        );
-      });
-    } else if (field.__props?.skip) {
-      // Skip
-    } else if (field.__props?.custom) {
-      const custom = field.__props?.custom;
-      this.visitBlock((ctx) => {
         const condition = field.__props?.condition;
-        if (condition) {
+        const deprecated = field.__props?.deprecated;
+
+        if (deprecated) {
           ctx.if(
-            (ctx) => condition(ctx),
-            (ctx) => custom(ctx)
+            (ctx) => deprecated(ctx),
+            (ctx) => ctx.todo("deprecated")
           );
-        } else {
-          custom(ctx);
-        }
-      });
-    } else {
-      this.visitBlock((ctx) => {
-        const condition = field.__props?.condition;
-        if (condition) {
+        } else if (custom) {
+          if (condition) {
+            ctx.if(
+              (ctx) => condition(ctx),
+              (ctx) => custom(ctx)
+            );
+          } else {
+            custom(ctx);
+          }
+        } else if (condition) {
           ctx.if(
             (ctx) => condition(ctx),
             (ctx) => ctx.walk()
@@ -547,7 +541,7 @@ export abstract class Backend {
   }
 
   protected visitIndex(target: Value, index: Value): any {
-    return new IndexReference(target, index);
+    return new IndexReference(target as any, index);
   }
 
   protected visitAssign(target: Value, value: Value): void {
@@ -639,8 +633,16 @@ export abstract class Backend {
     this.exitSetAssetInMap(id, type, target);
   }
 
-  protected visitError(scope: string, message: string): void {
-    this.exitError(scope, message);
+  protected visitInfo(message: string): void {
+    this.exitLog("INFO", message);
+  }
+
+  protected visitTodo(message: string): void {
+    this.exitLog("TODO", message);
+  }
+
+  protected visitError(message: string): void {
+    this.exitLog("ERROR", message);
   }
 
   protected newVariable(type: Type): VariableReference {
@@ -708,8 +710,9 @@ export abstract class Backend {
       setId: (id, type, target) =>
         this.visitSetAssetInMap(id, type, target) as any,
 
-      error: (message) => this.visitError("ERROR", message),
-      todo: (message) => this.visitError("TODO", message),
+      info: (message) => this.visitInfo(message),
+      error: (message) => this.visitError(message),
+      todo: (message) => this.visitTodo(message),
     };
   }
 }

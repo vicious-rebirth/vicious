@@ -31,7 +31,7 @@ function buildClass(): string {
       public enterType(name: string): BOOL { return true; }
       public exitType(name: string): void {}
 
-      public visitError(scope: string, message: string): void {}
+      public visitLog(scope: string, message: string): void {}
 
       ${functions.join("\n\n")}
     }
@@ -84,7 +84,7 @@ class DefinitionVisitor extends TSEmit {
   }
 
   protected emitAtom(atom: Atom): string {
-    const typeName = atom.constructor.name;
+    const typeName = (atom.constructor as any).name;
 
     return cg`public visit${typeName}(self: ${typeName}): void {
       if (!this.enterType("${typeName}")) return;
@@ -209,16 +209,16 @@ class DefinitionVisitor extends TSEmit {
   }
 
   protected emitEnd(): string {
-    return "0";
+    return "1";
   }
 
-  protected emitError(scope: string, message: string): string {
-    return `this.visitError("${scope}", "${message}");`;
+  protected emitLog(scope: string, message: string): string {
+    return `this.visitLog("${scope}", "${message}");`;
   }
 }
 
 class SwitchVisitor extends EmptyEmit {
   protected emitClass(cls: Class, _fields: string): string {
-    return cg`case ${cls.__id}: return this.visit${cls.constructor.name}(self);`;
+    return cg`case ${cls.__id}: return this.visit${(cls.constructor as any).name}(self);`;
   }
 }

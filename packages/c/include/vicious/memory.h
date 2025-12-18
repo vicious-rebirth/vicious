@@ -68,7 +68,12 @@ void poolLink(AssetPool *src, AssetPool *dest);
 /**
  * Get asset from a pool using ID
  */
-void *poolGet(const AssetPool *pool, uint64_t id);
+void *poolGetAsset(const AssetPool *pool, uint64_t id);
+
+/**
+ * Get type from a pool using ID
+ */
+uint32_t poolGetType(const AssetPool *pool, uint64_t id);
 
 /**
  * Insert asset into pool using ID

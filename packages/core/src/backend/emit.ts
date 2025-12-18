@@ -136,7 +136,7 @@ export abstract class Emit extends Backend {
     target: string
   ): string;
 
-  protected abstract emitError(scope: string, message: string): string;
+  protected abstract emitLog(scope: string, message: string): string;
 
   /**
    * Internal
@@ -415,7 +415,9 @@ export abstract class Emit extends Backend {
   protected exitAllocate(target: Value, _count?: Value): void {
     const [target_, count_] = this.popScope();
 
-    this.pushString(this.emitAllocate(target_!, this.getType(target), count_));
+    this.pushString(
+      this.emitAllocate(target_!, this.getType(target) as any, count_)
+    );
   }
 
   protected enterGrow(_target: Value, _index: Value): void {
@@ -425,7 +427,9 @@ export abstract class Emit extends Backend {
   protected exitGrow(target: Value, _index: Value): void {
     const [target_, index_] = this.popScope();
 
-    this.pushString(this.emitGrow(target_!, this.getType(target), index_!));
+    this.pushString(
+      this.emitGrow(target_!, this.getType(target) as any, index_!)
+    );
   }
 
   protected enterForward(_target: Value, _count: Value): void {
@@ -435,7 +439,9 @@ export abstract class Emit extends Backend {
   protected exitForward(target: Value, _count: Value): void {
     const [target_, count] = this.popScope();
 
-    this.pushString(this.emitForward(target_!, this.getType(target), count!));
+    this.pushString(
+      this.emitForward(target_!, this.getType(target) as any, count!)
+    );
   }
 
   protected exitSeek(_offset: Value): void {
@@ -492,8 +498,8 @@ export abstract class Emit extends Backend {
     this.pushString(this.emitSetAssetInMap(id!, type!, target!));
   }
 
-  protected exitError(scope: string, message: string): void {
-    this.pushString(this.emitError(scope, message));
+  protected exitLog(scope: string, message: string): void {
+    this.pushString(this.emitLog(scope, message));
   }
 
   protected pushString(str: string): void {
@@ -721,7 +727,7 @@ export class EmptyEmit extends Emit {
     return "";
   }
 
-  protected emitError(_scope: string, _message: string): string {
+  protected emitLog(_scope: string, _message: string): string {
     return "";
   }
 }

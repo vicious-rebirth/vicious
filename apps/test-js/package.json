@@ -1,0 +1,17 @@
+{
+  "name": "@repo/test-js",
+  "version": "0.0.0",
+  "description": "CLI tools for Vicious Engine",
+  "scripts": {
+    "test": "tsx src/test.ts",
+    "test:debug": "tsx --inspect-brk src/test.ts"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "tsx": "^4.21.0"
+  },
+  "dependencies": {
+    "@repo/js": "workspace:*"
+  }
+}

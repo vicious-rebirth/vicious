@@ -156,7 +156,7 @@ export abstract class TSEmit extends Emit {
     return cg`this.ctx.setId(${id}, getClassFromID(${type}), ${target});`;
   }
 
-  protected emitError(scope: string, message: string): string {
+  protected emitLog(scope: string, message: string): string {
     return cg`this.ctx.error("${scope}", "${message}");`;
   }
 }
