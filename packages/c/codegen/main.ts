@@ -3,6 +3,7 @@ import * as path from "path";
 
 import { buildDecoderDeclaration, buildDecoderImplementation } from "./decoder";
 import { buildEncoderDeclaration, buildEncoderImplementation } from "./encoder";
+import { buildFreeDeclaration, buildFreeImplementation } from "./free";
 import { buildTypes } from "./type";
 import { buildUtilDeclaration, buildUtilImplementation } from "./util";
 import { buildVisitorDeclaration, buildVisitorImplementation } from "./visitor";
@@ -17,6 +18,7 @@ async function main() {
         buildDecoderDeclaration(),
         buildEncoderDeclaration(),
         buildVisitorDeclaration(),
+        buildFreeDeclaration(),
         buildUtilDeclaration(),
         "#endif",
       ].join("\n\n")
@@ -33,6 +35,14 @@ async function main() {
       ["#include <vicious/generated.h>", buildEncoderImplementation()].join(
         "\n\n"
       )
+    ),
+    writeFile(
+      path.join(__dirname, "..", "src", "generated", "free.c"),
+      [
+        "#include <vicious/generated.h>",
+        "#include <stdlib.h>",
+        buildFreeImplementation(),
+      ].join("\n\n")
     ),
     writeFile(
       path.join(__dirname, "..", "src", "generated", "visitor.c"),

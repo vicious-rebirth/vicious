@@ -11,10 +11,10 @@ export class V421 extends Class {
   f_0x04 = field(U32, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2),
   });
-  f_0x08 = field(AssetReference, {
+  enumeration = field(AssetReference, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2),
   });
-  f_0x0c = field(U32, {
+  enumerationId = field(U32, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2),
   });
   f_0x10 = field(AssetFromTypeWrap, {

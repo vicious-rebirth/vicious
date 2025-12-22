@@ -10,17 +10,15 @@
 #include <cimgui.h>
 #include <cimgui_impl.h>
 
-#define ARENA_SIZE 32 * 1024 * 1024
 #define POOL_SIZE 8192
 
-Arena arena;
 AssetPool pool;
 
 static bool renderEnterField(VisitorContext *ctx, const char *name, I32 index) {
     char strId[128];
     snprintf(strId, sizeof(strId), "%s%d", name, index);
 
-    return igTreeNode_StrStr(strId, index >= 0 ? "%s[%d]" : "%s", name, index);
+    return igTreeNodeEx_StrStr(strId, ImGuiTreeNodeFlags_DefaultOpen, index >= 0 ? "%s[%d]" : "%s", name, index);
 }
 
 static void renderExitField(VisitorContext *ctx, const char *name, I32 index) {
@@ -92,7 +90,7 @@ static bool renderID(VisitorContext *ctx, ID *id) {
 }
 
 static bool renderStringBuffer(VisitorContext *ctx, StringBuffer *self) {
-    igInputText("value", (char *)self->data, self->size, 0, NULL, NULL); 
+    igInputText("value", (char *)self->data, self->size, 0, NULL, NULL);
 
     return false;
 }
@@ -140,9 +138,8 @@ static bool loadFile(const char *path, AssetFile *assetFile, LocalizationFile *l
     bool isLoc = strcmp(ext, ".loc") == 0;
 
     StdDecoder decoder;
-    stdDecoder(&decoder, file, &pool, &arena);
+    stdDecoder(&decoder, file, &pool, NULL);
 
-    arenaClear(&arena);
     poolClear(&pool);
 
     if (isLoc) {
@@ -154,27 +151,50 @@ static bool loadFile(const char *path, AssetFile *assetFile, LocalizationFile *l
     return true;
 }
 
-int main(int argc, const char **argv) {
-    if (argc < 2) goto usage;
+static bool saveFile(const char *path, const AssetFile *assetFile, const LocalizationFile *locFile) {
+    FILE *file = fopen(path, "w");
+    if (file == NULL) return false;
 
-    if (!poolNew(&pool, POOL_SIZE)) return 1;
-    if (!arenaNew(&arena, ARENA_SIZE)) return 1;
+    const char *ext = strrchr(path, '.');
+    if (ext == NULL) return false;
+
+    bool isLoc = strcmp(ext, ".loc") == 0;
+
+    StdEncoder encoder;
+    stdEncoder(&encoder, file, &pool);
+
+    if (isLoc) {
+        encodeLocalizationFile((EncoderContext *)&encoder, locFile);
+    } else {
+        encodeAssetFile((EncoderContext *)&encoder, assetFile);
+    }
+
+    return true;
+}
+
+int main(int argc, const char **argv) {
+    int result = 0;
 
     AssetFile assetFile = { 0 };
     LocalizationFile locFile = { 0 };
-    if (!loadFile(argv[1], &assetFile, &locFile)) goto usage;
 
-    if (!glfwInit()) return 1;
+    GLFWwindow* window = NULL;
+
+    if (argc < 2) goto usage;
+
+    if (!poolNew(&pool, POOL_SIZE)) goto error;
+
+    const char *filePath = argv[1];
+    if (!loadFile(filePath, &assetFile, &locFile)) goto usage;
+
+    if (!glfwInit()) goto error;
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Vicious Edit", NULL, NULL);
-    if (!window) {
-        glfwTerminate();
-        return 1; 
-    }
+    window = glfwCreateWindow(800, 600, "Vicious Edit", NULL, NULL);
+    if (!window) goto error;
 
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
@@ -200,10 +220,24 @@ int main(int argc, const char **argv) {
             ImGuiWindowFlags_NoTitleBar
             | ImGuiWindowFlags_NoResize
             | ImGuiWindowFlags_NoMove
-            | ImGuiWindowFlags_NoScrollbar
             | ImGuiWindowFlags_NoCollapse
+            | ImGuiWindowFlags_MenuBar
         );
+
+        if (igBeginMenuBar()) {
+            if (igBeginMenu("File", true)) {
+                if (igMenuItem_Bool("Save", NULL, false, true)) {
+                    saveFile(filePath, &assetFile, &locFile);
+                }
+
+                igEndMenu();
+            }
+
+            igEndMenuBar();
+        }
+
         render(&assetFile, &locFile);
+
         igEnd();
 
         igRender();
@@ -222,13 +256,24 @@ int main(int argc, const char **argv) {
     ImGui_ImplGlfw_Shutdown();
     igDestroyContext(NULL);
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
-
-    return 0;
+    goto cleanup;
 
 usage:
     printf("usage: %s file_path\n", argv[0]);
+error:
+    result = 1;
+cleanup:
+    if (window != NULL) {
+        glfwDestroyWindow(window);
+    }
 
-    return 1;
+    glfwTerminate();
+
+    FreeContext freeCtx = { 0 };
+    if (assetFile.magicHeader != 0) freeAssetFile(&freeCtx, &assetFile);
+    if (locFile.magicHeader != 0) freeLocalizationFile(&freeCtx, &locFile);
+
+    poolDestroy(&pool);
+
+    return result;
 }

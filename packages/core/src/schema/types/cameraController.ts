@@ -12,7 +12,7 @@ export class CameraControllerGroup extends Class {
 
 export class CameraController extends Class {
   __id = 381;
-  __folder = "Camera Controllers";
+  __folder = "CameraControllers";
   __ext = "cct";
   __offset = 0x273e0;
 

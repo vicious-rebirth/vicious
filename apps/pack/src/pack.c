@@ -26,7 +26,7 @@ static bool packVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
     if (self->type == -1) return false;
 
     uint32_t type = poolGetType(ctx->pool, *(uint64_t *)&self->id);
-    if (type) { 
+    if (type) {
         self->type = type;
         return false;
     }
@@ -35,8 +35,8 @@ static bool packVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
     const char *ext = getClassExtension(self->type);
 
     char path[1024];
-    snprintf(path, sizeof(path), "%s/%s/%s_%08X%08X.%s", 
-        ctx->projectPath, 
+    snprintf(path, sizeof(path), "%s/%s/%s_%08X%08X.%s",
+        ctx->projectPath,
         folder,
         self->label.buffer.data,
         self->id.low,
@@ -62,7 +62,7 @@ static bool packVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
 
     LOG("pack: %s\n", path);
     visitAssetFile((VisitorContext *)ctx, &assetFile);
-    
+ 
     self->first = true;
 
     return false;
@@ -167,7 +167,7 @@ int main(int argc, char **argv) {
 
     LOG("pack: %s\n", path);
     if (isLoc) {
-        encodeLocalizationFile((EncoderContext *)&encoder, &locFile); 
+        encodeLocalizationFile((EncoderContext *)&encoder, &locFile);
     } else {
         encodeAssetFile((EncoderContext *)&encoder, &assetFile);
     }

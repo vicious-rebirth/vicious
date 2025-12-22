@@ -12,7 +12,7 @@ export class ExternalVariableGroup extends Class {
 
 export class ExternalVariable extends Class {
   __id = 357;
-  __folder = "External Variables";
+  __folder = "ExternalVariables";
   __ext = "ekv";
   __offset = 0x1d710;
 

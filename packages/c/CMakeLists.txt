@@ -21,6 +21,7 @@ add_library(vicious STATIC
 
     src/generated/decoder.c
     src/generated/encoder.c
+    src/generated/free.c
     src/generated/visitor.c
     src/generated/util.c
 )
