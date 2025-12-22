@@ -35,12 +35,12 @@ static bool packVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
     const char *ext = getClassExtension(self->type);
 
     char path[1024];
-    snprintf(path, sizeof(path), "%s/%s/%08X%08X_%s.%s", 
+    snprintf(path, sizeof(path), "%s/%s/%s_%08X%08X.%s", 
         ctx->projectPath, 
         folder,
+        self->label.buffer.data,
         self->id.low,
         self->id.high,
-        self->label.buffer.data, 
         ext
     );
 

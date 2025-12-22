@@ -67,12 +67,12 @@ static bool unpackVisitorAssetFile(PackVisitor *ctx, AssetFile *self) {
     snprintf(path, sizeof(path), "%s/%s", ctx->projectPath, folder);
     mkdir(path, 0755);
 
-    snprintf(path, sizeof(path), "%s/%s/%08X%08X_%s.%s", 
+    snprintf(path, sizeof(path), "%s/%s/%s_%08X%08X.%s", 
         ctx->projectPath, 
         folder, 
+        self->content.header.label.buffer.data,
         self->content.header.id.low,
         self->content.header.id.high,
-        self->content.header.label.buffer.data, 
         getClassExtension(self->content.header.type)
     );
 
