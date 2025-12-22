@@ -11,11 +11,11 @@ export class PlaySoundAction extends Class {
 
   base = field(Action);
   f_0x08 = field(AssetFromTypeWrap);
-  f_0x0c = field(V301);
-  f_0x38_1 = field(V422, {
+  target = field(V301);
+  sound = field(V422, {
     condition: (ctx) => ctx.gte((ctx) => ctx.version(), 3),
   });
-  f_0x38_2 = field(AssetReference, {
+  sound_old = field(AssetReference, {
     condition: (ctx) => ctx.lt((ctx) => ctx.version(), 3),
   });
   f_0x4c = field(BOOL, {

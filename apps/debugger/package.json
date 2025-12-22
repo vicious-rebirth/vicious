@@ -1,0 +1,11 @@
+{
+  "name": "@repo/debugger",
+  "version": "0.0.0",
+  "description": "GDB Debugging for Vicious Engine",
+  "scripts": {
+    "start": "gdb -x main.py"
+  },
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

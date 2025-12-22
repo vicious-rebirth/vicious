@@ -13,5 +13,5 @@ export class V167 extends Class {
   f_0x00 = field(AssetFromTypeWrap, {
     condition: (ctx) => ctx.gte((ctx) => ctx.version(), 2),
   });
-  v301 = field(V301);
+  target = field(V301);
 }

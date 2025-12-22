@@ -1,0 +1,7 @@
+[project]
+name = "debugger"
+version = "0.0.0"
+description = "GDB debugging for Vicious Engine"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
