@@ -178,6 +178,7 @@ int main(int argc, const char **argv) {
     AssetFile assetFile = { 0 };
     LocalizationFile locFile = { 0 };
 
+    FreeContext freeCtx = { 0 };
     GLFWwindow* window = NULL;
 
     if (argc < 2) goto usage;
@@ -256,6 +257,9 @@ int main(int argc, const char **argv) {
     ImGui_ImplGlfw_Shutdown();
     igDestroyContext(NULL);
 
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
     goto cleanup;
 
 usage:
@@ -263,13 +267,6 @@ usage:
 error:
     result = 1;
 cleanup:
-    if (window != NULL) {
-        glfwDestroyWindow(window);
-    }
-
-    glfwTerminate();
-
-    FreeContext freeCtx = { 0 };
     if (assetFile.magicHeader != 0) freeAssetFile(&freeCtx, &assetFile);
     if (locFile.magicHeader != 0) freeLocalizationFile(&freeCtx, &locFile);
 

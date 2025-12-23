@@ -7,7 +7,7 @@
 #define POOL_SIZE 8192
 
 int main(int argc, char **argv) {
-    bool isError = false;
+    int result = 0;
 
     FILE *inFile = NULL;
     FILE *outFile = NULL;
@@ -31,8 +31,8 @@ int main(int argc, char **argv) {
     outFile = fopen(outputPath, "wb");
     if (outFile == NULL) goto error;
 
-    if (!poolNew(&pool, POOL_SIZE)) goto error;
     if (!arenaNew(&arena, ARENA_SIZE)) goto error;
+    if (!poolNew(&pool, POOL_SIZE)) goto error;
 
     StdDecoder decoder;
     stdDecoder(&decoder, inFile, &pool, &arena);
@@ -52,20 +52,20 @@ int main(int argc, char **argv) {
         encodeAssetFile((EncoderContext *)&encoder, &assetFile);
     }
 
-    goto done;
+    goto cleanup;
 
 usage:
     printf("usage: %s input_file output_file\n", argv[0]);
 
 error:
-    isError = true;
+    result = 1;
 
-done:
-    arenaDestroy(&arena);
+cleanup:
     poolDestroy(&pool);
+    arenaDestroy(&arena);
 
     if (outFile != NULL) fclose(outFile);
     if (inFile != NULL) fclose(inFile);
 
-    return isError ? 1 : 0;
+    return result;
 }

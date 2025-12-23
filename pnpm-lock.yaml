@@ -21,6 +21,14 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
+  apps/audio:
+    dependencies:
+      '@repo/c':
+        specifier: workspace:*
+        version: link:../../packages/c
+
+  apps/debugger: {}
+
   apps/edit:
     dependencies:
       '@repo/c':

@@ -73,7 +73,7 @@ VisitorContext PACK_VISITOR_CONTEXT = {
 };
 
 int main(int argc, char **argv) {
-    bool isError = false;
+    int result = 0;
 
     FILE *file = NULL;
     FILE *outFile = NULL;
@@ -172,20 +172,20 @@ int main(int argc, char **argv) {
         encodeAssetFile((EncoderContext *)&encoder, &assetFile);
     }
 
-    goto done;
+    goto cleanup;
 
 usage:
     printf("usage: %s file_path [project_path]\n", argv[0]);
 
 error:
-    isError = true;
+    result = 1;
 
-done:
+cleanup:
     arenaDestroy(&arena);
     poolDestroy(&pool);
 
     if (outFile != NULL) fclose(outFile);
     if (file != NULL) fclose(file);
 
-    return isError ? 1 : 0;
+    return result;
 }
