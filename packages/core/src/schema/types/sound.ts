@@ -21,7 +21,7 @@ export class Sound extends Class {
   duration = field(U32);
   bitDepth = field(U32);
   samplingRate = field(U32);
-  speedMultiplier = field(F32);
+  volume = field(F32);
   f_0x50 = field(BOOL);
   disabled = field(BOOL, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
