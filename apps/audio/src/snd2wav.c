@@ -25,7 +25,7 @@ typedef struct __attribute__((packed)) {
 
     char dataID[4];
     uint32_t dataSize;
-} WAVHeaderIMA;
+} WAVIMAHeader;
 
 void readSound(FILE *file, const Sound *self) {
     if (self->disabled) return;
@@ -35,7 +35,7 @@ void readSound(FILE *file, const Sound *self) {
     uint32_t dataSize = self->buffer.data.size;
     uint16_t samplesPerBlock = ((fmtChunk->blockAlign - fmtChunk->channels * 4) * 2 / fmtChunk->channels) + 1;
 
-    WAVHeaderIMA header = {
+    WAVIMAHeader header = {
         .chunkID = { 'R', 'I', 'F', 'F' },
         .chunkSize = 48 + dataSize,
         .format = { 'W', 'A', 'V', 'E' },

@@ -25,12 +25,12 @@ typedef struct __attribute__((packed)) {
 
     char dataID[4];
     uint32_t dataSize;
-} WAVHeaderIMA;
+} WAVIMAHeader;
 
 void readSound(FILE *file, Sound *self) {
     if (self->disabled) return;
 
-    WAVHeaderIMA header;
+    WAVIMAHeader header;
     fread(&header, sizeof(header), 1, file);
 
     WAVFmtChunk *fmtChunk = &self->buffer.fmtChunk;

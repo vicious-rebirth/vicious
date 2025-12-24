@@ -21,6 +21,14 @@ add_subdirectory(node_modules/@repo/c)
 # Executables
 #----------------------------------------------------------------------------------
 
+add_executable(mus2wav
+    src/mus2wav.c
+)
+
+add_executable(wav2mus
+    src/wav2mus.c
+)
+
 add_executable(snd2wav
     src/snd2wav.c
 )
