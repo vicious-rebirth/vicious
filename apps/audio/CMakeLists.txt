@@ -44,3 +44,7 @@ add_executable(wav2snd
 target_link_libraries(wav2snd
     vicious
 )
+
+add_executable(wav2xbox
+    src/wav2xbox.c
+)

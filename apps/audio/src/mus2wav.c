@@ -43,7 +43,7 @@ int main(int argc, const char **argv) {
     FILE *musFile = NULL;
     FILE *wavFile = NULL;
 
-    if (argc < 2) goto error;
+    if (argc < 2) goto usage;
 
     const char *musPath = argv[1];
 
