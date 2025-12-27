@@ -138,10 +138,10 @@ int main(int argc, const char **argv) {
                 for (size_t k = 0; k < 8; k++, code >>= 4) {
                     int step = stepTable[block->stepIndex];
                     int delta = step >> 3;
-                    
-                    if ((code & 4) != 0) delta += step;
-                    if ((code & 2) != 0) delta += step >> 1;
+
                     if ((code & 1) != 0) delta += step >> 2;
+                    if ((code & 2) != 0) delta += step >> 1;
+                    if ((code & 4) != 0) delta += step;
                     if ((code & 8) != 0) delta = -delta;
 
                     block->predictor += delta;

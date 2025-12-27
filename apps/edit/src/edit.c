@@ -90,7 +90,29 @@ static bool renderID(VisitorContext *ctx, ID *id) {
 }
 
 static bool renderStringBuffer(VisitorContext *ctx, StringBuffer *self) {
-    igInputText("value", (char *)self->data, self->size, 0, NULL, NULL);
+    char buffer[256];
+
+    char *ptr;
+    size_t size;
+    if (self->size > sizeof(buffer)) {
+        ptr = (char *)self->data;
+        size = self->size;
+    } else {
+        ptr = buffer;
+        size = sizeof(buffer);
+
+        memcpy(buffer, self->data, self->size);
+    }
+
+    if (igInputTextMultiline("value", ptr, size, (ImVec2_c){0, 0}, 0, NULL, NULL)) {
+        self->size = strlen(ptr) + 1;
+
+        if (ptr != (char *)self->data) {
+            free(self->data);
+            self->data = malloc(self->size);
+            memcpy(self->data, buffer, self->size);
+        }
+    }
 
     return false;
 }
