@@ -3,6 +3,7 @@ import * as path from "path";
 
 import { buildDecoderDeclaration, buildDecoderImplementation } from "./decoder";
 import { buildEncoderDeclaration, buildEncoderImplementation } from "./encoder";
+import { buildEnum } from "./enum";
 import { buildFreeDeclaration, buildFreeImplementation } from "./free";
 import { buildTypes } from "./type";
 import { buildUtilDeclaration, buildUtilImplementation } from "./util";
@@ -15,6 +16,7 @@ async function main() {
       [
         "#ifndef VICIOUS_GENERATED\n#define VICIOUS_GENERATED",
         buildTypes(),
+        buildEnum(),
         buildDecoderDeclaration(),
         buildEncoderDeclaration(),
         buildVisitorDeclaration(),
