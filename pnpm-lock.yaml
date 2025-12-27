@@ -60,6 +60,12 @@ importers:
         specifier: ^4.21.0
         version: 4.21.0
 
+  apps/texture:
+    dependencies:
+      '@repo/c':
+        specifier: workspace:*
+        version: link:../../packages/c
+
   packages/c:
     devDependencies:
       '@repo/core':

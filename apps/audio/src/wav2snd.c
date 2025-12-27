@@ -90,9 +90,9 @@ int main(int argc, const char **argv) {
     decodeAssetFile((DecoderContext *)&decoder, &assetFile);
 
     switch (assetFile.content.header.type) {
-        case 38: readSound(wavFile, assetFile.content.asset); break;
-        case 42: readSoundEffect(wavFile, assetFile.content.asset); break;
-        case 354: readVoiceOver(wavFile, assetFile.content.asset); break;
+        case VCS_Sound: readSound(wavFile, assetFile.content.asset); break;
+        case VCS_SoundEffect: readSoundEffect(wavFile, assetFile.content.asset); break;
+        case VCS_VoiceOver: readVoiceOver(wavFile, assetFile.content.asset); break;
         default: goto error;
     }
 

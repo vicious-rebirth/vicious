@@ -123,7 +123,7 @@ static bool renderVector3(VisitorContext *ctx, Vector3 *self) {
     return false;
 }
 
-VisitorContext visitor = {
+static VisitorContext visitor = {
     .enterField = renderEnterField,
     .exitField = renderExitField,
     .enterType = renderEnterType,
