@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include <sys/stat.h>
+
 #include "./dds.h"
 #include "./tga.h"
 
@@ -52,7 +54,9 @@ void x8Write(FILE *file, const uint8_t *buffer, uint32_t width, uint32_t height)
     }
 } 
 
-bool writeImageTexture(FILE *file, const ImageTexture *self) {
+bool writeImageTexture(const char *path, const ImageTexture *self) {
+    char imgPath[2048];
+
     switch (self->buffer.format) {
         case IF_DXT1:
         case IF_DXT5: {
@@ -72,8 +76,15 @@ bool writeImageTexture(FILE *file, const ImageTexture *self) {
                 .caps = DDSCAPS_COMPLEX | DDSCAPS_MIPMAP | DDSCAPS_TEXTURE
             };
 
+            snprintf(imgPath, sizeof(imgPath), "%s.%s", path, "dds");
+
+            FILE *file = fopen(imgPath, "wb");
+            if (file == NULL) return false;
+
             fwrite(&header, 1, sizeof(header), file);
             fwrite(self->buffer.pixels.data, 1, self->buffer.pixels.size, file);
+
+            fclose(file);
         } return true;
         case IF_A8:
         case IF_P8: {
@@ -86,15 +97,32 @@ bool writeImageTexture(FILE *file, const ImageTexture *self) {
                 .colorMapBlockSize = self->buffer.format == IF_P8 ? 32 : 0,
                 .xOrigin = 0,
                 .yOrigin = 0,
-                .width = self->buffer.width,
-                .height = self->buffer.height,
                 .bitsPerPixel = 8,
                 .imageDescriptor = 0x20
             };
 
-            fwrite(&header, 1, sizeof(header), file);
-            if (self->buffer.format == IF_P8) fwrite(self->buffer.palette.data, 1, self->buffer.palette.size, file);
-            x8Write(file, self->buffer.pixels.data, self->buffer.width, self->buffer.height);
+            size_t offset = 0;
+            size_t width = self->buffer.width;
+            size_t height = self->buffer.height;
+
+            mkdir(path, 0755);
+            for (uint8_t i = 0; i < self->buffer.levels; i++) {
+                header.width = width;
+                header.height = height;
+
+                snprintf(imgPath, sizeof(imgPath), "%s/%d.%s", path, i, "tga");
+
+                FILE *file = fopen(imgPath, "wb");
+                if (file == NULL) return false;
+
+                fwrite(&header, 1, sizeof(header), file);
+                if (self->buffer.format == IF_P8) fwrite(self->buffer.palette.data, 1, self->buffer.palette.size, file);
+                x8Write(file, self->buffer.pixels.data + offset, width, height);
+
+                offset += width * height;
+                width /= 2;
+                height /= 2;
+            }
         } return true;
         default: return false;
     }
@@ -104,7 +132,6 @@ int main(int argc, char **argv) {
     int result = 0;
 
     FILE *texFile = NULL;
-    FILE *imgFile = NULL;
     Arena arena = { 0 };
     AssetPool pool = { 0 };
 
@@ -127,41 +154,17 @@ int main(int argc, char **argv) {
     void *asset = assetFile.content.asset;
     uint32_t assetType = assetFile.content.header.type;
 
-    char *imgExt;
-    switch (assetType) {
-        case VCS_ImageTexture: {
-            uint32_t format = ((ImageTexture *)asset)->buffer.format;
-            switch (format) {
-                case IF_DXT1:
-                case IF_DXT5: imgExt = "dds"; break;
-                case IF_A8:
-                case IF_P8: imgExt = "tga"; break;
-                default:
-                    fprintf(stderr, "unhandled texture format: %d\n", format);
-                    goto error;
-            }
-        } break;
-        default:
-            fprintf(stderr, "not a texture: %d\n", assetType);
-            goto error;
-    }
-
-    const char *imgPrefixPath = argc > 2 ? argv[2] : "out";
-    char imgPath[2048];
-    snprintf(imgPath, sizeof(imgPath), "%s.%s", imgPrefixPath, imgExt);
-
-    imgFile = fopen(imgPath, "wb");
-    if (imgFile == NULL) goto error;
+    const char *path = argc > 2 ? argv[2] : "out";
 
     switch (assetType) {
-        case VCS_ImageTexture: writeImageTexture(imgFile, asset); break;
+        case VCS_ImageTexture: writeImageTexture(path, asset); break;
         default: goto error;
     }
 
     goto cleanup;
 
 usage:
-    fprintf(stderr, "usage: %s tex_path [img_prefix_path]\n", argv[0]);
+    fprintf(stderr, "usage: %s tex_path [img_path]\n", argv[0]);
 
 error:
     result = 1;
@@ -170,7 +173,6 @@ cleanup:
     arenaDestroy(&arena);
     poolDestroy(&pool);
 
-    if (imgFile != NULL) fclose(imgFile);
     if (texFile != NULL) fclose(texFile);
 
     return result;
