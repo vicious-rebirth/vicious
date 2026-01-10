@@ -21,18 +21,18 @@ add_subdirectory(node_modules/@repo/c)
 # Executables
 #----------------------------------------------------------------------------------
 
-add_executable(txr2image
-    src/txr2image.c
+add_executable(txr2dds
+    src/txr2dds.c
 )
 
-target_link_libraries(txr2image
+target_link_libraries(txr2dds
     vicious
 )
 
-add_executable(image2txr
-    src/image2txr.c
+add_executable(dds2txr
+    src/dds2txr.c
 )
 
-target_link_libraries(image2txr
+target_link_libraries(dds2txr
     vicious
 )

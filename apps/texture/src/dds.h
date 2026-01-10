@@ -4,7 +4,11 @@
 #include <stdint.h>
 
 typedef enum {
-    DDPF_FOURCC	=	0x4
+    DDPF_ALPHAPIXELS        = 0x1,
+    DDPF_ALPHA              = 0x2,
+    DDPF_FOURCC             = 0x4,
+    DDPF_PALETTEINDEXED8    = 0x20,
+    DDPF_RGB                = 0x40,
 } DDPF;
 
 typedef struct __attribute__((packed)) {
