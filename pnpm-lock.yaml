@@ -35,6 +35,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/c
 
+  apps/mesh:
+    dependencies:
+      '@repo/c':
+        specifier: workspace:*
+        version: link:../../packages/c
+
   apps/pack:
     dependencies:
       '@repo/c':

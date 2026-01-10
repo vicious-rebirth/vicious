@@ -2,8 +2,6 @@
 
 #include <stdio.h>
 
-#include <sys/stat.h>
-
 #include "./dds.h"
 
 #define ARENA_SIZE 32 * 1024 * 1024
@@ -88,23 +86,23 @@ bool writeImageTexture(FILE *file, const ImageTexture *self) {
 int main(int argc, char **argv) {
     int result = 0;
 
-    FILE *texFile = NULL;
+    FILE *txrFile = NULL;
     FILE *ddsFile = NULL;
     Arena arena = { 0 };
     AssetPool pool = { 0 };
 
     if (argc < 2) goto usage;
 
-    const char *texPath = argv[1];
+    const char *txrPath = argv[1];
 
-    texFile = fopen(texPath, "rb");
-    if (texFile == NULL) goto error;
+    txrFile = fopen(txrPath, "rb");
+    if (txrFile == NULL) goto error;
 
     if (!poolNew(&pool, POOL_SIZE)) goto error;
     if (!arenaNew(&arena, ARENA_SIZE)) goto error;
 
     StdDecoder decoder;
-    stdDecoder(&decoder, texFile, &pool, &arena);
+    stdDecoder(&decoder, txrFile, &pool, &arena);
 
     AssetFile assetFile;
     decodeAssetFile((DecoderContext *)&decoder, &assetFile);
@@ -125,7 +123,7 @@ int main(int argc, char **argv) {
     goto cleanup;
 
 usage:
-    fprintf(stderr, "usage: %s tex_path [dds_path]\n", argv[0]);
+    fprintf(stderr, "usage: %s txr_path [dds_path]\n", argv[0]);
 
 error:
     result = 1;
@@ -135,7 +133,7 @@ cleanup:
     poolDestroy(&pool);
 
     if (ddsFile != NULL) fclose(ddsFile);
-    if (texFile != NULL) fclose(texFile);
+    if (txrFile != NULL) fclose(txrFile);
 
     return result;
 }
