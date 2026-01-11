@@ -1,6 +1,6 @@
 # Audio
 
-Tooling to convert proprietary files (`.mus` and `.snd`) to a more modern/free format (`.wav`).
+CLI tooling to convert proprietary files (`.mus` and `.snd`) to a more modern/free format (`.wav`).
 
 ## Tools
 
