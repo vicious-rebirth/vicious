@@ -25,11 +25,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(cgltf)
 
 FetchContent_Declare(
-    linmath
-    GIT_REPOSITORY https://github.com/datenwolf/linmath.h.git
-    GIT_TAG master
+    cglm
+    GIT_REPOSITORY https://github.com/recp/cglm.git
+    GIT_TAG v0.9.6
 )
-FetchContent_MakeAvailable(linmath)
+FetchContent_MakeAvailable(cglm)
 
 add_subdirectory(node_modules/@repo/c)
 
@@ -43,10 +43,10 @@ add_executable(msh2gltf
 
 target_include_directories(msh2gltf PUBLIC
     ${cgltf_SOURCE_DIR}
-    ${linmath_SOURCE_DIR}
 )
 
 target_link_libraries(msh2gltf
     m
+    cglm
     vicious
 )
