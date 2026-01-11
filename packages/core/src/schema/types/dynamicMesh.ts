@@ -4,7 +4,7 @@ import { U8Buffer } from "./buffer";
 import { Label } from "./label";
 import { Matrix3, Transform, TransformList, Vector3 } from "./math";
 import { Mesh } from "./mesh";
-import { V20_9 } from "./v20";
+import { V20_9 } from "./staticMesh";
 
 export class DynamicMesh extends Class {
   __id = 28;

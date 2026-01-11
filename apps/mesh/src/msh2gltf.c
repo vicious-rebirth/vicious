@@ -16,11 +16,11 @@ typedef struct __attribute__((packed)) {
     float x, y, z, nx, ny, nz, u, v;
 } VertexGLTF;
 
-typedef VertexGLTF SkinVertex;
+typedef VertexGLTF VertexF32;
 
 typedef struct __attribute__((packed)) {
     int16_t x, y, z, nx, ny, nz, u, v;
-} StaticVertex;
+} VertexI16;
 
 typedef struct {
     uint8_t j0, j1, w0, w1;
@@ -81,7 +81,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
         if (scene->nodes == NULL) return false;
     }
 
-    doc->materials_count = (meshSectionCount);
+    doc->materials_count = meshSectionCount;
     doc->materials = calloc(doc->materials_count, sizeof(doc->materials[0]));
     if (doc->materials == NULL) return false;
 
@@ -98,11 +98,11 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
     cgltf_size inverseBindMatricesSize = mesh->helperPoints.count * sizeof(mat4);
     buffer->size += inverseBindMatricesSize;
 
-    cgltf_size riggedVertexCount = mesh->body.riggedVertexBuffer.size / sizeof(SkinVertex);
+    cgltf_size riggedVertexCount = mesh->body.riggedVertexBuffer.size / sizeof(VertexF32);
     cgltf_size riggedVertexBufferSize = riggedVertexCount * sizeof(VertexGLTF);
     buffer->size += riggedVertexBufferSize;
 
-    cgltf_size staticVertexCount = mesh->body.staticVertexBuffer.size / sizeof(StaticVertex);
+    cgltf_size staticVertexCount = mesh->body.staticVertexBuffer.size / sizeof(VertexI16);
     cgltf_size staticVertexBufferSize = staticVertexCount * sizeof(VertexGLTF);
     buffer->size += staticVertexBufferSize;
 
@@ -133,7 +133,6 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
     }
     buffer->size += riggedIndexBufferSize;
     buffer->size += staticIndexBufferSize;
-
 
     doc->bin = calloc(1, buffer->size);
     if (doc->bin == NULL) return false;
@@ -172,6 +171,8 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
     {
         cgltf_node *skeleton = &doc->nodes[doc->nodes_count++];
         {
+            skeleton->name = (char *)mesh->base.base.base.label.buffer.data;
+
             // Rotate Z-up
             skeleton->has_rotation = true;
             skeleton->rotation[0] = -1;
@@ -234,12 +235,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
             skin->joints[i] = j;
 
             // Attach to parent
-            cgltf_node *parent;
-            if (pnt->parentIndex >= 0) parent = skin->joints[pnt->parentIndex];
-            else {
-                parent = skeleton;
-                parent->name = j->name;
-            }
+            cgltf_node *parent = (pnt->parentIndex >= 0) ? skin->joints[pnt->parentIndex] : skeleton;
 
             parent->children = realloc(parent->children, sizeof(parent->children[0]) * (parent->children_count + 1));
             parent->children[parent->children_count++] = j;
@@ -301,7 +297,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
         {
             // Bake verticies mapped to helper point position
 
-            SkinVertex *inVertexBuffer = (SkinVertex *)mesh->body.riggedVertexBuffer.data;
+            VertexF32 *inVertexBuffer = (VertexF32 *)mesh->body.riggedVertexBuffer.data;
 
             for (uint8_t si = 0; si < meshSectionCount; si++) {
                 const MeshSection *section = &mesh->body.meshSections[si];
@@ -318,7 +314,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
                     for (size_t o = 0; o < count; o++) {
                         size_t i = off + o;
 
-                        SkinVertex *iv = &inVertexBuffer[i];
+                        VertexF32 *iv = &inVertexBuffer[i];
                         VertexGLTF *v = &vertexBuffer[i];
 
                         vec4 t = {iv->x, iv->y, iv->z, 1.0f};
@@ -518,7 +514,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
         {
             // Bake verticies mapped to helper point position
 
-            StaticVertex *inVertexBuffer = (StaticVertex *)mesh->body.staticVertexBuffer.data;
+            VertexI16 *inVertexBuffer = (VertexI16 *)mesh->body.staticVertexBuffer.data;
 
             for (uint8_t si = 0; si < meshSectionCount; si++) {
                 const MeshSection *section = &mesh->body.meshSections[si];
@@ -535,7 +531,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
                     for (size_t o = 0; o < count; o++) {
                         size_t i = off + o;
 
-                        StaticVertex *iv = &inVertexBuffer[i];
+                        VertexI16 *iv = &inVertexBuffer[i];
                         VertexGLTF *v = &vertexBuffer[i];
 
                         vec4 t = {
@@ -745,6 +741,254 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
     return true;
 }
 
+bool writeStaticMesh(FILE *file, const StaticMesh *mesh, bool isGLB) {
+    // Allocate
+
+    cgltf_data *doc = calloc(1, sizeof(*doc));
+
+    doc->asset.version = "2.0";
+    doc->asset.generator = "Vicious";
+
+    cgltf_size meshCount = mesh->body.buffers.meshSections.count;
+    doc->meshes = calloc(meshCount, sizeof(doc->meshes[0]));
+    if (doc->meshes == NULL) return false;
+
+    doc->nodes = calloc(1 + meshCount, sizeof(doc->nodes[0]));
+    if (doc->nodes == NULL) return false;
+
+    cgltf_node *root = &doc->nodes[doc->nodes_count++];
+    {
+        root->name = (char *)mesh->base.base.base.label.buffer.data;
+
+        // Rotate Z-up
+        root->has_rotation = true;
+        root->rotation[0] = -1;
+        root->rotation[1] = 0;
+        root->rotation[2] = 0;
+        root->rotation[3] = 1;
+
+        root->children = calloc(meshCount, sizeof(root->children[0]));
+        if (root->children == NULL) return false;
+    }
+
+    doc->scenes = calloc(1, sizeof(doc->scenes[0]));
+    if (doc->scenes == NULL) return false;
+
+    cgltf_scene* scene = &doc->scenes[doc->scenes_count++];
+    {
+        scene->nodes = calloc(1, sizeof(scene->nodes[0]));
+        if (scene->nodes == NULL) return false;
+
+        scene->nodes[scene->nodes_count++] = root;
+    }
+
+    doc->materials_count = 0;
+    for (cgltf_size i = 0; i < mesh->body.buffers.meshSections.count; i++) {
+        V20_8 *section = &mesh->body.buffers.meshSections.list[i];
+
+        if (section->material + 1 > doc->materials_count) doc->materials_count = section->material + 1;
+    }
+
+    doc->materials = calloc(doc->materials_count, sizeof(doc->materials[0]));
+    if (doc->materials == NULL) return false;
+
+    doc->buffers = calloc(1, sizeof(doc->buffers[0]));
+    if (doc->buffers == NULL) return false;
+
+    cgltf_buffer *buffer = &doc->buffers[doc->buffers_count++];
+    buffer->name = "buffer";
+    buffer->size = 0;
+
+    cgltf_size vertexCount = mesh->body.buffers.vertices.size / sizeof(VertexI16);
+    cgltf_size vertexBufferSize = vertexCount * sizeof(VertexGLTF);
+    buffer->size += vertexBufferSize;
+
+    cgltf_size indexCount = mesh->body.buffers.indices.count;
+    cgltf_size indexBufferSize = indexCount * sizeof(uint32_t);
+    buffer->size += indexBufferSize;
+
+    doc->bin = calloc(1, buffer->size);
+    if (doc->bin == NULL) return false;
+
+    // (1 vertex + 1 index) + 1 per mesh
+    doc->buffer_views = calloc(2 + meshCount, sizeof(doc->buffer_views[0]));
+    if (doc->buffer_views == NULL) return false;
+
+    // (1 pos + 1 uv) + 1 per mesh
+    doc->accessors = calloc(2 + meshCount, sizeof(doc->accessors[0]));
+    if (doc->accessors == NULL) return false;
+
+    // Materials (override with MaterialSet)
+
+    for (uint8_t i = 0; i < doc->materials_count; i++) {
+        cgltf_material *material = &doc->materials[i];
+
+        material->double_sided = true;
+
+        material->has_pbr_metallic_roughness = true;
+        cgltf_pbr_metallic_roughness *pbr = &material->pbr_metallic_roughness;
+
+        uint32_t color = (i < sizeof(uniqueColors) / sizeof(uniqueColors[0])) ? uniqueColors[i] : 0xFF00FF;
+        pbr->base_color_factor[0] = ((color >> 16) & 0xFF) / 255.0f;
+        pbr->base_color_factor[1] = ((color >>  8) & 0xFF) / 255.0f;
+        pbr->base_color_factor[2] = ((color >>  0) & 0xFF) / 255.0f;
+        pbr->base_color_factor[3] = 1.0f;
+
+        pbr->metallic_factor = 0.5f;
+        pbr->roughness_factor = 0.5f;
+    }
+
+    // Meshes
+
+    cgltf_size vertexBufferOffset = alloc_bin(vertexBufferSize);
+    VertexGLTF *vertexBuffer = (VertexGLTF *)(doc->bin + vertexBufferOffset);
+    {
+        // Map vertices
+
+        VertexI16 *inVertexBuffer = (VertexI16 *)mesh->body.buffers.vertices.data;
+
+        for (cgltf_size i = 0; i < vertexCount; i++) {
+            VertexI16 *iv = &inVertexBuffer[i];
+            VertexGLTF *v = &vertexBuffer[i];
+
+            v->x = (float)iv->x * mesh->base.inverseScale;
+            v->y = (float)iv->y * mesh->base.inverseScale;
+            v->z = (float)iv->z * mesh->base.inverseScale;
+
+            v->nx = (float)iv->nx / INT16_MAX;
+            v->ny = (float)iv->ny / INT16_MAX;
+            v->nz = (float)iv->nz / INT16_MAX;
+
+            v->u = (float)iv->u / 1024.0f;
+            v->v = (float)iv->v / 1024.0f;
+        }
+    }
+
+    cgltf_size indexBufferOffset = alloc_bin(indexBufferSize);
+    uint32_t *indexBuffer = (uint32_t *)(doc->bin + indexBufferOffset);
+    {
+        // Map indices
+
+        uint16_t *inIndexBuffer = mesh->body.buffers.indices.data;
+
+        for (cgltf_size i = 0; i < indexCount; i++) {
+            indexBuffer[i] = inIndexBuffer[i];
+        }
+    }
+
+    cgltf_buffer_view *vertexBufferView = &doc->buffer_views[doc->buffer_views_count++];
+
+    vertexBufferView->name = "vertices";
+    vertexBufferView->buffer = buffer;
+    vertexBufferView->offset = vertexBufferOffset;
+    vertexBufferView->size = vertexBufferSize;
+    vertexBufferView->stride = sizeof(VertexGLTF);
+    vertexBufferView->type = cgltf_buffer_view_type_vertices;
+
+    cgltf_accessor *positionAccessor = &doc->accessors[doc->accessors_count++];
+
+    positionAccessor->name = "position";
+    positionAccessor->buffer_view = vertexBufferView;
+    positionAccessor->offset = 0;
+    positionAccessor->count = vertexCount;
+    positionAccessor->component_type = cgltf_component_type_r_32f;
+    positionAccessor->type = cgltf_type_vec3;
+
+    cgltf_accessor *uvAccessor = &doc->accessors[doc->accessors_count++];
+
+    uvAccessor->name = "uv";
+    uvAccessor->buffer_view = vertexBufferView;
+    uvAccessor->offset = 6 * sizeof(float);
+    uvAccessor->count = vertexCount;
+    uvAccessor->component_type = cgltf_component_type_r_32f;
+    uvAccessor->type = cgltf_type_vec2;
+
+    cgltf_size index = 0;
+    for (cgltf_size i = 0; i < mesh->body.buffers.meshSections.count; i++) {
+        V20_8 *section = &mesh->body.buffers.meshSections.list[i];
+
+        // Create indices
+
+        cgltf_size count = section->index;
+
+        cgltf_buffer_view *indexBufferView = &doc->buffer_views[doc->buffer_views_count++];
+
+        indexBufferView->name = "indices";
+        indexBufferView->buffer = buffer;
+        indexBufferView->offset = indexBufferOffset + index * sizeof(uint32_t);
+        indexBufferView->size = count * sizeof(uint32_t);
+        indexBufferView->type = cgltf_buffer_view_type_indices;
+
+        cgltf_accessor *indexAccessor = &doc->accessors[doc->accessors_count++];
+
+        indexAccessor->name = "index";
+        indexAccessor->buffer_view = indexBufferView;
+        indexAccessor->count = count;
+        indexAccessor->component_type = cgltf_component_type_r_32u;
+        indexAccessor->type = cgltf_type_scalar;
+
+        index += count;
+
+        // Create mesh
+
+        cgltf_mesh *mesh = &doc->meshes[doc->meshes_count++];
+
+        mesh->primitives_count = 1;
+
+        mesh->primitives = calloc(mesh->primitives_count, sizeof(mesh->primitives[0]));
+        if (mesh->primitives == NULL) return false;
+
+        cgltf_primitive *primitive = &mesh->primitives[0];
+
+        primitive->type = cgltf_primitive_type_triangle_strip;
+        primitive->indices = indexAccessor;
+        primitive->material = &doc->materials[section->material];
+
+        primitive->attributes_count = 2;
+
+        primitive->attributes = calloc(primitive->attributes_count, sizeof(primitive->attributes[0]));
+        if (primitive->attributes == NULL) return false;
+
+        primitive->attributes[0].name = "POSITION";
+        primitive->attributes[0].type = cgltf_attribute_type_position;
+        primitive->attributes[0].data = positionAccessor;
+
+        primitive->attributes[1].name = "TEXCOORD_0";
+        primitive->attributes[1].type = cgltf_attribute_type_texcoord;
+        primitive->attributes[1].data = uvAccessor;
+
+        // Create node
+
+        cgltf_node *node = &doc->nodes[doc->nodes_count++];
+        node->mesh = mesh;
+
+        // Add to root
+
+        root->children[root->children_count++] = node;
+    }
+
+    // Write file
+
+    cgltf_options opts = { 0 };
+
+    cgltf_size expected = cgltf_write(&opts, NULL, 0, doc);
+
+    char *json = malloc(expected);
+    if (json == NULL) return false;
+
+    cgltf_size actual = cgltf_write(&opts, json, expected, doc);
+
+    if (isGLB) {
+        cgltf_write_glb(file, json, actual - 1, doc->bin, doc->bin_size);
+    } else {
+        fwrite(json, 1, actual - 1, file);
+    }
+
+    free(json);
+
+    return true;
+}
+
 int main(int argc, char **argv) {
     int result = 0;
 
@@ -783,6 +1027,9 @@ int main(int argc, char **argv) {
     switch (assetType) {
         case VCS_DynamicMesh: {
             if (!writeDynamicMesh(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
+        } break;
+        case VCS_StaticMesh: {
+            if (!writeStaticMesh(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
         } break;
         default: goto error;
     }

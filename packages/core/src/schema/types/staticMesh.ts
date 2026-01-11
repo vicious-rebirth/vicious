@@ -4,7 +4,7 @@ import { U8Buffer, U16Buffer } from "./buffer";
 import { Color, Vector3 } from "./math";
 import { Mesh } from "./mesh";
 
-export class V20 extends Class {
+export class StaticMesh extends Class {
   __id = 20;
   __offset = 0x124b70;
 
