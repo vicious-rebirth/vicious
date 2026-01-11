@@ -27,4 +27,4 @@ As of writing, I didn't create a tool to combine a MaterialSet with a Mesh.
 
 ### Why are .gltf files empty?
 
-As of writing, I didn't add the `out.bin` file writing. You should really only be using `out.glb`.
+As of writing, I didn't add the `out.bin` file writing. You should really only be using `out.glb` until then.
