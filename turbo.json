@@ -1,22 +1,20 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"]
-    },
     "codegen": {
       "dependsOn": ["^codegen"]
     },
-    "lint": {
-      "dependsOn": ["^lint"]
+    "setup:release": {
+      "dependsOn": ["^setup:release"]
     },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+    "setup:debug": {
+      "dependsOn": ["^setup:debug"]
     },
-    "dev": {
-      "cache": false,
-      "persistent": true
+    "build:exe": {
+      "dependsOn": ["^build:exe"]
+    },
+    "build:lib": {
+      "dependsOn": ["^build:lib"]
     }
   }
 }

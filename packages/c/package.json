@@ -4,10 +4,9 @@
   "description": "C implementation of Vicious Engine",
   "scripts": {
     "codegen": "tsx codegen/main.ts",
-    "codegen:debug": "tsx --inspect-brk codegen/main.ts",
-    "setup": "cmake -G Ninja -S . -B build",
-    "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build",
-    "build": "cmake --build build"
+    "setup:release": "cmake -S . -B build",
+    "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build",
+    "build:lib": "cmake --build build"
   },
   "license": "MIT",
   "devDependencies": {

@@ -3,11 +3,9 @@
   "version": "0.0.0",
   "description": "Tool to convert tex files of Vicious Engine",
   "scripts": {
-    "setup": "cmake -G Ninja -S . -B build",
-    "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B build",
-    "build": "cmake --build build",
-    "tex2image": "build/tex2image",
-    "image2tex": "build/image2tex"
+    "setup:release": "cmake -S . -B build",
+    "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build",
+    "build:exe": "cmake --build build -j 4"
   },
   "license": "MIT",
   "devDependencies": {},

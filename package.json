@@ -2,12 +2,13 @@
   "name": "vicious",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "codegen": "turbo run codegen",
-    "dev": "turbo run dev",
     "format": "prettier --write .",
-    "lint": "turbo run lint",
-    "check-types": "turbo run check-types"
+    "setup:release": "turbo run setup:release",
+    "setup:debug": "turbo run setup:debug",
+    "codegen": "turbo run codegen",
+    "build": "turbo run build:exe && turbo run build:lib",
+    "build:exe": "turbo run build:exe",
+    "build:lib": "turbo run build:lib"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",

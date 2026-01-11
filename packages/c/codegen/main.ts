@@ -1,4 +1,4 @@
-import { writeFile } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import * as path from "path";
 
 import { buildDecoderDeclaration, buildDecoderImplementation } from "./decoder";
@@ -8,8 +8,14 @@ import { buildFreeDeclaration, buildFreeImplementation } from "./free";
 import { buildTypes } from "./type";
 import { buildUtilDeclaration, buildUtilImplementation } from "./util";
 import { buildVisitorDeclaration, buildVisitorImplementation } from "./visitor";
+import { existsSync } from "fs";
 
 async function main() {
+  const generatedFolder = path.join(__dirname, "..", "src", "generated");
+  if (!existsSync(generatedFolder)) {
+    await mkdir(generatedFolder, { recursive: true });
+  }
+
   await Promise.all([
     writeFile(
       path.join(__dirname, "..", "include", "vicious", "generated.h"),
@@ -27,19 +33,19 @@ async function main() {
     ),
 
     writeFile(
-      path.join(__dirname, "..", "src", "generated", "decoder.c"),
+      path.join(generatedFolder, "decoder.c"),
       ["#include <vicious/generated.h>", buildDecoderImplementation()].join(
         "\n\n"
       )
     ),
     writeFile(
-      path.join(__dirname, "..", "src", "generated", "encoder.c"),
+      path.join(generatedFolder, "encoder.c"),
       ["#include <vicious/generated.h>", buildEncoderImplementation()].join(
         "\n\n"
       )
     ),
     writeFile(
-      path.join(__dirname, "..", "src", "generated", "free.c"),
+      path.join(generatedFolder, "free.c"),
       [
         "#include <vicious/generated.h>",
         "#include <stdlib.h>",
@@ -47,14 +53,14 @@ async function main() {
       ].join("\n\n")
     ),
     writeFile(
-      path.join(__dirname, "..", "src", "generated", "visitor.c"),
+      path.join(generatedFolder, "visitor.c"),
       ["#include <vicious/generated.h>", buildVisitorImplementation()].join(
         "\n\n"
       )
     ),
 
     writeFile(
-      path.join(__dirname, "..", "src", "generated", "util.c"),
+      path.join(generatedFolder, "util.c"),
       ["#include <vicious/generated.h>", buildUtilImplementation()].join("\n\n")
     ),
   ]);

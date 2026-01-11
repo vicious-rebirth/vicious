@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "description": "JS implementation of Vicious Engine",
   "scripts": {
-    "codegen": "tsx codegen/main.ts",
-    "codegen:debug": "tsx --inspect-brk codegen/main.ts"
+    "codegen": "tsx codegen/main.ts"
   },
   "license": "MIT",
   "devDependencies": {
