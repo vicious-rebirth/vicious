@@ -14,7 +14,13 @@
 
 typedef struct __attribute__((packed)) {
     float x, y, z, nx, ny, nz, u, v;
-} RiggedVertex;
+} VertexGLTF;
+
+typedef VertexGLTF SkinVertex;
+
+typedef struct __attribute__((packed)) {
+    int16_t x, y, z, nx, ny, nz, u, v;
+} StaticVertex;
 
 typedef struct {
     uint8_t j0, j1, w0, w1;
@@ -46,6 +52,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
     doc->asset.version = "2.0";
     doc->asset.generator = "Vicious";
 
+    cgltf_size jointCount = mesh->helperPoints.count;
     size_t meshSectionCount = sizeof(mesh->body.meshSections) / sizeof(mesh->body.meshSections[0]);
 
     cgltf_size staticMeshCount = 0;
@@ -60,8 +67,8 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
     doc->meshes = calloc(riggedMeshCount + staticMeshCount, sizeof(doc->meshes[0]));
     if (doc->meshes == NULL) return false;
 
-    // 1 skeleton + 1 per skeleton joint + 1 per mesh 
-    doc->nodes = calloc(1 + mesh->helperPoints.count + riggedMeshCount + staticMeshCount, sizeof(doc->nodes[0]));
+    // 1 skeleton + 1 per skeleton joint + 1 per mesh
+    doc->nodes = calloc(1 + jointCount + riggedMeshCount + staticMeshCount, sizeof(doc->nodes[0]));
     if (doc->nodes == NULL) return false;
 
     doc->scenes = calloc(1, sizeof(doc->scenes[0]));
@@ -91,27 +98,42 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
     cgltf_size inverseBindMatricesSize = mesh->helperPoints.count * sizeof(mat4);
     buffer->size += inverseBindMatricesSize;
 
-    uint32_t riggedVertexCount = mesh->body.riggedVertexBuffer.size / sizeof(RiggedVertex);
-    cgltf_size riggedVertexBufferSize = mesh->body.riggedVertexBuffer.size;
+    cgltf_size riggedVertexCount = mesh->body.riggedVertexBuffer.size / sizeof(SkinVertex);
+    cgltf_size riggedVertexBufferSize = riggedVertexCount * sizeof(VertexGLTF);
     buffer->size += riggedVertexBufferSize;
 
-    uint32_t riggedJointCount = mesh->body.riggedJointWeightBuffer.size / sizeof(JointWeightVicious);
+    cgltf_size staticVertexCount = mesh->body.staticVertexBuffer.size / sizeof(StaticVertex);
+    cgltf_size staticVertexBufferSize = staticVertexCount * sizeof(VertexGLTF);
+    buffer->size += staticVertexBufferSize;
+
+    cgltf_size riggedJointCount = mesh->body.riggedJointWeightBuffer.size / sizeof(JointWeightVicious);
     cgltf_size riggedJointBufferSize = riggedJointCount * sizeof(JointWeightGLTF);
     buffer->size += riggedJointBufferSize;
 
+    cgltf_size staticJointCount = staticVertexCount;
+    cgltf_size staticJointBufferSize = staticJointCount * sizeof(JointWeightGLTF);
+    buffer->size += staticJointBufferSize;
+
     cgltf_size riggedIndexBufferSize = 0;
-    if (riggedVertexBufferSize > 0) {
-        for (uint8_t si = 0; si < meshSectionCount; si++) {
-            const MeshSection *section = &mesh->body.meshSections[si];
+    cgltf_size staticIndexBufferSize = 0;
+    for (uint8_t si = 0; si < meshSectionCount; si++) {
+        const MeshSection *section = &mesh->body.meshSections[si];
 
-            for (size_t ri = 0; ri < section->riggedRangeCount; ri++) {
-                const MeshRange *range = &section->riggedRanges[ri];
+        for (size_t ri = 0; ri < section->riggedRangeCount; ri++) {
+            const MeshRange *range = &section->riggedRanges[ri];
 
-                riggedIndexBufferSize += range->indexCount * sizeof(uint32_t);
-            }
+            riggedIndexBufferSize += range->indexCount * sizeof(uint32_t);
+        }
+
+        for (size_t ri = 0; ri < section->staticRangeCount; ri++) {
+            const MeshRange *range = &section->staticRanges[ri];
+
+            staticIndexBufferSize += range->indexCount * sizeof(uint32_t);
         }
     }
     buffer->size += riggedIndexBufferSize;
+    buffer->size += staticIndexBufferSize;
+
 
     doc->bin = calloc(1, buffer->size);
     if (doc->bin == NULL) return false;
@@ -149,6 +171,14 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
     cgltf_skin *skin = &doc->skins[doc->skins_count++];
     {
         cgltf_node *skeleton = &doc->nodes[doc->nodes_count++];
+        {
+            // Rotate Z-up
+            skeleton->has_rotation = true;
+            skeleton->rotation[0] = -1;
+            skeleton->rotation[1] = 0;
+            skeleton->rotation[2] = 0;
+            skeleton->rotation[3] = 1;
+        }
 
         skin->skeleton = skeleton;
         scene->nodes[scene->nodes_count++] = skeleton;
@@ -267,11 +297,11 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
         // Create buffers
 
         size_t vertexBufferOffset = alloc_bin(riggedVertexBufferSize);
-        RiggedVertex *vertexBuffer = (RiggedVertex *)(doc->bin + vertexBufferOffset);
+        VertexGLTF *vertexBuffer = (VertexGLTF *)(doc->bin + vertexBufferOffset);
         {
             // Bake verticies mapped to helper point position
 
-            memcpy(vertexBuffer, mesh->body.riggedVertexBuffer.data, mesh->body.riggedVertexBuffer.size);
+            SkinVertex *inVertexBuffer = (SkinVertex *)mesh->body.riggedVertexBuffer.data;
 
             for (uint8_t si = 0; si < meshSectionCount; si++) {
                 const MeshSection *section = &mesh->body.meshSections[si];
@@ -286,14 +316,24 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
                     uint32_t count = range->vertexCount - prev;
 
                     for (size_t o = 0; o < count; o++) {
-                        RiggedVertex *v = &vertexBuffer[off + o];
+                        size_t i = off + o;
 
-                        vec4 t = {v->x, v->y, v->z, 1.0f};
+                        SkinVertex *iv = &inVertexBuffer[i];
+                        VertexGLTF *v = &vertexBuffer[i];
+
+                        vec4 t = {iv->x, iv->y, iv->z, 1.0f};
                         glm_mat4_mulv(*m, t, t);
 
                         v->x = t[0];
                         v->y = t[1];
                         v->z = t[2];
+
+                        v->nx = iv->nx;
+                        v->ny = iv->ny;
+                        v->nz = iv->nz;
+
+                        v->u = iv->u;
+                        v->v = iv->v;
                     }
 
                     prev = range->vertexCount;
@@ -309,18 +349,16 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
             const JointWeightVicious *joints = (JointWeightVicious *)mesh->body.riggedJointWeightBuffer.data;
 
             for (uint32_t i = 0; i < riggedJointCount; i++) {
-                JointWeightGLTF *j = &jointBuffer[i];
                 const JointWeightVicious *ji = &joints[i];
+
+                JointWeightGLTF *j = &jointBuffer[i];
+                memset(j, 0, sizeof(JointWeightGLTF));
 
                 j->joints[0] = ji->j0 + 1;
                 j->joints[1] = ji->j1 + 1;
-                j->joints[2] = 0;
-                j->joints[3] = 0;
 
                 j->weights[0] = (float)ji->w0 / 255.0f;
                 j->weights[1] = (float)ji->w1 / 255.0f;
-                j->weights[2] = 0.0f;
-                j->weights[3] = 0.0f;
             }
         }
 
@@ -332,7 +370,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
         vertexBufferView->buffer = buffer;
         vertexBufferView->offset = vertexBufferOffset;
         vertexBufferView->size = riggedVertexBufferSize;
-        vertexBufferView->stride = sizeof(RiggedVertex);
+        vertexBufferView->stride = sizeof(VertexGLTF);
         vertexBufferView->type = cgltf_buffer_view_type_vertices;
 
         cgltf_buffer_view *jointBufferView = &doc->buffer_views[doc->buffer_views_count++];
@@ -375,7 +413,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
 
         cgltf_accessor *weightAccessor = &doc->accessors[doc->accessors_count++];
 
-        weightAccessor->name = "rigged_weights";
+        weightAccessor->name = "skin_weights";
         weightAccessor->buffer_view = jointBufferView;
         weightAccessor->offset = 4;
         weightAccessor->count = riggedJointCount;
@@ -398,7 +436,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
                 {
                     // Map from uint16_t to uint32_t and apply range transformation
 
-                    uint16_t *inIndexBuffer = (uint16_t *)(mesh->body.indexBuffer.data + range->indexOffset * 2);
+                    uint16_t *inIndexBuffer = (uint16_t *)(mesh->body.indexBuffer.data + range->indexOffset * sizeof(uint16_t));
 
                     for (size_t i = 0; i < range->indexCount; i++) {
                         indexBuffer[i] = (uint32_t)inIndexBuffer[i] + range->vertexOffset;
@@ -416,6 +454,219 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
                 cgltf_accessor *indexAccessor = &doc->accessors[doc->accessors_count++];
 
                 indexAccessor->name = "skin_index";
+                indexAccessor->buffer_view = indexBufferView;
+                indexAccessor->count = range->indexCount;
+                indexAccessor->component_type = cgltf_component_type_r_32u;
+                indexAccessor->type = cgltf_type_scalar;
+
+                // Create mesh
+
+                cgltf_mesh *mesh = &doc->meshes[doc->meshes_count++];
+
+                mesh->primitives_count = 1;
+
+                mesh->primitives = calloc(mesh->primitives_count, sizeof(mesh->primitives[0]));
+                if (mesh->primitives == NULL) return false;
+
+                cgltf_primitive *primitive = &mesh->primitives[0];
+
+                primitive->type = cgltf_primitive_type_triangle_strip;
+                primitive->indices = indexAccessor;
+                primitive->material = &doc->materials[si];
+
+                primitive->attributes_count = 4;
+
+                primitive->attributes = calloc(primitive->attributes_count, sizeof(primitive->attributes[0]));
+                if (primitive->attributes == NULL) return false;
+
+                primitive->attributes[0].name = "POSITION";
+                primitive->attributes[0].type = cgltf_attribute_type_position;
+                primitive->attributes[0].data = positionAccessor;
+
+                primitive->attributes[1].name = "TEXCOORD_0";
+                primitive->attributes[1].type = cgltf_attribute_type_texcoord;
+                primitive->attributes[1].data = uvAccessor;
+
+                primitive->attributes[2].name = "JOINTS_0";
+                primitive->attributes[2].type = cgltf_attribute_type_joints;
+                primitive->attributes[2].data = jointAccessor;
+
+                primitive->attributes[3].name = "WEIGHTS_0";
+                primitive->attributes[3].type = cgltf_attribute_type_weights;
+                primitive->attributes[3].data = weightAccessor;
+
+                // Create node
+
+                cgltf_node *node = &doc->nodes[doc->nodes_count++];
+                node->mesh = mesh;
+                node->skin = skin;
+
+                // Add to scene
+
+                scene->nodes[scene->nodes_count++] = node;
+            }
+        }
+    }
+
+    // Static
+
+    if (mesh->body.staticVertexBuffer.size > 0) {
+        // Create buffers
+
+        size_t vertexBufferOffset = alloc_bin(staticVertexBufferSize);
+        VertexGLTF *vertexBuffer = (VertexGLTF *)(doc->bin + vertexBufferOffset);
+        {
+            // Bake verticies mapped to helper point position
+
+            StaticVertex *inVertexBuffer = (StaticVertex *)mesh->body.staticVertexBuffer.data;
+
+            for (uint8_t si = 0; si < meshSectionCount; si++) {
+                const MeshSection *section = &mesh->body.meshSections[si];
+
+                size_t prev = 0;
+                for (size_t ri = 0; ri < section->staticRangeCount; ri++) {
+                    const MeshRange *range = &section->staticRanges[ri];
+
+                    mat4 *m = &helperMatrices[range->helperPointIndex];
+
+                    uint32_t off = range->vertexOffset + prev;
+                    uint32_t count = range->vertexCount - prev;
+
+                    for (size_t o = 0; o < count; o++) {
+                        size_t i = off + o;
+
+                        StaticVertex *iv = &inVertexBuffer[i];
+                        VertexGLTF *v = &vertexBuffer[i];
+
+                        vec4 t = {
+                            (float)iv->x * mesh->base.inverseScale,
+                            (float)iv->y * mesh->base.inverseScale,
+                            (float)iv->z * mesh->base.inverseScale,
+                            1.0f
+                        };
+                        glm_mat4_mulv(*m, t, t);
+
+                        v->x = t[0];
+                        v->y = t[1];
+                        v->z = t[2];
+
+                        v->nx = ((float)iv->nx / INT16_MAX);
+                        v->ny = ((float)iv->ny / INT16_MAX);
+                        v->nz = ((float)iv->nz / INT16_MAX);
+
+                        v->u = (float)iv->u / 1024.0f;
+                        v->v = (float)iv->v / 1024.0f;
+                    }
+
+                    prev = range->vertexCount;
+                }
+            }
+        }
+
+        size_t jointBufferOffset = alloc_bin(staticJointBufferSize);
+        JointWeightGLTF *jointBuffer = (JointWeightGLTF *)(doc->bin + jointBufferOffset);
+        {
+            // Generated with mesh
+            memset(jointBuffer, 0, staticJointBufferSize);
+        }
+
+        // Create buffer viewers
+
+        cgltf_buffer_view *vertexBufferView = &doc->buffer_views[doc->buffer_views_count++];
+
+        vertexBufferView->name = "static_vertices";
+        vertexBufferView->buffer = buffer;
+        vertexBufferView->offset = vertexBufferOffset;
+        vertexBufferView->size = staticVertexBufferSize;
+        vertexBufferView->stride = sizeof(VertexGLTF);
+        vertexBufferView->type = cgltf_buffer_view_type_vertices;
+
+        cgltf_buffer_view *jointBufferView = &doc->buffer_views[doc->buffer_views_count++];
+
+        jointBufferView->name = "static_joints";
+        jointBufferView->buffer = buffer;
+        jointBufferView->offset = jointBufferOffset;
+        jointBufferView->size = staticJointBufferSize;
+        jointBufferView->stride = sizeof(JointWeightGLTF);
+        jointBufferView->type = cgltf_buffer_view_type_vertices;
+
+        // Create accessors
+
+        cgltf_accessor *positionAccessor = &doc->accessors[doc->accessors_count++];
+
+        positionAccessor->name = "static_position";
+        positionAccessor->buffer_view = vertexBufferView;
+        positionAccessor->offset = 0;
+        positionAccessor->count = staticVertexCount;
+        positionAccessor->component_type = cgltf_component_type_r_32f;
+        positionAccessor->type = cgltf_type_vec3;
+
+        cgltf_accessor *uvAccessor = &doc->accessors[doc->accessors_count++];
+
+        uvAccessor->name = "static_uv";
+        uvAccessor->buffer_view = vertexBufferView;
+        uvAccessor->offset = 6 * sizeof(float);
+        uvAccessor->count = staticVertexCount;
+        uvAccessor->component_type = cgltf_component_type_r_32f;
+        uvAccessor->type = cgltf_type_vec2;
+
+        cgltf_accessor *jointAccessor = &doc->accessors[doc->accessors_count++];
+
+        jointAccessor->name = "skin_joints";
+        jointAccessor->buffer_view = jointBufferView;
+        jointAccessor->offset = 0;
+        jointAccessor->count = staticJointCount;
+        jointAccessor->component_type = cgltf_component_type_r_8u;
+        jointAccessor->type = cgltf_type_vec4;
+
+        cgltf_accessor *weightAccessor = &doc->accessors[doc->accessors_count++];
+
+        weightAccessor->name = "static_weights";
+        weightAccessor->buffer_view = jointBufferView;
+        weightAccessor->offset = 4;
+        weightAccessor->count = staticJointCount;
+        weightAccessor->component_type = cgltf_component_type_r_32f;
+        weightAccessor->type = cgltf_type_vec4;
+
+        // Create meshes
+
+        for (uint32_t si = 0; si < meshSectionCount; si++) {
+            const MeshSection *section = &mesh->body.meshSections[si];
+
+            for (uint32_t ri = 0; ri < section->staticRangeCount; ri++) {
+                const MeshRange *range = &section->staticRanges[ri];
+
+                // Create index buffer + accessor
+
+                size_t indexBufferSize = range->indexCount * sizeof(uint32_t);
+                size_t indexBufferOffset = alloc_bin(indexBufferSize);
+                uint32_t *indexBuffer = (uint32_t *)(doc->bin + indexBufferOffset);
+                {
+                    // Map from uint16_t to uint32_t and apply range transformation
+
+                    uint16_t *inIndexBuffer = (uint16_t *)(mesh->body.indexBuffer.data + range->indexOffset * sizeof(uint16_t));
+
+                    for (size_t i = 0; i < range->indexCount; i++) {
+                        uint32_t idx = (uint32_t)inIndexBuffer[i] + range->vertexOffset;
+                        indexBuffer[i] = idx;
+
+                        // Set joint
+                        jointBuffer[idx].joints[0] = range->helperPointIndex;
+                        jointBuffer[idx].weights[0] = 1;
+                    }
+                }
+
+                cgltf_buffer_view *indexBufferView = &doc->buffer_views[doc->buffer_views_count++];
+
+                indexBufferView->name = "static_indices";
+                indexBufferView->buffer = buffer;
+                indexBufferView->offset = indexBufferOffset;
+                indexBufferView->size = indexBufferSize;
+                indexBufferView->type = cgltf_buffer_view_type_indices;
+
+                cgltf_accessor *indexAccessor = &doc->accessors[doc->accessors_count++];
+
+                indexAccessor->name = "static_index";
                 indexAccessor->buffer_view = indexBufferView;
                 indexAccessor->count = range->indexCount;
                 indexAccessor->component_type = cgltf_component_type_r_32u;
