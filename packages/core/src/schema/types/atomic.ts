@@ -1,6 +1,11 @@
 import { Atom } from "../core";
 
-export class ANY extends Atom {}
+export class ANY extends Atom {
+  __doc = `
+    Pointer to any type (void *).
+  `;
+}
+
 export class BOOL extends Atom {}
 export class F32 extends Atom {}
 export class I16 extends Atom {}

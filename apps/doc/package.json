@@ -1,0 +1,16 @@
+{
+  "name": "@repo/doc",
+  "version": "0.0.0",
+  "description": "Documentation for Vicious Engine",
+  "scripts": {
+    "codegen": "tsx codegen/main.ts",
+    "build": "doxygen"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@repo/core": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^25.0.3",
+    "tsx": "^4.21.0"
+  }
+}

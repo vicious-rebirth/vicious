@@ -143,9 +143,15 @@ export class Animation extends Class {
 
 export class AnimationIndexBuffer extends Struct {
   __offset = 0x120f0;
+  __doc = `
+    U16 index buffer for Animation.
+  `;
 
-  count = field(U32);
+  count = field(U32, {
+    doc: "Count for buffer",
+  });
   buffer = field(U8Buffer, {
+    doc: "Indices stored in U16 format",
     custom: (ctx) => {
       ctx.set(this.buffer.consume, false);
       ctx.set(this.buffer.size, (ctx) => ctx.mul(this.count, 2));

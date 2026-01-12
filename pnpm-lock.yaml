@@ -29,6 +29,21 @@ importers:
 
   apps/debugger: {}
 
+  apps/doc:
+    devDependencies:
+      '@repo/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/node':
+        specifier: ^25.0.3
+        version: 25.0.3
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
+
   apps/edit:
     dependencies:
       '@repo/c':

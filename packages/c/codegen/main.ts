@@ -1,3 +1,4 @@
+import { existsSync } from "fs";
 import { mkdir, writeFile } from "fs/promises";
 import * as path from "path";
 
@@ -8,7 +9,6 @@ import { buildFreeDeclaration, buildFreeImplementation } from "./free";
 import { buildTypes } from "./type";
 import { buildUtilDeclaration, buildUtilImplementation } from "./util";
 import { buildVisitorDeclaration, buildVisitorImplementation } from "./visitor";
-import { existsSync } from "fs";
 
 async function main() {
   const generatedFolder = path.join(__dirname, "..", "src", "generated");

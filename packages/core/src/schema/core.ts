@@ -125,6 +125,7 @@ export type CodeContext = {
 
 export type FieldProps = {
   name?: string;
+  doc?: string;
   skip?: boolean;
   todo?: boolean;
   offset?: number;

@@ -41,4 +41,4 @@ As of writing, I'm considering making a `txr2png` tool. It's just that it's much
 
 ### Why do some/all .dds look corrupted?
 
-Textures seem to differ per platform. There is probably another field I didn't account for aswell. Would love someone to figure this one out, but for now Xbox is likely the only mostly working platform. 
+Textures seem to differ per platform. There is probably another field I didn't account for aswell. Would love someone to figure this one out, but for now Xbox is likely the only mostly working platform.

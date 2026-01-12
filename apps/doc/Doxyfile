@@ -1,0 +1,9 @@
+PROJECT_NAME           = "Vicious"
+PROJECT_BRIEF          = "Reverse engineering of Vicious Engine"
+OUTPUT_DIRECTORY       = "out"
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+INPUT                  = doc.h
+FILE_PATTERNS          = *.h
+RECURSIVE              = NO
