@@ -313,9 +313,7 @@ int main(int argc, char **argv) {
     const char *pngPath = argc > 2 ? argv[2] : "out.png";
 
     switch (assetType) {
-        case VCS_ImageTexture: 
-            if (!writeImageTexture(pngPath, asset)) goto error; 
-            break;
+        case VCS_ImageTexture: if (!writeImageTexture(pngPath, asset)) goto error; break;
         default: goto error;
     }
 

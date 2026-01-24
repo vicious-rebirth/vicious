@@ -27,8 +27,8 @@ typedef struct __attribute__((packed)) {
     uint32_t dataSize;
 } WAVIMAHeader;
 
-void readSound(FILE *file, const Sound *self) {
-    if (self->disabled) return;
+bool writeSound(FILE *file, const Sound *self) {
+    if (self->disabled) return true;
 
     const WAVFmtChunk *fmtChunk = &self->buffer.fmtChunk;
 
@@ -61,14 +61,16 @@ void readSound(FILE *file, const Sound *self) {
 
     fwrite(&header, sizeof(header), 1, file);
     fwrite(self->buffer.data.data, sizeof(uint8_t), dataSize, file);
+
+    return true;
 }
 
-void readSoundEffect(FILE *file, const SoundEffect *self) {
-    readSound(file, &self->base);
+bool writeSoundEffect(FILE *file, const SoundEffect *self) {
+    return writeSound(file, &self->base);
 }
 
-void readVoiceOver(FILE *file, const VoiceOver *self) {
-    readSound(file, &self->base);
+bool writeVoiceOver(FILE *file, const VoiceOver *self) {
+    return writeSound(file, &self->base);
 }
 
 int main(int argc, const char **argv) {
@@ -101,10 +103,13 @@ int main(int argc, const char **argv) {
 
     decodeAssetFile((DecoderContext *)&decoder, &assetFile);
 
-    switch (assetFile.content.header.type) {
-        case 38: readSound(wavFile, assetFile.content.asset); break;
-        case 42: readSoundEffect(wavFile, assetFile.content.asset); break;
-        case 354: readVoiceOver(wavFile, assetFile.content.asset); break;
+    void *asset = assetFile.content.asset;
+    uint32_t assetType = assetFile.content.header.type;
+
+    switch (assetType) {
+        case VCS_Sound: if (!writeSound(wavFile, asset)) goto error; break;
+        case VCS_SoundEffect: if (!writeSoundEffect(wavFile, asset)) goto error; break;
+        case VCS_VoiceOver: if (!writeVoiceOver(wavFile, asset)) goto error; break;
         default: goto error;
     }
 

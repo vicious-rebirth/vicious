@@ -44,7 +44,24 @@ uint32_t uniqueColors[32] = {
 
 #define alloc_bin(sz) doc->bin_size; doc->bin_size += sz;
 
-bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
+bool writeGLB(FILE *file, cgltf_data *doc) {
+    cgltf_options opts = { 0 };
+
+    cgltf_size expected = cgltf_write(&opts, NULL, 0, doc);
+
+    char *json = malloc(expected);
+    if (json == NULL) return false;
+
+    cgltf_size actual = cgltf_write(&opts, json, expected, doc);
+
+    cgltf_write_glb(file, json, actual - 1, doc->bin, doc->bin_size);
+
+    free(json);
+
+    return true;
+}
+
+bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh) {
     // Allocate
 
     cgltf_data *doc = calloc(1, sizeof(*doc));
@@ -719,29 +736,10 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh, bool isGLB) {
 
     free(helperMatrices);
 
-    // Write file
-
-    cgltf_options opts = { 0 };
-
-    cgltf_size expected = cgltf_write(&opts, NULL, 0, doc);
-
-    char *json = malloc(expected);
-    if (json == NULL) return false;
-
-    cgltf_size actual = cgltf_write(&opts, json, expected, doc);
-
-    if (isGLB) {
-        cgltf_write_glb(file, json, actual - 1, doc->bin, doc->bin_size);
-    } else {
-        fwrite(json, 1, actual - 1, file);
-    }
-
-    free(json);
-
-    return true;
+    return writeGLB(file, doc);
 }
 
-bool writeStaticMesh(FILE *file, const StaticMesh *mesh, bool isGLB) {
+bool writeStaticMesh(FILE *file, const StaticMesh *mesh) {
     // Allocate
 
     cgltf_data *doc = calloc(1, sizeof(*doc));
@@ -967,26 +965,7 @@ bool writeStaticMesh(FILE *file, const StaticMesh *mesh, bool isGLB) {
         root->children[root->children_count++] = node;
     }
 
-    // Write file
-
-    cgltf_options opts = { 0 };
-
-    cgltf_size expected = cgltf_write(&opts, NULL, 0, doc);
-
-    char *json = malloc(expected);
-    if (json == NULL) return false;
-
-    cgltf_size actual = cgltf_write(&opts, json, expected, doc);
-
-    if (isGLB) {
-        cgltf_write_glb(file, json, actual - 1, doc->bin, doc->bin_size);
-    } else {
-        fwrite(json, 1, actual - 1, file);
-    }
-
-    free(json);
-
-    return true;
+    return writeGLB(file, doc);
 }
 
 int main(int argc, char **argv) {
@@ -1021,16 +1000,9 @@ int main(int argc, char **argv) {
     gltfFile = fopen(gltfPath, "wb");
     if (gltfFile == NULL) goto error;
 
-    size_t gltfPathSize = strlen(gltfPath);
-    bool isGLTF = gltfPathSize > (sizeof(".gltf") - 1) && strcasecmp(gltfPath + gltfPathSize - (sizeof(".gltf") - 1), ".gltf") == 0;
-
     switch (assetType) {
-        case VCS_DynamicMesh:
-            if (!writeDynamicMesh(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-            break;
-        case VCS_StaticMesh:
-            if (!writeStaticMesh(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-            break;
+        case VCS_DynamicMesh: if (!writeDynamicMesh(gltfFile, asset)) goto error; break;
+        case VCS_StaticMesh: if (!writeStaticMesh(gltfFile, asset)) goto error; break;
         default: goto error;
     }
 

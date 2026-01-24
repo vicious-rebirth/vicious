@@ -27,7 +27,7 @@ typedef struct __attribute__((packed)) {
     uint32_t dataSize;
 } WAVIMAHeader;
 
-void readSound(FILE *file, Sound *self) {
+void writeSound(FILE *file, Sound *self) {
     if (self->disabled) return;
 
     WAVIMAHeader header;
@@ -50,12 +50,12 @@ void readSound(FILE *file, Sound *self) {
     self->buffer.data.data = data;
 }
 
-void readSoundEffect(FILE *file, SoundEffect *self) {
-    readSound(file, &self->base);
+void writeSoundEffect(FILE *file, SoundEffect *self) {
+    writeSound(file, &self->base);
 }
 
-void readVoiceOver(FILE *file, VoiceOver *self) {
-    readSound(file, &self->base);
+void writeVoiceOver(FILE *file, VoiceOver *self) {
+    writeSound(file, &self->base);
 }
 
 int main(int argc, const char **argv) {
@@ -89,10 +89,13 @@ int main(int argc, const char **argv) {
 
     decodeAssetFile((DecoderContext *)&decoder, &assetFile);
 
-    switch (assetFile.content.header.type) {
-        case VCS_Sound: readSound(wavFile, assetFile.content.asset); break;
-        case VCS_SoundEffect: readSoundEffect(wavFile, assetFile.content.asset); break;
-        case VCS_VoiceOver: readVoiceOver(wavFile, assetFile.content.asset); break;
+    void *asset = assetFile.content.asset;
+    uint32_t assetType = assetFile.content.header.type;
+
+    switch (assetType) {
+        case VCS_Sound: writeSound(wavFile, asset); break;
+        case VCS_SoundEffect: writeSoundEffect(wavFile, asset); break;
+        case VCS_VoiceOver: writeVoiceOver(wavFile, asset); break;
         default: goto error;
     }
 

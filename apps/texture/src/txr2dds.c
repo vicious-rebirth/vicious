@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
     if (ddsFile == NULL) goto error;
 
     switch (assetType) {
-        case VCS_ImageTexture: writeImageTexture(ddsFile, asset); break;
+        case VCS_ImageTexture: if (!writeImageTexture(ddsFile, asset)) goto error; break;
         default: goto error;
     }
 

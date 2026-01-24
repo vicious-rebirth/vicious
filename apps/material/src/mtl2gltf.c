@@ -9,16 +9,16 @@
 #define ARENA_SIZE 32 * 1024 * 1024
 #define POOL_SIZE 8192
 
-const char *textureSearchFormats[] = { 
+const char *materialSearchFormats[] = {
     "%s_%08X%08X.png",
     "Textures/%s_%08X%08X.png",
     "Out/Textures/%s_%08X%08X.png",
-    "%s.png",
     "../Textures/%s_%08X%08X.png",
     "../Out/Textures/%s_%08X%08X.png",
+    "%s.png",
 };
 
-bool writeGLTF(FILE *file, cgltf_data *doc, bool isGLB) {
+bool writeGLB(FILE *file, cgltf_data *doc) {
     cgltf_options opts = { 0 };
 
     cgltf_size expected = cgltf_write(&opts, NULL, 0, doc);
@@ -28,18 +28,14 @@ bool writeGLTF(FILE *file, cgltf_data *doc, bool isGLB) {
 
     cgltf_size actual = cgltf_write(&opts, json, expected, doc);
 
-    if (isGLB) {
-        cgltf_write_glb(file, json, actual - 1, doc->bin, doc->bin_size);
-    } else {
-        fwrite(json, 1, actual - 1, file);
-    }
+    cgltf_write_glb(file, json, actual - 1, doc->bin, doc->bin_size);
 
     free(json);
 
     return true;
 }
 
-bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const AssetReference *albedoReference, bool isGLB) {
+bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const AssetReference *albedoReference) {
     // Counts
 
     size_t textureCount = (albedoReference ? 1 : 0);
@@ -51,8 +47,8 @@ bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const
     FILE *albedoFile = NULL;
     size_t albedoSize = 0;
     if (albedoReference) {
-        for (size_t i = 0; i < sizeof(textureSearchFormats) / sizeof(textureSearchFormats[0]); i++) {
-            const char *format = textureSearchFormats[i];
+        for (size_t i = 0; i < sizeof(materialSearchFormats) / sizeof(materialSearchFormats[0]); i++) {
+            const char *format = materialSearchFormats[i];
 
             sprintf(
                 pathBuffer,
@@ -156,90 +152,82 @@ bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const
         pbr->base_color_texture.scale = 1.0f;
     }
 
-    return writeGLTF(file, doc, isGLB);
+    return writeGLB(file, doc);
 }
 
-bool writeSpriteMaterial(FILE *file, const SpriteMaterial *material, bool isGLB) {
+bool writeSpriteMaterial(FILE *file, const SpriteMaterial *material) {
     return writeMaterialTexture(
         file,
         (const char *)material->base.base.base.base.label.buffer.data,
         &material->base.tint,
-        &material->albedo,
-        isGLB
+        &material->albedo
     );
 }
 
-bool writeV27(FILE *file, const V27 *material, bool isGLB) {
+bool writeV27(FILE *file, const V27 *material) {
     return writeMaterialTexture(
         file,
         (const char *)material->base.base.base.base.base.label.buffer.data,
         &material->base.tint,
-        &material->albedo,
-        isGLB
+        &material->albedo
     );
 }
 
-bool writeV51(FILE *file, const V51 *material, bool isGLB) {
+bool writeV51(FILE *file, const V51 *material) {
     return writeMaterialTexture(
         file,
         (const char *)material->base.base.base.base.base.label.buffer.data,
         &material->base.tint,
-        &material->albedo,
-        isGLB
+        &material->albedo
     );
 }
 
-bool writeV73(FILE *file, const V73 *material, bool isGLB) {
+bool writeV73(FILE *file, const V73 *material) {
     return writeMaterialTexture(
         file,
         (const char *)material->base.base.base.base.base.label.buffer.data,
         &material->base.tint,
-        &material->albedo,
-        isGLB
+        &material->albedo
     );
 }
 
-bool writeV94(FILE *file, const V94 *material, bool isGLB) {
+bool writeV94(FILE *file, const V94 *material) {
     // Lighthing?
     return writeMaterialTexture(
         file,
         (const char *)material->base.base.base.base.base.label.buffer.data,
         &material->base.tint,
-        &material->albedo,
-        isGLB
+        &material->albedo
     );
 }
 
-bool writeV96(FILE *file, const V96 *material, bool isGLB) {
+bool writeV96(FILE *file, const V96 *material) {
     // Lighthing?
     return writeMaterialTexture(
         file,
         (const char *)material->base.base.base.base.base.label.buffer.data,
         &material->base.tint,
-        NULL,
-        isGLB
+        NULL
     );
 }
 
-bool writeV287(FILE *file, const V287 *material, bool isGLB) {
+bool writeV287(FILE *file, const V287 *material) {
     // Lighthing?
     return writeMaterialTexture(
         file,
         (const char *)material->base.base.base.base.base.label.buffer.data,
         &material->base.tint,
-        NULL,
-        isGLB
+        NULL
     );
 }
 
-bool writeV298(FILE *file, const V298 *material, bool isGLB) {
+bool writeV298(FILE *file, const V298 *material) {
     // Lighthing?
     return writeMaterialTexture(
         file,
         (const char *)material->base.base.base.base.base.label.buffer.data,
         &material->base.tint,
-        NULL,
-        isGLB
+        NULL
     );
 }
 
@@ -275,34 +263,15 @@ int main(int argc, char **argv) {
     gltfFile = fopen(gltfPath, "wb");
     if (gltfFile == NULL) goto error;
 
-    size_t gltfPathSize = strlen(gltfPath);
-    bool isGLTF = gltfPathSize > (sizeof(".gltf") - 1) && strcasecmp(gltfPath + gltfPathSize - (sizeof(".gltf") - 1), ".gltf") == 0;
-
     switch (assetType) {
-        case VCS_SpriteMaterial:
-            if (!writeSpriteMaterial(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-            break;
-        case VCS_V27:
-            if (!writeV27(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-            break;
-        case VCS_V51:
-            if (!writeV51(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-            break;
-        case VCS_V73:
-            if (!writeV73(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-            break;
-        case VCS_V94:
-            if (!writeV94(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-            break;
-        case VCS_V96:
-            if (!writeV96(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-            break;
-        case VCS_V287:
-            if (!writeV287(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-            break;
-        case VCS_V298:
-            if (!writeV298(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-            break;
+        case VCS_SpriteMaterial: if (!writeSpriteMaterial(gltfFile, asset)) goto error; break;
+        case VCS_V27: if (!writeV27(gltfFile, asset)) goto error; break;
+        case VCS_V51: if (!writeV51(gltfFile, asset)) goto error; break;
+        case VCS_V73: if (!writeV73(gltfFile, asset)) goto error; break;
+        case VCS_V94: if (!writeV94(gltfFile, asset)) goto error; break;
+        case VCS_V96: if (!writeV96(gltfFile, asset)) goto error; break;
+        case VCS_V287: if (!writeV287(gltfFile, asset)) goto error; break;
+        case VCS_V298: if (!writeV298(gltfFile, asset)) goto error; break;
         default: goto error;
     }
 

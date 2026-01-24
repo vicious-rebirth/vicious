@@ -17,6 +17,6 @@ export class Skin extends Class {
   __offset = 0x112d20;
 
   base = field(Object);
-  f_0x40 = field(AssetReferenceSizedList);
-  f_0x44 = field(AssetReferenceSizedList);
+  materialSets = field(AssetReferenceSizedList);
+  surfaceSets = field(AssetReferenceSizedList);
 }
