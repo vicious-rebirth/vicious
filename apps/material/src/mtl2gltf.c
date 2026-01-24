@@ -9,7 +9,7 @@
 #define ARENA_SIZE 32 * 1024 * 1024
 #define POOL_SIZE 8192
 
-const char *materialSearchFormats[] = {
+const char *textureSearchFormats[] = {
     "%s_%08X%08X.png",
     "Textures/%s_%08X%08X.png",
     "Out/Textures/%s_%08X%08X.png",
@@ -47,8 +47,8 @@ bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const
     FILE *albedoFile = NULL;
     size_t albedoSize = 0;
     if (albedoReference) {
-        for (size_t i = 0; i < sizeof(materialSearchFormats) / sizeof(materialSearchFormats[0]); i++) {
-            const char *format = materialSearchFormats[i];
+        for (size_t i = 0; i < sizeof(textureSearchFormats) / sizeof(textureSearchFormats[0]); i++) {
+            const char *format = textureSearchFormats[i];
 
             sprintf(
                 pathBuffer,
@@ -81,7 +81,8 @@ bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const
 
     doc->bin = bin;
 
-    doc->samplers = calloc(1, sizeof(doc->samplers[0]));
+    doc->samplers_count = 1;
+    doc->samplers = calloc(doc->samplers_count, sizeof(doc->samplers[0]));
 
     cgltf_sampler *sampler = &doc->samplers[0];
 
@@ -91,7 +92,14 @@ bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const
     sampler->wrap_s = cgltf_wrap_mode_clamp_to_edge;
     sampler->wrap_t = cgltf_wrap_mode_clamp_to_edge;
 
-    doc->buffers = calloc(textureCount, sizeof(doc->buffers[0]));
+    doc->buffers_count = 1;
+    doc->buffers = calloc(1, sizeof(doc->buffers[0]));
+
+    cgltf_buffer *buffer = &doc->buffers[0];
+
+    buffer->name = "buffer";
+    buffer->size = binSize;
+
     doc->buffer_views = calloc(textureCount, sizeof(doc->buffer_views[0]));
     doc->images = calloc(textureCount, sizeof(doc->images[0]));
     doc->textures = calloc(textureCount, sizeof(doc->textures[0]));
@@ -103,20 +111,17 @@ bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const
 
     cgltf_texture *albedo = NULL;
     if (albedoReference) {
-        cgltf_buffer *buffer = &doc->buffers[doc->buffers_count++];
-
-        buffer->name = "albedo";
-        buffer->size = albedoSize;
-
-        void *bufferPtr = bin + doc->bin_size;
+        size_t bufferOffset = doc->bin_size;
         doc->bin_size += albedoSize;
 
-        fread(bufferPtr, 1, albedoSize, albedoFile);
+        fread(bin + bufferOffset, 1, albedoSize, albedoFile);
 
         cgltf_buffer_view *bv = &doc->buffer_views[doc->buffer_views_count++];
 
         bv->name = "albedo";
         bv->buffer = buffer;
+        bv->offset = bufferOffset;
+        bv->size = albedoSize;
 
         cgltf_image *img = &doc->images[doc->images_count++];
 

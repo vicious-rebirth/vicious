@@ -33,6 +33,18 @@ add_subdirectory(node_modules/@repo/c)
 # Executables
 #----------------------------------------------------------------------------------
 
+add_executable(ms2gltf
+    src/ms2gltf.c
+)
+
+target_include_directories(ms2gltf PUBLIC
+    ${cgltf_SOURCE_DIR}
+)
+
+target_link_libraries(ms2gltf
+    vicious
+)
+
 add_executable(mtl2gltf
     src/mtl2gltf.c
 )
