@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
     goto cleanup;
 
 usage:
-    fprintf(stderr, "usage: %s dds_path in_txr_path [out_txr_path]\n", argv[0]);
+    fprintf(stderr, "usage: %s dds_file in_txr_file [out_txr_file]\n", argv[0]);
 
 error:
     result = 1;

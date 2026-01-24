@@ -175,7 +175,7 @@ int main(int argc, char **argv) {
     goto cleanup;
 
 usage:
-    printf("usage: %s file_path [project_path]\n", argv[0]);
+    printf("usage: %s file [project_path]\n", argv[0]);
 
 error:
     result = 1;

@@ -322,7 +322,7 @@ int main(int argc, char **argv) {
     goto cleanup;
 
 usage:
-    fprintf(stderr, "usage: %s txr_path [png_path]\n", argv[0]);
+    fprintf(stderr, "usage: %s txr_file [png_file]\n", argv[0]);
 
 error:
     result = 1;

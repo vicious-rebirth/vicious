@@ -2,9 +2,13 @@ import { Struct, field } from "../core";
 import { F32, U8, U32 } from "./atomic";
 
 export class Color extends Struct {
-  r = field(U8);
-  g = field(U8);
+  __doc = `
+    Color stored in BGRA format
+  `;
+
   b = field(U8);
+  g = field(U8);
+  r = field(U8);
   a = field(U8);
 }
 

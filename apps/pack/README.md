@@ -17,10 +17,10 @@ Note: This tool expects `unpack` to have been run before.
 #### Usage
 
 ```
-pack file_path [project_path]
+pack file [project_path]
 ```
 
-- file_path: Path to unpacked asset file
+- file: Path to unpacked asset file
 - (Optional) project_path: Path to root folder with unpacked assets from `unpack` (defaults to `out`)
 
 ### unpack
@@ -30,8 +30,8 @@ Unpackages a multi-asset packed file into folder-sorted individual unpacked asse
 #### Usage
 
 ```
-unpack file_path [project_path]
+unpack file [project_path]
 ```
 
-- file_path: Path to packed asset file
+- file: Path to packed asset file
 - (Optional) project_path: Path to root folder to put files into (defaults to `out`)

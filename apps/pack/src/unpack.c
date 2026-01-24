@@ -188,7 +188,7 @@ int main(int argc, char **argv) {
 
     return 0;
 usage:
-    printf("usage: %s file_path [project_path]\n", argv[0]);
+    printf("usage: %s file [project_path]\n", argv[0]);
 
 error:
     arenaDestroy(&arena);

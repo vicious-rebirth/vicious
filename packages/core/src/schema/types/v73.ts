@@ -9,8 +9,8 @@ export class V73 extends Class {
   __offset = 0x113e30;
 
   base = field(V19);
-  f_0x44 = field(AssetReference);
-  f_0x48 = field(AssetReference);
+  albedo = field(AssetReference);
+  specular = field(AssetReference);
   f_0x74 = field(V71);
   f_0xe8 = field(V71);
   f_0x6c = field(U32);

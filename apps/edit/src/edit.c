@@ -78,6 +78,23 @@ static void renderF32(VisitorContext *ctx, F32 *self) {
     igInputFloat("value", self, 1, 1, "%.08f", 0);
 }
 
+static bool renderColor(VisitorContext *ctx, Color *self) {
+    float color[4];
+    color[0] = (float)self->r / 0xFF;
+    color[1] = (float)self->g / 0xFF;
+    color[2] = (float)self->b / 0xFF;
+    color[3] = (float)self->a / 0xFF;
+
+    igColorEdit4("value", color, 0);
+
+    self->r = color[0] * 0xFF;
+    self->g = color[1] * 0xFF;
+    self->b = color[2] * 0xFF;
+    self->a = color[3] * 0xFF;
+
+    return false;
+}
+
 static bool renderID(VisitorContext *ctx, ID *id) {
     char buffer[20];
 
@@ -137,6 +154,7 @@ static VisitorContext visitor = {
     .visitI32 = renderI32,
     .visitF32 = renderF32,
 
+    .enterColor = renderColor,
     .enterID = renderID,
     .enterStringBuffer = renderStringBuffer,
     .enterVector3 = renderVector3,
@@ -285,7 +303,7 @@ int main(int argc, const char **argv) {
     goto cleanup;
 
 usage:
-    printf("usage: %s file_path\n", argv[0]);
+    printf("usage: %s file\n", argv[0]);
 error:
     result = 1;
 cleanup:

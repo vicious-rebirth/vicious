@@ -31,13 +31,26 @@ dds2txr dds_file in_txr_file [out_txr_file]
 - in_txr_file: Reference `.txr` file to inject into
 - (Optional) out_txr_file: Output path to `.txr` file (defaults to `out.txr`)
 
+### txr2png
+
+Converts a texture (`.txr`) to PNG (`.png`).
+
+#### Usage
+
+```
+txr2png txr_file [png_file]
+```
+
+- txr_file: Input path to `.txr` file
+- (Optional) png_file: Output path to `.png` file (defaults to `out.png`)
+
 ## FAQ
 
 ### Why do some .dds files not work?
 
 Modern DirectX dropped supports for `DDPF_PALETTEINDEXED8` because that's not how modern graphic cards work anymore. You'll likely have to use an old version of `texconv` to make it work.
 
-As of writing, I'm considering making a `txr2png` tool. It's just that it's much trickier to make a `png2txr` tool.
+You can use `txr2png` to get a more usable file (but will not re-create the original texture one to one).
 
 ### Why do some/all .dds look corrupted?
 
