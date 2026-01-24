@@ -8,7 +8,7 @@ export class V27 extends Class {
   __offset = 0x111ff0;
 
   base = field(V19);
-  texture = field(AssetReference);
+  albedo = field(AssetReference);
   f_0x6c = field(U32);
   _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 1));
   f_0x70 = field(AssetFromType, {

@@ -8,7 +8,7 @@ export class V94 extends Class {
   __offset = 0x1125a0;
 
   base = field(V19);
-  f_0x44 = field(AssetReference);
+  albedo = field(AssetReference);
   f_0x48 = field(AssetReference);
   empty = field(Empty, {
     offset: 0xf50d0,

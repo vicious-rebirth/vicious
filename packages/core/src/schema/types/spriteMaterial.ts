@@ -9,7 +9,7 @@ export class SpriteMaterial extends Class {
   __offset = 0x1056a0;
 
   base = field(V63);
-  texture = field(AssetReference);
+  albedo = field(AssetReference);
   f_0x60 = field(U32, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
   });

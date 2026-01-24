@@ -15,6 +15,7 @@ WORKDIR /repo
 COPY --chown=node:node . .
 
 RUN pnpm dlx turbo prune --docker --out-dir pruned-audio @repo/audio \
+    && pnpm dlx turbo prune --docker --out-dir pruned-material @repo/material \
     && pnpm dlx turbo prune --docker --out-dir pruned-mesh @repo/mesh \
     && pnpm dlx turbo prune --docker --out-dir pruned-pack @repo/pack \
     && pnpm dlx turbo prune --docker --out-dir pruned-texture @repo/texture
@@ -36,6 +37,16 @@ WORKDIR /build
 FROM build AS audio
 
 COPY --from=prune /repo/pruned-audio/full /build
+
+RUN pnpm install
+
+RUN pnpm codegen
+RUN pnpm setup:release
+RUN pnpm build:exe
+
+FROM build AS material
+
+COPY --from=prune /repo/pruned-material/full /build
 
 RUN pnpm install
 
@@ -80,6 +91,7 @@ USER node
 ENV PATH="/tools:${PATH}"
 
 COPY --from=audio /build/apps/audio/build/exe/* /tools/
+COPY --from=material /build/apps/material/build/exe/* /tools/
 COPY --from=mesh /build/apps/mesh/build/exe/* /tools/
 COPY --from=pack /build/apps/pack/build/exe/* /tools/
 COPY --from=texture /build/apps/texture/build/exe/* /tools/

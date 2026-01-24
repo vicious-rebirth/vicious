@@ -1025,12 +1025,12 @@ int main(int argc, char **argv) {
     bool isGLTF = gltfPathSize > (sizeof(".gltf") - 1) && strcasecmp(gltfPath + gltfPathSize - (sizeof(".gltf") - 1), ".gltf") == 0;
 
     switch (assetType) {
-        case VCS_DynamicMesh: {
+        case VCS_DynamicMesh:
             if (!writeDynamicMesh(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-        } break;
-        case VCS_StaticMesh: {
+            break;
+        case VCS_StaticMesh:
             if (!writeStaticMesh(gltfFile, assetFile.content.asset, !isGLTF)) goto error;
-        } break;
+            break;
         default: goto error;
     }
 

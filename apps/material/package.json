@@ -1,0 +1,15 @@
+{
+  "name": "@repo/material",
+  "version": "0.0.0",
+  "description": "Tool to convert material files of Vicious Engine",
+  "scripts": {
+    "setup:release": "cmake -S . -B build",
+    "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build",
+    "build:exe": "cmake --build build -j 4"
+  },
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "@repo/c": "workspace:*"
+  }
+}
