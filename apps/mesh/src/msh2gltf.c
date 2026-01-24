@@ -19,7 +19,7 @@ typedef struct __attribute__((packed)) {
 typedef VertexGLTF VertexF32;
 
 typedef struct __attribute__((packed)) {
-    int16_t x, y, z, nx, ny, nz, u, v;
+    int16_t x, y, z, u, nx, ny, nz, v;
 } VertexI16;
 
 typedef struct {

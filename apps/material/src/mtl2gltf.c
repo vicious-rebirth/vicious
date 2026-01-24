@@ -89,8 +89,8 @@ bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const
     sampler->name = "sampler";
     sampler->min_filter = cgltf_filter_type_linear;
     sampler->mag_filter = cgltf_filter_type_linear;
-    sampler->wrap_s = cgltf_wrap_mode_clamp_to_edge;
-    sampler->wrap_t = cgltf_wrap_mode_clamp_to_edge;
+    sampler->wrap_s = cgltf_wrap_mode_repeat;
+    sampler->wrap_t = cgltf_wrap_mode_repeat;
 
     doc->buffers_count = 1;
     doc->buffers = calloc(1, sizeof(doc->buffers[0]));
@@ -143,6 +143,8 @@ bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const
     mat->name = (char *)name;
 
     mat->double_sided = true;
+    mat->alpha_mode = cgltf_alpha_mode_mask;
+    mat->alpha_cutoff = 0.5f;
 
     mat->has_pbr_metallic_roughness = true;
     cgltf_pbr_metallic_roughness *pbr = &mat->pbr_metallic_roughness;
@@ -156,6 +158,9 @@ bool writeMaterialTexture(FILE *file, const char *name, const Color *tint, const
         pbr->base_color_texture.texture = albedo;
         pbr->base_color_texture.scale = 1.0f;
     }
+
+    pbr->metallic_factor = 0.5f;
+    pbr->roughness_factor = 0.5f;
 
     return writeGLB(file, doc);
 }

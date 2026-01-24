@@ -117,8 +117,8 @@ bool writeMaterialSet(FILE *file, MaterialSet *materialSet) {
     sampler->name = "sampler";
     sampler->min_filter = cgltf_filter_type_linear;
     sampler->mag_filter = cgltf_filter_type_linear;
-    sampler->wrap_s = cgltf_wrap_mode_clamp_to_edge;
-    sampler->wrap_t = cgltf_wrap_mode_clamp_to_edge;
+    sampler->wrap_s = cgltf_wrap_mode_repeat;
+    sampler->wrap_t = cgltf_wrap_mode_repeat;
 
     doc->buffers_count = 1;
     doc->buffers = calloc(1, sizeof(doc->buffers[0]));

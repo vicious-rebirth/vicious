@@ -141,7 +141,7 @@ rgba_t dxtColor(uint32_t x, uint32_t y, dxt_color_t c) {
 }
 
 uint8_t dxtAlpha(uint32_t x, uint32_t y, dxt_alpha_t a) {
-    uint32_t ai = 3 * (y*4 + x);
+    uint32_t ai = 3 * (y * 4 + x);
 
     uint32_t ac;
     if (ai <= 12) ac = (a.ac1 >> ai) & 7;
@@ -161,7 +161,7 @@ uint8_t dxtAlpha(uint32_t x, uint32_t y, dxt_alpha_t a) {
                     case 4: return (2 * a.a0 + 3 * a.a1) / 5;
                     case 5: return (1 * a.a0 + 4 * a.a1) / 5;
                     case 6: return 0;
-                    case 7: return 255;
+                    case 7: return 0xFF;
                     default: return 0;
                 }
             }
