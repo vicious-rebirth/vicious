@@ -158,8 +158,8 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh) {
     doc->buffer_views = calloc(5 + riggedMeshCount + staticMeshCount, sizeof(doc->buffer_views[0]));
     if (doc->buffer_views == NULL) return false;
 
-    // (1 skeleton + 4 static + 4 rigged) + 1 per mesh
-    doc->accessors = calloc(9 + riggedMeshCount + staticMeshCount, sizeof(doc->accessors[0]));
+    // (1 skeleton + 5 static + 5 rigged) + 1 per mesh
+    doc->accessors = calloc(11 + riggedMeshCount + staticMeshCount, sizeof(doc->accessors[0]));
     if (doc->accessors == NULL) return false;
 
     // Materials (override with MaterialSet)
@@ -406,6 +406,15 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh) {
         positionAccessor->component_type = cgltf_component_type_r_32f;
         positionAccessor->type = cgltf_type_vec3;
 
+        cgltf_accessor *normalAccessor = &doc->accessors[doc->accessors_count++];
+
+        normalAccessor->name = "skin_normal";
+        normalAccessor->buffer_view = vertexBufferView;
+        normalAccessor->offset = 3 * sizeof(float);
+        normalAccessor->count = riggedVertexCount;
+        normalAccessor->component_type = cgltf_component_type_r_32f;
+        normalAccessor->type = cgltf_type_vec3;
+
         cgltf_accessor *uvAccessor = &doc->accessors[doc->accessors_count++];
 
         uvAccessor->name = "skin_uv";
@@ -487,7 +496,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh) {
                 primitive->indices = indexAccessor;
                 primitive->material = &doc->materials[si];
 
-                primitive->attributes_count = 4;
+                primitive->attributes_count = 5;
 
                 primitive->attributes = calloc(primitive->attributes_count, sizeof(primitive->attributes[0]));
                 if (primitive->attributes == NULL) return false;
@@ -496,17 +505,21 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh) {
                 primitive->attributes[0].type = cgltf_attribute_type_position;
                 primitive->attributes[0].data = positionAccessor;
 
-                primitive->attributes[1].name = "TEXCOORD_0";
-                primitive->attributes[1].type = cgltf_attribute_type_texcoord;
-                primitive->attributes[1].data = uvAccessor;
+                primitive->attributes[1].name = "NORMAL";
+                primitive->attributes[1].type = cgltf_attribute_type_normal;
+                primitive->attributes[1].data = normalAccessor;
 
-                primitive->attributes[2].name = "JOINTS_0";
-                primitive->attributes[2].type = cgltf_attribute_type_joints;
-                primitive->attributes[2].data = jointAccessor;
+                primitive->attributes[2].name = "TEXCOORD_0";
+                primitive->attributes[2].type = cgltf_attribute_type_texcoord;
+                primitive->attributes[2].data = uvAccessor;
 
-                primitive->attributes[3].name = "WEIGHTS_0";
-                primitive->attributes[3].type = cgltf_attribute_type_weights;
-                primitive->attributes[3].data = weightAccessor;
+                primitive->attributes[3].name = "JOINTS_0";
+                primitive->attributes[3].type = cgltf_attribute_type_joints;
+                primitive->attributes[3].data = jointAccessor;
+
+                primitive->attributes[4].name = "WEIGHTS_0";
+                primitive->attributes[4].type = cgltf_attribute_type_weights;
+                primitive->attributes[4].data = weightAccessor;
 
                 // Create node
 
@@ -614,6 +627,15 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh) {
         positionAccessor->component_type = cgltf_component_type_r_32f;
         positionAccessor->type = cgltf_type_vec3;
 
+        cgltf_accessor *normalAccessor = &doc->accessors[doc->accessors_count++];
+
+        normalAccessor->name = "static_normal";
+        normalAccessor->buffer_view = vertexBufferView;
+        normalAccessor->offset = 3 * sizeof(float);
+        normalAccessor->count = staticVertexCount;
+        normalAccessor->component_type = cgltf_component_type_r_32f;
+        normalAccessor->type = cgltf_type_vec3;
+
         cgltf_accessor *uvAccessor = &doc->accessors[doc->accessors_count++];
 
         uvAccessor->name = "static_uv";
@@ -700,7 +722,7 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh) {
                 primitive->indices = indexAccessor;
                 primitive->material = &doc->materials[si];
 
-                primitive->attributes_count = 4;
+                primitive->attributes_count = 5;
 
                 primitive->attributes = calloc(primitive->attributes_count, sizeof(primitive->attributes[0]));
                 if (primitive->attributes == NULL) return false;
@@ -709,17 +731,21 @@ bool writeDynamicMesh(FILE *file, const DynamicMesh *mesh) {
                 primitive->attributes[0].type = cgltf_attribute_type_position;
                 primitive->attributes[0].data = positionAccessor;
 
-                primitive->attributes[1].name = "TEXCOORD_0";
-                primitive->attributes[1].type = cgltf_attribute_type_texcoord;
-                primitive->attributes[1].data = uvAccessor;
+                primitive->attributes[1].name = "NORMAL";
+                primitive->attributes[1].type = cgltf_attribute_type_normal;
+                primitive->attributes[1].data = normalAccessor;
 
-                primitive->attributes[2].name = "JOINTS_0";
-                primitive->attributes[2].type = cgltf_attribute_type_joints;
-                primitive->attributes[2].data = jointAccessor;
+                primitive->attributes[2].name = "TEXCOORD_0";
+                primitive->attributes[2].type = cgltf_attribute_type_texcoord;
+                primitive->attributes[2].data = uvAccessor;
 
-                primitive->attributes[3].name = "WEIGHTS_0";
-                primitive->attributes[3].type = cgltf_attribute_type_weights;
-                primitive->attributes[3].data = weightAccessor;
+                primitive->attributes[3].name = "JOINTS_0";
+                primitive->attributes[3].type = cgltf_attribute_type_joints;
+                primitive->attributes[3].data = jointAccessor;
+
+                primitive->attributes[4].name = "WEIGHTS_0";
+                primitive->attributes[4].type = cgltf_attribute_type_weights;
+                primitive->attributes[4].data = weightAccessor;
 
                 // Create node
 
@@ -812,8 +838,8 @@ bool writeStaticMesh(FILE *file, const StaticMesh *mesh) {
     doc->buffer_views = calloc(2 + meshCount, sizeof(doc->buffer_views[0]));
     if (doc->buffer_views == NULL) return false;
 
-    // (1 pos + 1 uv) + 1 per mesh
-    doc->accessors = calloc(2 + meshCount, sizeof(doc->accessors[0]));
+    // (1 pos + 1 norm + 1 uv) + 1 per mesh
+    doc->accessors = calloc(3 + meshCount, sizeof(doc->accessors[0]));
     if (doc->accessors == NULL) return false;
 
     // Materials (override with MaterialSet)
@@ -892,6 +918,15 @@ bool writeStaticMesh(FILE *file, const StaticMesh *mesh) {
     positionAccessor->component_type = cgltf_component_type_r_32f;
     positionAccessor->type = cgltf_type_vec3;
 
+    cgltf_accessor *normalAccessor = &doc->accessors[doc->accessors_count++];
+
+    normalAccessor->name = "normal";
+    normalAccessor->buffer_view = vertexBufferView;
+    normalAccessor->offset = 3 * sizeof(float);
+    normalAccessor->count = vertexCount;
+    normalAccessor->component_type = cgltf_component_type_r_32f;
+    normalAccessor->type = cgltf_type_vec3;
+
     cgltf_accessor *uvAccessor = &doc->accessors[doc->accessors_count++];
 
     uvAccessor->name = "uv";
@@ -942,7 +977,7 @@ bool writeStaticMesh(FILE *file, const StaticMesh *mesh) {
         primitive->indices = indexAccessor;
         primitive->material = &doc->materials[section->material];
 
-        primitive->attributes_count = 2;
+        primitive->attributes_count = 3;
 
         primitive->attributes = calloc(primitive->attributes_count, sizeof(primitive->attributes[0]));
         if (primitive->attributes == NULL) return false;
@@ -951,9 +986,13 @@ bool writeStaticMesh(FILE *file, const StaticMesh *mesh) {
         primitive->attributes[0].type = cgltf_attribute_type_position;
         primitive->attributes[0].data = positionAccessor;
 
-        primitive->attributes[1].name = "TEXCOORD_0";
-        primitive->attributes[1].type = cgltf_attribute_type_texcoord;
-        primitive->attributes[1].data = uvAccessor;
+        primitive->attributes[1].name = "NORMAL";
+        primitive->attributes[1].type = cgltf_attribute_type_normal;
+        primitive->attributes[1].data = normalAccessor;
+
+        primitive->attributes[2].name = "TEXCOORD_0";
+        primitive->attributes[2].type = cgltf_attribute_type_texcoord;
+        primitive->attributes[2].data = uvAccessor;
 
         // Create node
 
