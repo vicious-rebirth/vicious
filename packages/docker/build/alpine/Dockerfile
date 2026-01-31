@@ -14,7 +14,8 @@ WORKDIR /repo
 
 COPY --chown=node:node . .
 
-RUN pnpm dlx turbo prune --docker --out-dir pruned-audio @repo/audio \
+RUN    pnpm dlx turbo prune --docker --out-dir pruned-animation @repo/animation \
+    && pnpm dlx turbo prune --docker --out-dir pruned-audio @repo/audio \
     && pnpm dlx turbo prune --docker --out-dir pruned-material @repo/material \
     && pnpm dlx turbo prune --docker --out-dir pruned-mesh @repo/mesh \
     && pnpm dlx turbo prune --docker --out-dir pruned-pack @repo/pack \
@@ -33,6 +34,16 @@ RUN apk add --no-cache \
 USER node
 
 WORKDIR /build
+
+FROM build AS animation
+
+COPY --from=prune /repo/pruned-animation/full /build
+
+RUN pnpm install
+
+RUN pnpm codegen
+RUN pnpm setup:release
+RUN pnpm build:exe
 
 FROM build AS audio
 

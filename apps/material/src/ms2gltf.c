@@ -45,6 +45,7 @@ bool writeMaterialSet(FILE *file, MaterialSet *materialSet) {
 
     for (size_t i = 0; i < count; i++) {
         const AssetReference *ref = &materialSet->base.materials.base.list[i];
+        if (ref->type == -1) continue;
 
         FILE *file = NULL;
         for (size_t i = 0; i < sizeof(materialSearchFormats) / sizeof(materialSearchFormats[0]); i++) {
@@ -61,14 +62,14 @@ bool writeMaterialSet(FILE *file, MaterialSet *materialSet) {
             file = fopen(pathBuffer, "rb");
             if (file) break;
         }
-        if (!file) return false;
+        if (!file) continue;
 
         fseek(file, 0, SEEK_END);
         size_t size = ftell(file);
         fseek(file, 0, SEEK_SET);
 
         void *data = malloc(size);
-        if (data == NULL) return false;
+        if (data == NULL) continue;
 
         fread(data, 1, size, file);
 
@@ -77,7 +78,7 @@ bool writeMaterialSet(FILE *file, MaterialSet *materialSet) {
         cgltf_options opts = { 0 };
 
         cgltf_result result = cgltf_parse(&opts, data, size, &docs[i]);
-        if (result != cgltf_result_success) return false;
+        if (result != cgltf_result_success) continue;
     }
 
     // Allocate
@@ -96,13 +97,15 @@ bool writeMaterialSet(FILE *file, MaterialSet *materialSet) {
     size_t materialsCount = 0;
     for (size_t i = 0; i < count; i++) {
         cgltf_data *d = docs[i];
-
-        binSize += d->bin_size;
-        buffersCount += d->buffers_count;
-        bufferViewsCount += d->buffer_views_count;
-        texturesCount += d->textures_count;
-        imagesCount += d->images_count;
         materialsCount += 1;
+
+        if (d != NULL) {
+            binSize += d->bin_size;
+            buffersCount += d->buffers_count;
+            bufferViewsCount += d->buffer_views_count;
+            texturesCount += d->textures_count;
+            imagesCount += d->images_count;
+        }
     }
 
     void *bin = malloc(binSize);
@@ -138,6 +141,15 @@ bool writeMaterialSet(FILE *file, MaterialSet *materialSet) {
     for (size_t i = 0; i < count; i++) {
         cgltf_data *d = docs[i];
 
+        size_t materialOffset = doc->materials_count;
+        if (d == NULL) {
+            // TODO: Empty material
+            cgltf_material *mat = &doc->materials[materialOffset];
+            doc->materials_count += 1;
+
+            continue;
+        }
+
         size_t bufferOffset = doc->bin_size;
         memcpy(bin + bufferOffset, d->bin, d->bin_size);
         doc->bin_size += d->bin_size;
@@ -171,7 +183,6 @@ bool writeMaterialSet(FILE *file, MaterialSet *materialSet) {
         }
         doc->textures_count += d->textures_count;
 
-        size_t materialOffset = doc->materials_count;
         for (size_t j = 0; j < 1; j++) {
             cgltf_material *mat = &doc->materials[materialOffset + j];
             *mat = d->materials[j];
@@ -245,7 +256,7 @@ int main(int argc, char **argv) {
     goto cleanup;
 
 usage:
-    fprintf(stderr, "usage: %s ms_path [gltf_path]\n", argv[0]);
+    fprintf(stderr, "usage: %s ms_file [gltf_file]\n", argv[0]);
 
 error:
     result = 1;

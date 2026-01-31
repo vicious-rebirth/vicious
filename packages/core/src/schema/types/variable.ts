@@ -1,5 +1,5 @@
 import { Class, field } from "../core";
-import { U32 } from "./atomic";
+import { F32 } from "./atomic";
 import { Group } from "./group";
 import { Object } from "./object";
 
@@ -17,5 +17,5 @@ export class Variable extends Class {
   __offset = 0x1d710;
 
   base = field(Object);
-  f_1 = field(U32);
+  value = field(F32);
 }

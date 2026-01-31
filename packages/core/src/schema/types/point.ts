@@ -1,5 +1,5 @@
 import { Class, field } from "../core";
-import { U32 } from "./atomic";
+import { F32 } from "./atomic";
 import { Group } from "./group";
 import { Transform } from "./math";
 import { Object } from "./object";
@@ -19,5 +19,5 @@ export class Point extends Class {
 
   base = field(Object);
   transform = field(Transform);
-  f_0x70 = field(U32);
+  f_0x70 = field(F32);
 }

@@ -1009,7 +1009,7 @@ int main(int argc, char **argv) {
     goto cleanup;
 
 usage:
-    fprintf(stderr, "usage: %s msh_path [gltf_path]\n", argv[0]);
+    fprintf(stderr, "usage: %s msh_file [gltf_file]\n", argv[0]);
 
 error:
     result = 1;
