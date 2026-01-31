@@ -5,7 +5,7 @@
   "scripts": {
     "setup:release": "cmake -S . -B build",
     "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build",
-    "build": "cmake --build build"
+    "build:exe": "cmake --build build"
   },
   "license": "MIT",
   "devDependencies": {},
