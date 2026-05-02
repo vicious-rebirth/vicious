@@ -17,6 +17,7 @@ COPY --chown=node:node . .
 RUN    pnpm dlx turbo prune --docker --out-dir pruned-animation @repo/animation \
     && pnpm dlx turbo prune --docker --out-dir pruned-audio @repo/audio \
     && pnpm dlx turbo prune --docker --out-dir pruned-doc @repo/doc \
+    && pnpm dlx turbo prune --docker --out-dir pruned-edit @repo/edit \
     && pnpm dlx turbo prune --docker --out-dir pruned-material @repo/material \
     && pnpm dlx turbo prune --docker --out-dir pruned-mesh @repo/mesh \
     && pnpm dlx turbo prune --docker --out-dir pruned-pack @repo/pack \
@@ -34,6 +35,7 @@ RUN apk add --no-cache \
     libc-dev \
     linux-headers \
     make \
+    pkgconf \
     python3
 
 WORKDIR /opt
@@ -63,6 +65,16 @@ RUN pnpm install
 RUN pnpm codegen
 RUN pnpm build:docs
 
+FROM build AS edit
+
+COPY --from=prune /repo/pruned-edit/full /build
+
+RUN pnpm install
+
+RUN pnpm codegen
+RUN pnpm setup:web
+RUN pnpm build:web
+
 FROM build AS pack
 
 COPY --from=prune /repo/pruned-pack/full /build
@@ -89,5 +101,6 @@ USER node
 WORKDIR /out
 
 COPY --chown=node:node --from=doc /build/apps/doc/out/html /out/docs
+COPY --chown=node:node --from=edit /build/apps/edit/build_web/exe/* /out/tools/
 COPY --chown=node:node --from=pack /build/apps/pack/build_web/exe/* /out/tools/
 COPY --chown=node:node --from=pak /build/apps/pak/build_web/exe/* /out/tools/

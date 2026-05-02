@@ -10,9 +10,22 @@
 #include <cimgui.h>
 #include <cimgui_impl.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif
+
 #define POOL_SIZE 8192
 
 AssetPool pool;
+
+AssetFile assetFile;
+LocalizationFile locFile;
+
+GLFWwindow *window;
+ImGuiIO *io;
+
+const char *filePath;
+FreeContext freeCtx;
 
 static bool renderEnterField(VisitorContext *ctx, const char *name, I32 index) {
     char strId[128];
@@ -212,20 +225,73 @@ static bool saveFile(const char *path, const AssetFile *assetFile, const Localiz
     return true;
 }
 
+#ifdef __EMSCRIPTEN__
+void loop(void *arg) {
+#else
+bool loop() {
+#endif
+
+#ifndef __EMSCRIPTEN__
+    if (glfwWindowShouldClose(window)) return false;
+#endif
+
+    glfwPollEvents();
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    igNewFrame();
+
+    igSetNextWindowPos((ImVec2){ 0, 0 }, 0, (ImVec2){ 0, 0 });
+    igSetNextWindowSize(io->DisplaySize, 0);
+
+    igBegin("Window", NULL,
+        ImGuiWindowFlags_NoTitleBar
+        | ImGuiWindowFlags_NoResize
+        | ImGuiWindowFlags_NoMove
+        | ImGuiWindowFlags_NoCollapse
+        | ImGuiWindowFlags_MenuBar
+    );
+
+    if (igBeginMenuBar()) {
+        if (igBeginMenu("File", true)) {
+            if (igMenuItem_Bool("Save", NULL, false, true)) {
+                saveFile(filePath, &assetFile, &locFile);
+            }
+
+            igEndMenu();
+        }
+
+        igEndMenuBar();
+    }
+
+    render(&assetFile, &locFile);
+
+    igEnd();
+
+    igRender();
+
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);
+    glClearColor(0, 0, 0, 1.00f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(igGetDrawData());
+
+    glfwSwapBuffers(window);
+
+#ifndef __EMSCRIPTEN__
+    return true;
+#endif
+}
+
 int main(int argc, const char **argv) {
     int result = 0;
-
-    AssetFile assetFile = { 0 };
-    LocalizationFile locFile = { 0 };
-
-    FreeContext freeCtx = { 0 };
-    GLFWwindow* window = NULL;
 
     if (argc < 2) goto usage;
 
     if (!poolNew(&pool, POOL_SIZE)) goto error;
 
-    const char *filePath = argv[1];
+    filePath = argv[1];
     if (!loadFile(filePath, &assetFile, &locFile)) goto usage;
 
     if (!glfwInit()) goto error;
@@ -241,57 +307,22 @@ int main(int argc, const char **argv) {
     glfwSwapInterval(1);
 
     igCreateContext(NULL);
-    ImGuiIO* io = igGetIO_Nil();
+    io = igGetIO_Nil();
     io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
+
+    #ifdef __EMSCRIPTEN__
+    ImGui_ImplOpenGL3_Init("#version 300 es");
+    #else 
     ImGui_ImplOpenGL3_Init("#version 330");
+    #endif
 
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        igNewFrame();
-
-        igSetNextWindowPos((ImVec2){ 0, 0 }, 0, (ImVec2){ 0, 0 });
-        igSetNextWindowSize(io->DisplaySize, 0);
-
-        igBegin("Window", NULL,
-            ImGuiWindowFlags_NoTitleBar
-            | ImGuiWindowFlags_NoResize
-            | ImGuiWindowFlags_NoMove
-            | ImGuiWindowFlags_NoCollapse
-            | ImGuiWindowFlags_MenuBar
-        );
-
-        if (igBeginMenuBar()) {
-            if (igBeginMenu("File", true)) {
-                if (igMenuItem_Bool("Save", NULL, false, true)) {
-                    saveFile(filePath, &assetFile, &locFile);
-                }
-
-                igEndMenu();
-            }
-
-            igEndMenuBar();
-        }
-
-        render(&assetFile, &locFile);
-
-        igEnd();
-
-        igRender();
-
-        int width, height;
-        glfwGetFramebufferSize(window, &width, &height);
-        glViewport(0, 0, width, height);
-        glClearColor(0, 0, 0, 1.00f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(igGetDrawData());
-
-        glfwSwapBuffers(window);
-    }
+    #if __EMSCRIPTEN__
+    emscripten_set_main_loop_arg(loop, NULL, 0, 1);
+    #else
+    while (loop());
+    #endif
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

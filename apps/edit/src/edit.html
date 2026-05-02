@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <title>Vicious Edit</title>
+
+        <style>
+            canvas {
+                display: block;
+                margin-top: 1em;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="file" id="file" />
+        <button onclick="run()">Run</button>
+        <button onclick="save()">Save</button>
+        <a id="download" style="display: none">Download</a>
+
+        <canvas id="canvas"></canvas>
+
+        {{{ SCRIPT }}}
+
+        <script>
+            const input = document.getElementById("file");
+            const canvas = document.getElementById("canvas");
+            const download = document.getElementById("download");
+
+            let module = null;
+            let fileName = null;
+            let path = null;
+
+            async function run() {
+                const file = input.files[0];
+                if (!file) return;
+
+                if (module) {
+                    module.ccall("exit", null, ["number"], [0]);
+                }
+
+                const arrayBuffer = await file.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+
+                fileName = file.name;
+                path = `/${fileName}`;
+
+                module = await Module({
+                    arguments: [path],
+                    canvas,
+                    preRun: [
+                        (mod) => {
+                            mod.FS.writeFile(path, data);
+                        }
+                    ],
+                });
+            }
+
+            async function save() {
+                if (!module) return;
+                if (!path) return;
+
+                const data = module.FS.readFile(path);
+                const blob = new Blob([data], { type: "application/octet-stream" });
+
+                const url = URL.createObjectURL(blob);
+
+                download.href = url;
+                download.download = fileName;
+                download.click();
+
+                download.style.display = "block";
+            }
+        </script>
+    </body>
+</html>

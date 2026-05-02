@@ -59,3 +59,19 @@ target_link_libraries(edit
     ${OPENGL_LIBRARIES}
     vicious
 )
+
+if(EMSCRIPTEN)
+    set_target_properties(edit PROPERTIES
+        SUFFIX ".html"
+    )
+
+    target_link_options(edit PRIVATE
+        "--shell-file=${CMAKE_SOURCE_DIR}/src/edit.html"
+        -sALLOW_MEMORY_GROWTH
+        -sEXPORTED_RUNTIME_METHODS=["FS"]
+        -sMODULARIZE
+        -sFULL_ES3=1
+        -sUSE_GLFW=3
+        -sUSE_WEBGL2=1
+    )
+endif()

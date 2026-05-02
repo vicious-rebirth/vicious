@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "description": "Tool to modify properties of assets for Vicious Engine",
   "scripts": {
-    "setup": "cmake -S . -B build",
+    "setup:release": "cmake -S . -B build",
     "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build",
-    "build:exe": "cmake --build build -j 4"
+    "setup:web": "emcmake cmake -S . -B build_web",
+    "build:exe": "cmake --build build",
+    "build:web": "cmake --build build_web"
   },
   "license": "MIT",
   "devDependencies": {},
