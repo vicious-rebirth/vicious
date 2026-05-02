@@ -9,5 +9,6 @@ set -gx PATH \
     "$REPO_ROOT/apps/material/build/exe" \
     "$REPO_ROOT/apps/mesh/build/exe" \
     "$REPO_ROOT/apps/pack/build/exe" \
+    "$REPO_ROOT/apps/pak/build/exe" \
     "$REPO_ROOT/apps/texture/build/exe" \
     $PATH

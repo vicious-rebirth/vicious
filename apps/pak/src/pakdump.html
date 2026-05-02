@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <title>Vicious Pak Dump</title>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    </head>
+    <body>
+        <input type="file" id="file" />
+        <button onclick="run()">Run</button>
+        <a id="download" style="display: none">Download</a>
+
+        <pre id="output"></pre>
+
+        {{{ SCRIPT }}}
+
+        <script>
+            const input = document.getElementById("file");
+            const output = document.getElementById("output");
+            const download = document.getElementById("download");
+
+            async function run() {
+                const file = input.files[0];
+                if (!file) return;
+
+                const arrayBuffer = await file.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+
+                const inPath = `/${file.name}`;
+                const outPath = "/out";
+
+                await Module({
+                    print: (text) => output.textContent += text + "\n",
+                    arguments: [inPath, outPath],
+                    preRun: [
+                        (mod) => {
+                            output.textContent = "";
+                            download.style.display = "none";
+
+                            mod.FS.writeFile(inPath, data);
+                        }
+                    ],
+                    postRun: [
+                        (mod) => {
+                            function addFolderToZip(zip, fsPath, zipFolder) {
+                                const entries = mod.FS.readdir(fsPath);
+
+                                for (const name of entries) {
+                                    if (name === "." || name === "..") continue;
+
+                                    const fullPath = `${fsPath}/${name}`;
+                                    const stat = mod.FS.stat(fullPath);
+
+                                    if (mod.FS.isDir(stat.mode)) {
+                                        addFolderToZip(zip, fullPath, zipFolder.folder(name));
+                                    } else {
+                                        const data = mod.FS.readFile(fullPath);
+                                        zipFolder.file(name, data);
+                                    }
+                                }
+                            }
+
+                            const zip = new JSZip();
+
+                            addFolderToZip(zip, "/out", zip);
+
+                            zip.generateAsync({ type: "blob" }).then(blob => {
+                                const url = URL.createObjectURL(blob);
+
+                                download.href = url;
+                                download.download = "data.zip";
+                                download.click();
+
+                                download.style.display = "block";
+                            });
+                        }
+                    ],
+                });
+            }
+        </script>
+    </body>
+</html>

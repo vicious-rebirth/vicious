@@ -19,6 +19,7 @@ RUN    pnpm dlx turbo prune --docker --out-dir pruned-animation @repo/animation 
     && pnpm dlx turbo prune --docker --out-dir pruned-material @repo/material \
     && pnpm dlx turbo prune --docker --out-dir pruned-mesh @repo/mesh \
     && pnpm dlx turbo prune --docker --out-dir pruned-pack @repo/pack \
+    && pnpm dlx turbo prune --docker --out-dir pruned-pak @repo/pak \
     && pnpm dlx turbo prune --docker --out-dir pruned-texture @repo/texture
 
 FROM base AS build
@@ -85,6 +86,15 @@ RUN pnpm codegen
 RUN pnpm setup:release
 RUN pnpm build:exe
 
+FROM build AS pak
+
+COPY --from=prune /repo/pruned-pak/full /build
+
+RUN pnpm install
+
+RUN pnpm setup:release
+RUN pnpm build:exe
+
 FROM build AS texture
 
 COPY --from=prune /repo/pruned-texture/full /build
@@ -105,6 +115,7 @@ COPY --from=audio /build/apps/audio/build/exe/* /tools/
 COPY --from=material /build/apps/material/build/exe/* /tools/
 COPY --from=mesh /build/apps/mesh/build/exe/* /tools/
 COPY --from=pack /build/apps/pack/build/exe/* /tools/
+COPY --from=pak /build/apps/pak/build/exe/* /tools/
 COPY --from=texture /build/apps/texture/build/exe/* /tools/
 
 WORKDIR /workdir
