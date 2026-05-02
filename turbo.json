@@ -10,11 +10,20 @@
     "setup:debug": {
       "dependsOn": ["^setup:debug"]
     },
+    "setup:web": {
+      "dependsOn": ["^setup:web"]
+    },
+    "build:docs": {
+      "dependsOn": ["^build:docs"]
+    },
     "build:exe": {
       "dependsOn": ["^build:exe"]
     },
     "build:lib": {
       "dependsOn": ["^build:lib"]
+    },
+    "build:web": {
+      "dependsOn": ["^build:web"]
     }
   }
 }

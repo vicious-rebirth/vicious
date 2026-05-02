@@ -105,6 +105,20 @@ Run in a shell with a mounted host folder. The folder should have a disc-unpacke
 docker run -v /path/to/folder:/workdir -it vicious /bin/sh
 ```
 
+### Web
+
+This is a Emscripten (web) build of the repo. This is mostly only used for [the website](https://vicious-rebirth.github.io/).
+
+#### Dependencies
+
+- [Docker](https://www.docker.com/get-started/)
+
+#### Build
+
+```
+docker build -t vicious-web -f packages/docker/build/web/Dockerfile .
+```
+
 ## Support
 
 ### Spy vs. Spy 2005

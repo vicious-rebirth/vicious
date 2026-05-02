@@ -4,7 +4,7 @@
   "description": "Documentation for Vicious Engine",
   "scripts": {
     "codegen": "tsx codegen/main.ts",
-    "build": "doxygen"
+    "build:docs": "doxygen"
   },
   "license": "MIT",
   "devDependencies": {

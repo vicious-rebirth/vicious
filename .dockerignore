@@ -1,7 +1,7 @@
 **/.cache
 **/.git
 **/.turbo
-**/build
+**/build*
 **/generated
 **/node_modules
 **/out
