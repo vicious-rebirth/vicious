@@ -32,6 +32,19 @@ target_link_libraries(pack
     vicious
 )
 
+if(EMSCRIPTEN)
+    set_target_properties(pack PROPERTIES
+        SUFFIX ".html"
+    )
+
+    target_link_options(pack PRIVATE
+        "--shell-file=${CMAKE_SOURCE_DIR}/src/pack.html"
+        -sALLOW_MEMORY_GROWTH
+        -sEXPORTED_RUNTIME_METHODS=["FS"]
+        -sMODULARIZE
+    )
+endif()
+
 add_executable(unpack
     src/unpack.c
 )
@@ -39,3 +52,16 @@ add_executable(unpack
 target_link_libraries(unpack
     vicious
 )
+
+if(EMSCRIPTEN)
+    set_target_properties(unpack PROPERTIES
+        SUFFIX ".html"
+    )
+
+    target_link_options(unpack PRIVATE
+        "--shell-file=${CMAKE_SOURCE_DIR}/src/unpack.html"
+        -sALLOW_MEMORY_GROWTH
+        -sEXPORTED_RUNTIME_METHODS=["FS"]
+        -sMODULARIZE
+    )
+endif()

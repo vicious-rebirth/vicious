@@ -57,9 +57,9 @@ typedef struct {
 
     const char *filePath;
     const char *projectPath;
-} PackVisitor;
+} Visitor;
 
-static bool unpackVisitorAssetFile(PackVisitor *ctx, AssetFile *self) {
+static void unpackVisitorAssetFile(Visitor *ctx, AssetFile *self) {
     char path[1024];
 
     const char *folder = getClassFolder(self->content.header.type);
@@ -77,7 +77,7 @@ static bool unpackVisitorAssetFile(PackVisitor *ctx, AssetFile *self) {
     );
 
     FILE *file = fopen(path, "wb");
-    if (file == NULL) return false;
+    if (file == NULL) return;
 
     StdEncoder encoder;
     stdEncoder(&encoder, file, NULL);
@@ -86,11 +86,9 @@ static bool unpackVisitorAssetFile(PackVisitor *ctx, AssetFile *self) {
     encodeAssetFile((EncoderContext *)&encoder, self);
 
     fclose(file);
-
-    return false;
 }
 
-static bool unpackVisitorLocalizationFile(PackVisitor *ctx, LocalizationFile *self) {
+static void unpackVisitorLocalizationFile(Visitor *ctx, LocalizationFile *self) {
     char path[1024];
 
     snprintf(path, sizeof(path), "%s/Localizations", ctx->projectPath);
@@ -106,7 +104,7 @@ static bool unpackVisitorLocalizationFile(PackVisitor *ctx, LocalizationFile *se
     );
 
     FILE *file = fopen(path, "wb");
-    if (file == NULL) return false;
+    if (file == NULL) return;
 
     StdEncoder encoder;
     stdEncoder(&encoder, file, NULL);
@@ -115,14 +113,12 @@ static bool unpackVisitorLocalizationFile(PackVisitor *ctx, LocalizationFile *se
     encodeLocalizationFile((EncoderContext *)&encoder, self);
 
     fclose(file);
-
-    return false;
 }
 
-static bool unpackVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
-    if (self->type == -1) return false;
-    if (!self->first) return false;
-    if (self->asset == 0) return false;
+static void unpackVisitorAssetReference(Visitor *ctx, AssetReference *self) {
+    if (self->type == -1) return;
+    if (!self->first) return;
+    if (self->asset == 0) return;
 
     AssetFile assetFile = REFERENCE_FILE;
 
@@ -134,11 +130,9 @@ static bool unpackVisitorAssetReference(PackVisitor *ctx, AssetReference *self) 
     unpackVisitorAssetFile(ctx, &assetFile);
 
     self->first = false;
-
-    return false;
 }
 
-VisitorContext PACK_VISITOR_CONTEXT = {
+VisitorContext VISITOR_CONTEXT = {
     .exitAssetReference = (void *)unpackVisitorAssetReference,
     .exitLocalizationFile = (void *)unpackVisitorLocalizationFile,
     .exitAssetFile = (void *)unpackVisitorAssetFile
@@ -170,8 +164,8 @@ int main(int argc, char **argv) {
     const char *projectPath = argc > 2 ? argv[2] : "out";
     mkdir(projectPath, 0755);
 
-    PackVisitor visitor = {
-        .ctx = PACK_VISITOR_CONTEXT,
+    Visitor visitor = {
+        .ctx = VISITOR_CONTEXT,
         .filePath = filePath,
         .projectPath = projectPath,
     };

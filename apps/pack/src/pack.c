@@ -20,9 +20,9 @@ typedef struct {
     AssetPool *pool;
     Arena *arena;
     const char *projectPath;
-} PackVisitor;
+} Visitor;
 
-static bool packVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
+static bool packVisitorAssetReference(Visitor *ctx, AssetReference *self) {
     if (self->type == -1) return false;
 
     uint32_t type = poolGetType(ctx->pool, *(uint64_t *)&self->id);
@@ -68,7 +68,7 @@ static bool packVisitorAssetReference(PackVisitor *ctx, AssetReference *self) {
     return false;
 }
 
-VisitorContext PACK_VISITOR_CONTEXT = {
+VisitorContext VISITOR_CONTEXT = {
     .enterAssetReference = (void *)packVisitorAssetReference
 };
 
@@ -80,8 +80,8 @@ int main(int argc, char **argv) {
     Arena arena = { 0 };
     AssetPool pool = { 0 };
 
-    PackVisitor visitor = {
-        .ctx = PACK_VISITOR_CONTEXT,
+    Visitor visitor = {
+        .ctx = VISITOR_CONTEXT,
     };
 
     if (argc < 2) goto usage;
