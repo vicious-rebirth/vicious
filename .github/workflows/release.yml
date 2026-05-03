@@ -1,0 +1,84 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  alpine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: docker build -t vicious-alpine -f packages/docker/build/alpine/Dockerfile . 
+
+      - name: Extract
+        run: |
+          mkdir /tmp/dist
+          docker create --name alpine vicious-alpine
+          docker cp alpine:/tools /tmp/dist/tools
+          docker rm alpine
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: alpine
+          path: /tmp/dist
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: docker build -t vicious-web -f packages/docker/build/web/Dockerfile .
+
+      - name: Extract
+        run: |
+          docker create --name web vicious-web
+          docker cp web:/out /tmp/dist
+          docker rm web
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: /tmp/dist
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [alpine, web]
+    steps:
+      - name: Download alpine
+        uses: actions/download-artifact@v4
+        with:
+          name: alpine
+          path: alpine
+
+      - name: Download web
+        uses: actions/download-artifact@v4
+        with:
+          name: web
+          path: web
+
+      - name: Zip
+        run: |
+          zip -r alpine.zip alpine
+          zip -r web.zip web
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        if: github.ref_type == 'tag'
+        with:
+          draft: true
+          files: |
+            alpine.zip
+            web.zip
