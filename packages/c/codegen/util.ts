@@ -3,7 +3,7 @@ import { Class } from "@repo/core/schema";
 import { cg, getIDSortedClasses } from "@repo/core/util";
 
 export function buildUtilImplementation() {
-  return [buildClassFromID(), buildClassFolder(), buildClassExtension()].join(
+  return [buildClassFromID(), buildClassFolder(), buildClassExtension(), buildClassSize()].join(
     "\n\n"
   );
 }
@@ -13,6 +13,7 @@ export function buildUtilDeclaration() {
     "const char *getClassName(U32 typeId);",
     "const char *getClassFolder(U32 typeId);",
     "const char *getClassExtension(U32 typeId);",
+    "U32 getClassSize(U32 typeId);",
   ].join("\n");
 }
 
@@ -78,6 +79,27 @@ function buildClassExtension() {
   `;
 }
 
+function buildClassSize() {
+  return cg`
+    U32 getClassSize(U32 typeId) {
+      switch (typeId) {
+        ${getIDSortedClasses()
+          .map((cls) => {
+            const backend = new SwitchClassSize();
+
+            backend.visit(cls);
+
+            return backend.output;
+          })
+          .filter((v) => v)
+          .join("\n")}
+      }
+
+      return 0;
+    }
+  `;
+}
+
 class SwitchClassID extends EmptyEmit {
   protected emitClass(cls: Class, _fields: string): string {
     return cg`case ${cls.__id}: return "${cls.constructor.name}";`;
@@ -119,5 +141,11 @@ class SwitchClassExtension extends EmptyEmit {
     if (cls.base) return this.getClassExtension(new cls.base.__type());
 
     return null;
+  }
+}
+
+class SwitchClassSize extends EmptyEmit {
+  protected emitClass(cls: Class, _fields: string): string {
+    return cg`case ${cls.__id}: return sizeof(${cls.constructor.name});`;
   }
 }
