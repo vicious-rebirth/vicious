@@ -16,6 +16,7 @@ COPY --chown=node:node . .
 
 RUN    pnpm dlx turbo prune --docker --out-dir pruned-animation @repo/animation \
     && pnpm dlx turbo prune --docker --out-dir pruned-audio @repo/audio \
+    && pnpm dlx turbo prune --docker --out-dir pruned-json @repo/json \
     && pnpm dlx turbo prune --docker --out-dir pruned-material @repo/material \
     && pnpm dlx turbo prune --docker --out-dir pruned-mesh @repo/mesh \
     && pnpm dlx turbo prune --docker --out-dir pruned-pack @repo/pack \
@@ -49,6 +50,16 @@ RUN pnpm build:exe
 FROM build AS audio
 
 COPY --from=prune /repo/pruned-audio/full /build
+
+RUN pnpm install
+
+RUN pnpm codegen
+RUN pnpm setup:release
+RUN pnpm build:exe
+
+FROM build AS json
+
+COPY --from=prune /repo/pruned-json/full /build
 
 RUN pnpm install
 
@@ -112,6 +123,7 @@ USER node
 ENV PATH="/tools:${PATH}"
 
 COPY --from=audio /build/apps/audio/build/exe/* /tools/
+COPY --from=json /build/apps/json/build/exe/* /tools/
 COPY --from=material /build/apps/material/build/exe/* /tools/
 COPY --from=mesh /build/apps/mesh/build/exe/* /tools/
 COPY --from=pack /build/apps/pack/build/exe/* /tools/

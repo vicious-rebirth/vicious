@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <title>Vicious To JSON</title>
+    </head>
+    <body>
+        <input type="file" id="file" />
+
+        <input type="checkbox" id="format" name="format" />
+        <label for="format">Format</label>
+
+        <button onclick="run()">Run</button>
+
+        <a id="download" style="display: none">Download</a>
+
+        <pre id="output"></pre>
+
+        {{{ SCRIPT }}}
+
+        <script>
+            const input = document.getElementById("file");
+            const output = document.getElementById("output");
+            const format = document.getElementById("format");
+            const download = document.getElementById("download");
+
+            async function run() {
+                const file = input.files[0];
+                if (!file) return;
+
+                const arrayBuffer = await file.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+
+                const inPath = `/${file.name}`;
+                const outPath = "/out.json";
+
+                await Module({
+                    print: (text) => output.textContent += text + "\n",
+                    arguments: [inPath, outPath],
+                    preRun: [
+                        (mod) => {
+                            output.textContent = "";
+                            download.style.display = "none";
+
+                            mod.FS.writeFile(inPath, data);
+                        }
+                    ],
+                    postRun: [
+                        (mod) => {
+                            const data = mod.FS.readFile(outPath);
+
+                            if (format.checked) {
+                                const decoder = new TextDecoder();
+                                const str = decoder.decode(data);
+                                data = JSON.stringify(JSON.parse(str), null, 2);
+                            }
+
+                            const blob = new Blob([data], { type: "application/json" });
+
+                            const url = URL.createObjectURL(blob);
+
+                            download.href = url;
+                            download.download = "out.json";
+                            download.click();
+
+                            download.style.display = "block";
+                        }
+                    ],
+                });
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "@repo/json",
+  "version": "0.0.0",
+  "description": "Tools to convert Vicious Engine files to JSON",
+  "scripts": {
+    "setup:release": "cmake -S . -B build",
+    "setup:debug": "cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build",
+    "setup:web": "emcmake cmake -S . -B build_web",
+    "build:exe": "cmake --build build",
+    "build:web": "cmake --build build_web"
+  },
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "@repo/c": "workspace:*"
+  }
+}

@@ -56,6 +56,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/c
 
+  apps/json:
+    dependencies:
+      '@repo/c':
+        specifier: workspace:*
+        version: link:../../packages/c
+
   apps/material:
     dependencies:
       '@repo/c':
@@ -73,6 +79,8 @@ importers:
       '@repo/c':
         specifier: workspace:*
         version: link:../../packages/c
+
+  apps/pak: {}
 
   apps/test-c:
     dependencies:
