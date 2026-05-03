@@ -36,6 +36,19 @@ add_subdirectory(node_modules/@repo/c)
 # Executables
 #----------------------------------------------------------------------------------
 
+add_executable(json2vcs
+    src/json2vcs.c
+)
+
+target_include_directories(json2vcs PUBLIC
+    ${cjson_SOURCE_DIR}
+)
+
+target_link_libraries(json2vcs
+    cjson
+    vicious
+)
+
 add_executable(vcs2json
     src/vcs2json.c
 )
