@@ -82,6 +82,8 @@ bool dump(FILE *file, const char *folder) {
 }
 
 int main(int argc, char **argv) {
+    int result = 0;
+
     FILE *inFile = NULL;
 
     if (argc < 2) goto usage;
@@ -98,12 +100,16 @@ int main(int argc, char **argv) {
 
     fclose(inFile);
 
-    return 0;
+    goto cleanup;
+
 usage:
     printf("usage: %s file [out_path]\n", argv[0]);
 
 error:
+    result = 1;
+
+cleanup:
     if (inFile != NULL) fclose(inFile);
 
-    return 1;
+    return result;
 }

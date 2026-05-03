@@ -335,8 +335,10 @@ int main(int argc, const char **argv) {
 
 usage:
     printf("usage: %s file\n", argv[0]);
+
 error:
     result = 1;
+
 cleanup:
     if (assetFile.magicHeader != 0) freeAssetFile(&freeCtx, &assetFile);
     if (locFile.magicHeader != 0) freeLocalizationFile(&freeCtx, &locFile);

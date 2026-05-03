@@ -139,6 +139,8 @@ VisitorContext VISITOR_CONTEXT = {
 };
 
 int main(int argc, char **argv) {
+    int result = 0;
+
     FILE *inFile = NULL;
     Arena arena = { 0 };
     AssetPool pool = { 0 };
@@ -180,11 +182,15 @@ int main(int argc, char **argv) {
         visitAssetFile((VisitorContext *)&visitor, &assetFile);
     }
 
-    return 0;
+    goto cleanup;
+
 usage:
     printf("usage: %s file [project_path]\n", argv[0]);
 
 error:
+    result = 1;
+
+cleanup:
     arenaDestroy(&arena);
     poolDestroy(&pool);
 

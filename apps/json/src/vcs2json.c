@@ -177,7 +177,7 @@ VisitorContext VISITOR_CONTEXT = {
 };
 
 int main(int argc, char **argv) {
-    bool status = true;
+    int result = 0;
 
     FILE *inFile = NULL;
     FILE *outFile = NULL;
@@ -236,15 +236,15 @@ int main(int argc, char **argv) {
 
     free(str);
 
-    goto end;
+    goto cleanup;
 
 usage:
     printf("usage: %s file [out_json]\n", argv[0]);
 
 error:
-    status = false;
+    result = 1;
 
-end:
+cleanup:
     arenaDestroy(&arena);
     poolDestroy(&pool);
 
@@ -253,5 +253,5 @@ end:
     if (inFile != NULL) fclose(inFile);
     if (outFile != NULL) fclose(outFile);
 
-    return status ? 0 : 1;
+    return result;
 }
