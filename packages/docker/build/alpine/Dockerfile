@@ -26,6 +26,7 @@ RUN    pnpm dlx turbo prune --docker --out-dir pruned-animation @repo/animation 
 FROM base AS build
 
 RUN apk add --no-cache \
+    build-base \
     cmake \
     clang \
     git \
@@ -124,6 +125,7 @@ ENV PATH="/tools:${PATH}"
 
 COPY --from=audio /build/apps/audio/build/exe/* /tools/
 COPY --from=json /build/apps/json/build/exe/* /tools/
+COPY --from=json /build/apps/json/build/_deps/cjson-build/libcjson.so* /usr/lib/
 COPY --from=material /build/apps/material/build/exe/* /tools/
 COPY --from=mesh /build/apps/mesh/build/exe/* /tools/
 COPY --from=pack /build/apps/pack/build/exe/* /tools/
