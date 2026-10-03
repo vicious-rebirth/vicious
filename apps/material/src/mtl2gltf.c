@@ -174,7 +174,7 @@ bool writeSpriteMaterial(FILE *file, const SpriteMaterial *material) {
     );
 }
 
-bool writeV27(FILE *file, const V27 *material) {
+bool writeSingleTextureModelMaterial(FILE *file, const SingleTextureModelMaterial *material) {
     return writeMaterialTexture(
         file,
         (const char *)material->base.base.base.base.base.label.buffer.data,
@@ -192,7 +192,7 @@ bool writeV51(FILE *file, const V51 *material) {
     );
 }
 
-bool writeV73(FILE *file, const V73 *material) {
+bool writeDualTextureModelMaterial(FILE *file, const DualTextureModelMaterial *material) {
     return writeMaterialTexture(
         file,
         (const char *)material->base.base.base.base.base.label.buffer.data,
@@ -201,7 +201,7 @@ bool writeV73(FILE *file, const V73 *material) {
     );
 }
 
-bool writeV94(FILE *file, const V94 *material) {
+bool writeProjectedModelMaterial(FILE *file, const ProjectedModelMaterial *material) {
     // Lighthing?
     return writeMaterialTexture(
         file,
@@ -211,7 +211,7 @@ bool writeV94(FILE *file, const V94 *material) {
     );
 }
 
-bool writeV96(FILE *file, const V96 *material) {
+bool writeUntexturedModelMaterial(FILE *file, const UntexturedModelMaterial *material) {
     // Lighthing?
     return writeMaterialTexture(
         file,
@@ -275,11 +275,11 @@ int main(int argc, char **argv) {
 
     switch (assetType) {
         case VCS_SpriteMaterial: if (!writeSpriteMaterial(gltfFile, asset)) goto error; break;
-        case VCS_V27: if (!writeV27(gltfFile, asset)) goto error; break;
+        case VCS_SingleTextureModelMaterial: if (!writeSingleTextureModelMaterial(gltfFile, asset)) goto error; break;
         case VCS_V51: if (!writeV51(gltfFile, asset)) goto error; break;
-        case VCS_V73: if (!writeV73(gltfFile, asset)) goto error; break;
-        case VCS_V94: if (!writeV94(gltfFile, asset)) goto error; break;
-        case VCS_V96: if (!writeV96(gltfFile, asset)) goto error; break;
+        case VCS_DualTextureModelMaterial: if (!writeDualTextureModelMaterial(gltfFile, asset)) goto error; break;
+        case VCS_ProjectedModelMaterial: if (!writeProjectedModelMaterial(gltfFile, asset)) goto error; break;
+        case VCS_UntexturedModelMaterial: if (!writeUntexturedModelMaterial(gltfFile, asset)) goto error; break;
         case VCS_V287: if (!writeV287(gltfFile, asset)) goto error; break;
         case VCS_V298: if (!writeV298(gltfFile, asset)) goto error; break;
         default: goto error;
