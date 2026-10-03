@@ -10,7 +10,7 @@ export class LensFlare extends Class {
   __offset = 0xe75a0;
 
   base = field(Object);
-  f_0x40 = field(AssetFromTypeSizedList);
+  elements = field(AssetFromTypeSizedList);
   f_1 = field(U32, { condition: (ctx) => ctx.eq((ctx) => ctx.version(), 4) });
   f_0x48 = field(U32, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),

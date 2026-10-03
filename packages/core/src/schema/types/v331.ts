@@ -1,13 +1,13 @@
 import { Class, field } from "../core";
-import { Action } from "./action";
 import { AssetFromTypeWrap } from "./asset";
 import { U8, U32 } from "./atomic";
+import { Statement } from "./statement";
 
 export class V331 extends Class {
   __id = 331;
   __offset = 0x23b90;
 
-  base = field(Action);
+  base = field(Statement);
   old = field(U8, {
     condition: (ctx) => ctx.eq((ctx) => ctx.version(), 2),
     custom: (ctx) => {

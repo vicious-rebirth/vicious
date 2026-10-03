@@ -1,14 +1,14 @@
 import { Class, deprecated, field } from "../core";
-import { Action } from "./action";
 import { AssetFromType, AssetFromTypeWrap } from "./asset";
 import { U32 } from "./atomic";
 import { Label } from "./label";
+import { Statement } from "./statement";
 
 export class V413 extends Class {
   __id = 413;
   __offset = 0x23fc0;
 
-  base = field(Action);
+  base = field(Statement);
   _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 0));
   f_1 = field(AssetFromType);
   f_0x0c = field(AssetFromType);

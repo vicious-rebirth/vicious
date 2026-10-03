@@ -7,11 +7,11 @@ import {
   AssetReferenceSuffixSizedList,
 } from "./asset";
 import { I32, U8, U32 } from "./atomic";
+import { DynamicModel } from "./dynamicModel";
 import { Group } from "./group";
 import { Label } from "./label";
 import { Transform } from "./math";
 import { Object } from "./object";
-import { V45 } from "./v45";
 
 export class EntityGroup extends Class {
   __id = 141;
@@ -72,7 +72,7 @@ export class Entity extends Class {
   body = field(EntityBody, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 3),
   });
-  f_0x80 = field(V45, {
+  f_0x80 = field(DynamicModel, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 10),
   });
 }

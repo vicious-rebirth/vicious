@@ -1,0 +1,18 @@
+import { Class, field } from "../core";
+import { AssetReference } from "./asset";
+import { BOOL, F32, U32 } from "./atomic";
+import { DynamicGeomTemplate } from "./dynamicGeomTemplate";
+
+export class GeomTrailTemplate extends Class {
+  __id = 53;
+  __offset = 0xe6500;
+
+  base = field(DynamicGeomTemplate);
+  f_0x44 = field(AssetReference);
+  f_0x48 = field(U32);
+  f_0x4c = field(U32);
+  f_0x50 = field(U32);
+  f_0x54 = field(F32);
+  f_0x58 = field(F32);
+  f_0x5c = field(BOOL);
+}

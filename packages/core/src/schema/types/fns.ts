@@ -7,9 +7,9 @@ export class FN_0x22520 extends Struct {
   __metadata = true;
   __offset = 0x22520;
 
-  f_0x00 = field(U32);
-  f_0x04 = field(AssetReference);
-  f_0x08 = field(U32);
+  mode = field(U32);
+  dialog = field(AssetReference);
+  elementId = field(U32);
 }
 
 export class FN_0x22080 extends Struct {
@@ -33,16 +33,16 @@ export class FN_0x21dd0 extends Struct {
   __metadata = true;
   __offset = 0x21dd0;
 
-  f_0x00 = field(U32);
-  f_0x04 = field(AssetReference);
+  mode = field(U32);
+  asset = field(AssetReference);
 }
 
 export class FN_0x224c0 extends Struct {
   __metadata = true;
   __offset = 0x224c0;
 
-  f_0x00 = field(U32);
-  f_0x04 = field(AssetReference);
+  mode = field(U32);
+  asset = field(AssetReference);
 }
 
 export class FN_0x5e2d0 extends Struct {

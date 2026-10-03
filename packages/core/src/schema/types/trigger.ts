@@ -1,10 +1,10 @@
 import { Class, deprecated, field } from "../core";
 import { AssetReference, AssetReferenceSuffixSizedList } from "./asset";
 import { BOOL, U32 } from "./atomic";
+import { BoundingVolume } from "./boundingVolume";
 import { Group } from "./group";
 import { Object } from "./object";
 import { Script } from "./script";
-import { V56 } from "./v56";
 
 export class TriggerGroup extends Class {
   __id = 156;
@@ -24,7 +24,7 @@ export class Trigger extends Class {
   onEnter = field(Script);
   onInside = field(Script);
   onExit = field(Script);
-  boundingBox = field(V56);
+  boundingBox = field(BoundingVolume);
   f_0x9c = field(U32);
   f_0xa0 = field(AssetReference);
   _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 1));

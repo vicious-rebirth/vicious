@@ -1,25 +1,25 @@
 import { Class, deprecated, field } from "../core";
-import { Action } from "./action";
 import {
   AssetFromType,
   AssetFromTypeWrap,
   AssetReferenceSuffix,
 } from "./asset";
 import { BOOL, U32 } from "./atomic";
+import { CameraSelector } from "./cameraSelector";
+import { EntitySelector } from "./entitySelector";
 import { FN_0x5e2d0 } from "./fns";
 import { Label } from "./label";
 import { Script } from "./script";
-import { V166 } from "./v166";
-import { V301 } from "./v301";
+import { Statement } from "./statement";
 
 export class V281 extends Class {
   __id = 281;
   __offset = 0x644b0;
 
-  base = field(Action);
-  f_0x54 = field(V301);
+  base = field(Statement);
+  f_0x54 = field(EntitySelector);
   f_0x08 = field(Label);
-  f_0x80 = field(V166);
+  f_0x80 = field(CameraSelector);
   _ = deprecated((ctx) => ctx.lt((ctx) => ctx.version(), 2));
   f_0xbc = field(AssetFromTypeWrap, {
     condition: (ctx) => ctx.gte((ctx) => ctx.version(), 2),
@@ -46,7 +46,7 @@ export class V281 extends Class {
   f_0xcc = field(AssetFromType, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 3),
   });
-  old = field(V301, {
+  old = field(EntitySelector, {
     condition: (ctx) =>
       ctx.and(
         (ctx) => ctx.gt((ctx) => ctx.version(), 5),

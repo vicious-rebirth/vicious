@@ -1,14 +1,14 @@
 import { Class, field } from "../core";
+import { EntitySelector } from "./entitySelector";
 import { FN_0x21f40 } from "./fns";
-import { V108 } from "./v108";
-import { V301 } from "./v301";
+import { ValueExpression } from "./valueExpression";
 
 export class V273 extends Class {
   __id = 273;
   __offset = 0x59230;
 
-  base = field(V108);
-  f_0x08 = field(V301);
+  base = field(ValueExpression);
+  f_0x08 = field(EntitySelector);
   f_1 = field(FN_0x21f40, {
     custom: (ctx) => {
       ctx.set(this.f_1.version, (ctx) => ctx.version());

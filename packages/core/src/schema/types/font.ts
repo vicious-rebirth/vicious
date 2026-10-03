@@ -21,9 +21,9 @@ export class Font extends Class {
 
   base = field(Object);
   material = field(AssetReference);
-  f_0x48 = field(F32);
-  f_0x4c = field(F32);
-  f_0x50 = field(F32, {
+  sizeScale = field(F32);
+  glyphWidth = field(F32);
+  glyphHeight = field(F32, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 4),
   });
   f_0x40 = field(U32);

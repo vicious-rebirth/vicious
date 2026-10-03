@@ -1,14 +1,14 @@
 import { Class, field } from "../core";
-import { Action } from "./action";
 import { AssetReferenceSuffix } from "./asset";
 import { U32 } from "./atomic";
 import { FN_0x22520 } from "./fns";
+import { Statement } from "./statement";
 
 export class V516 extends Class {
   __id = 516;
   __offset = 0x4a8e0;
 
-  base = field(Action);
+  base = field(Statement);
   f_1 = field(AssetReferenceSuffix, {
     condition: (ctx) => ctx.lt((ctx) => ctx.version(), 2),
   });

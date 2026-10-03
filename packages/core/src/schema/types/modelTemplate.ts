@@ -6,14 +6,14 @@ import {
   AssetReferenceSizedList,
 } from "./asset";
 import { BOOL, F32, U32 } from "./atomic";
+import { DynamicGeomTemplate } from "./dynamicGeomTemplate";
 import { LabelList } from "./label";
-import { V34 } from "./v34";
 
 export class ModelTemplate extends Class {
   __id = 44;
   __offset = 0x10f920;
 
-  base = field(V34);
+  base = field(DynamicGeomTemplate);
   mesh = field(AssetReference);
   skins = field(AssetReferenceSizedList);
   surface = field(AssetReference, {

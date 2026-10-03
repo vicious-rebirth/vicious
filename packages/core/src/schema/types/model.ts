@@ -2,13 +2,13 @@ import { Class, Struct, field } from "../core";
 import { BOOL } from "./atomic";
 import { U8Buffer } from "./buffer";
 import { Transform } from "./math";
-import { V26 } from "./v26";
+import { StaticGeom } from "./staticGeom";
 
 export class Model extends Class {
   __id = 29;
   __offset = 0x113780;
 
-  base = field(V26);
+  base = field(StaticGeom);
   transform = field(Transform);
   vertexBuffer = field(VertexBuffer);
 }

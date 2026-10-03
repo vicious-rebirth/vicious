@@ -1,13 +1,13 @@
 import { Class, deprecated, field } from "../core";
 import { AssetFromType } from "./asset";
 import { FN_0x21f40 } from "./fns";
-import { V108 } from "./v108";
+import { ValueExpression } from "./valueExpression";
 
 export class V307 extends Class {
   __id = 307;
   __offset = 0x72c50;
 
-  base = field(V108);
+  base = field(ValueExpression);
   _ = deprecated((ctx) => ctx.lt((ctx) => ctx.version(), 2));
   f_0x04 = field(AssetFromType, {
     condition: (ctx) => ctx.gte((ctx) => ctx.version(), 2),

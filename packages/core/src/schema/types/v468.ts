@@ -1,10 +1,10 @@
 import { Class, field } from "../core";
-import { V23 } from "./v23";
+import { DynamicGeom } from "./dynamicGeom";
 
 export class V468 extends Class {
   __id = 468;
   __todo = true;
   __offset = 0x1d6a0;
 
-  base = field(V23);
+  base = field(DynamicGeom);
 }

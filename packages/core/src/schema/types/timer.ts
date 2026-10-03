@@ -10,8 +10,8 @@ export class Timer extends Class {
   __offset = 0x2f4f0;
 
   base = field(Object);
-  f_0xb0 = field(U32);
-  f_0xb8 = field(U32);
+  flags = field(U32);
+  duration = field(U32);
   onStarted = field(Script);
   onUpdated = field(Script);
   onStopped = field(Script);

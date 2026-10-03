@@ -1,10 +1,10 @@
 import { Class, field } from "../core";
 import { AssetFromType, AssetReferenceSuffix } from "./asset";
 import { BOOL, U32 } from "./atomic";
+import { EntitySelector } from "./entitySelector";
 import { FN_0x5e2d0 } from "./fns";
 import { Script } from "./script";
 import { V160 } from "./v160";
-import { V301 } from "./v301";
 
 export class V470 extends Class {
   __id = 470;
@@ -33,7 +33,7 @@ export class V470 extends Class {
   f_0x70 = field(AssetReferenceSuffix, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
   });
-  v301 = field(V301, {
+  v301 = field(EntitySelector, {
     condition: (ctx) =>
       ctx.and(
         (ctx) => ctx.gt((ctx) => ctx.version(), 1),

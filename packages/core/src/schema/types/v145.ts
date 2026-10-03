@@ -1,13 +1,13 @@
 import { Class, deprecated, field } from "../core";
 import { U8, U32 } from "./atomic";
 import { FN_0x22520 } from "./fns";
-import { V109 } from "./v109";
+import { GameStateExpression } from "./gameStateExpression";
 
 export class V145 extends Class {
   __id = 145;
   __offset = 0x5d970;
 
-  base = field(V109);
+  base = field(GameStateExpression);
   _ = deprecated((ctx) => ctx.lt((ctx) => ctx.version(), 2));
   f_1 = field(FN_0x22520);
   f_0x10 = field(U32);

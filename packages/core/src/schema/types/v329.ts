@@ -1,16 +1,16 @@
 import { Class, deprecated, field } from "../core";
-import { Action } from "./action";
 import { AssetFromTypeWrap, AssetReference } from "./asset";
 import { U32 } from "./atomic";
-import { V301 } from "./v301";
+import { EntitySelector } from "./entitySelector";
+import { Statement } from "./statement";
 import { V421 } from "./v421";
 
 export class V329 extends Class {
   __id = 329;
   __offset = 0x42840;
 
-  base = field(Action);
-  f_1 = field(V301);
+  base = field(Statement);
+  f_1 = field(EntitySelector);
   f_0x4c = field(AssetFromTypeWrap);
   v421 = field(V421, {
     condition: (ctx) => ctx.gte((ctx) => ctx.version(), 2),

@@ -1,14 +1,14 @@
 import { Class, field } from "../core";
 import { AssetFromTypeWrap } from "./asset";
 import { U32 } from "./atomic";
-import { V109 } from "./v109";
+import { GameStateExpression } from "./gameStateExpression";
 import { V421 } from "./v421";
 
 export class V436 extends Class {
   __id = 436;
   __offset = 0x5a940;
 
-  base = field(V109);
+  base = field(GameStateExpression);
   f_0x04 = field(AssetFromTypeWrap, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2),
   });

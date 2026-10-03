@@ -1,20 +1,20 @@
 import { Class, deprecated, field } from "../core";
-import { Action } from "./action";
 import { AssetFromType, AssetFromTypeWrap, AssetReference } from "./asset";
 import { U32 } from "./atomic";
+import { CameraSelector } from "./cameraSelector";
+import { DialogSelector } from "./dialogSelector";
 import { ID } from "./id";
-import { V166 } from "./v166";
-import { V365 } from "./v365";
+import { Statement } from "./statement";
 
 export class V138 extends Class {
   __id = 138;
   __offset = 0x4c8e0;
 
-  base = field(Action);
-  f_0x08 = field(V166);
+  base = field(Statement);
+  f_0x08 = field(CameraSelector);
   _ = deprecated((ctx) => ctx.lt((ctx) => ctx.version(), 2));
   __ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 2));
-  f_0x40 = field(V365, {
+  f_0x40 = field(DialogSelector, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2),
   });
   ___ = deprecated((ctx) =>

@@ -1,22 +1,22 @@
 import { Class, field } from "../core";
-import { Action } from "./action";
 import { AssetFromTypeWrap } from "./asset";
 import { U32 } from "./atomic";
+import { EntitySelector } from "./entitySelector";
 import { Label } from "./label";
-import { V301 } from "./v301";
-import { V333 } from "./v333";
+import { PointSelector } from "./pointSelector";
+import { Statement } from "./statement";
 
 export class V448 extends Class {
   __id = 448;
   __offset = 0x46f90;
 
-  base = field(Action);
-  f_0x0c = field(V301);
+  base = field(Statement);
+  f_0x0c = field(EntitySelector);
   f_0x38 = field(AssetFromTypeWrap);
-  f_0x68 = field(V333, {
+  f_0x68 = field(PointSelector, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
   });
-  f_0x3c = field(V301, {
+  f_0x3c = field(EntitySelector, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
   });
   f_0x7c = field(Label, {

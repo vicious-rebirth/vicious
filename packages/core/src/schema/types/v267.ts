@@ -1,15 +1,15 @@
 import { Class, field } from "../core";
-import { Action } from "./action";
 import { AssetFromType, AssetFromTypeSizedList } from "./asset";
+import { EntitySelector } from "./entitySelector";
 import { FN_0x21f40 } from "./fns";
-import { V301 } from "./v301";
+import { Statement } from "./statement";
 
 export class V267 extends Class {
   __id = 267;
   __offset = 0x43aa0;
 
-  base = field(Action);
-  f_0x04 = field(V301);
+  base = field(Statement);
+  f_0x04 = field(EntitySelector);
   f_1 = field(FN_0x21f40, {
     custom: (ctx) => {
       ctx.set(this.f_1.version, (ctx) => ctx.version());

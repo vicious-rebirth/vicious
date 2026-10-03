@@ -1,17 +1,17 @@
 import { Class, deprecated, field } from "../core";
-import { Action } from "./action";
 import { AssetFromType, AssetFromTypeSizedList } from "./asset";
 import { BOOL, U32 } from "./atomic";
+import { EntitySelector } from "./entitySelector";
 import { FN_0x21f40 } from "./fns";
-import { V301 } from "./v301";
+import { Statement } from "./statement";
 
 export class V192 extends Class {
   __id = 192;
   __offset = 0x436a0;
 
-  base = field(Action);
+  base = field(Statement);
   _ = deprecated((ctx) => ctx.lte((ctx) => ctx.version(), 2));
-  f_1 = field(V301);
+  f_1 = field(EntitySelector);
   f_2 = field(FN_0x21f40, {
     custom: (ctx) => {
       ctx.set(this.f_2.version, (ctx) => ctx.version());

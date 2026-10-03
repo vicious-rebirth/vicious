@@ -18,8 +18,8 @@ export class StaticLight extends Class {
   __offset = 0x1135d0;
 
   base = field(Object);
-  f_0x40 = field(F32);
-  f_0x44 = field(I32);
+  intensity = field(F32);
+  color = field(I32);
   _ = deprecated((ctx) => ctx.eq((ctx) => ctx.version(), 1));
   f_0x78 = field(I32, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 2),

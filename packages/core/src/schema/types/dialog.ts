@@ -8,7 +8,7 @@ import { F32, U8, U32 } from "./atomic";
 import { Group } from "./group";
 import { Dimension } from "./math";
 import { Object } from "./object";
-import { V133 } from "./v133";
+import { UIGrid } from "./uiGrid";
 
 export class DialogGroup extends Class {
   __id = 139;
@@ -27,7 +27,7 @@ export class Dialog extends Class {
   f_0x48 = field(U32);
   s_14 = field(U32);
   f_0x124 = field(U32);
-  f_0x88 = field(V133);
+  grid = field(UIGrid);
   f_0x64 = field(U8, {
     condition: (ctx) => ctx.gte((ctx) => ctx.version(), 7),
   });

@@ -2,13 +2,13 @@ import { Class, field } from "../core";
 import { AssetReferenceSuffix } from "./asset";
 import { BOOL, U32 } from "./atomic";
 import { FN_0x22520 } from "./fns";
-import { V109 } from "./v109";
+import { GameStateExpression } from "./gameStateExpression";
 
 export class V150 extends Class {
   __id = 150;
   __offset = 0x5daf0;
 
-  base = field(V109);
+  base = field(GameStateExpression);
   f_1 = field(AssetReferenceSuffix, {
     condition: (ctx) => ctx.lt((ctx) => ctx.version(), 2),
   });

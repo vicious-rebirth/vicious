@@ -1,13 +1,13 @@
 import { Class, field } from "../core";
 import { AssetReference } from "./asset";
 import { BOOL, F32, U32 } from "./atomic";
-import { V34 } from "./v34";
+import { DynamicGeomTemplate } from "./dynamicGeomTemplate";
 
 export class V467 extends Class {
   __id = 467;
   __offset = 0xe57a0;
 
-  base = field(V34);
+  base = field(DynamicGeomTemplate);
   f_0x44 = field(AssetReference);
   f_0x48 = field(U32);
   f_0x4c = field(F32);

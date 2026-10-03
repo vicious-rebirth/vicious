@@ -1,11 +1,11 @@
 import { Class, Struct, deprecated, field } from "../core";
-import { V19 } from "./v19";
+import { ModelMaterial } from "./modelMaterial";
 
 export class V298 extends Class {
   __id = 298;
   __offset = 0x112b70;
 
-  base = field(V19);
+  base = field(ModelMaterial);
   f_1 = field(V298_1);
 }
 

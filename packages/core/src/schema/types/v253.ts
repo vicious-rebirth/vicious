@@ -1,14 +1,14 @@
 import { Class, deprecated, field } from "../core";
-import { Action } from "./action";
 import { AssetFromType, AssetFromTypeWrap, AssetReference } from "./asset";
 import { U32 } from "./atomic";
 import { FN_0x22520 } from "./fns";
+import { Statement } from "./statement";
 
 export class V253 extends Class {
   __id = 253;
   __offset = 0x1aca0;
 
-  base = field(Action);
+  base = field(Statement);
   f_0x08 = field(U32, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 3),
   });

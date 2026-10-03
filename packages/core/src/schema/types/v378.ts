@@ -1,14 +1,14 @@
 import { Class, field } from "../core";
 import { U32 } from "./atomic";
 import { FN_0x22520 } from "./fns";
-import { V108 } from "./v108";
+import { ValueExpression } from "./valueExpression";
 
 export class V378 extends Class {
   __id = 378;
   __offset = 0x55aa0;
 
   // Should be V369
-  base = field(V108);
+  base = field(ValueExpression);
   f_1 = field(FN_0x22520);
   f_0x10 = field(U32, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),

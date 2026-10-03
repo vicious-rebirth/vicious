@@ -1,19 +1,19 @@
 import { Class, field } from "../core";
-import { Action } from "./action";
 import { AssetFromType, AssetFromTypeWrap, AssetReference } from "./asset";
 import { BOOL, U32 } from "./atomic";
-import { V166 } from "./v166";
+import { CameraSelector } from "./cameraSelector";
+import { Statement } from "./statement";
 
 export class V163 extends Class {
   __id = 163;
   __offset = 0x3def0;
 
-  base = field(Action);
+  base = field(Statement);
   f_0x08 = field(U32);
   f_0x0c = field(U32, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),
   });
-  f_0x10 = field(V166);
+  f_0x10 = field(CameraSelector);
   f_0x4c = field(AssetFromType);
   f_0x48 = field(AssetReference, {
     condition: (ctx) => ctx.gt((ctx) => ctx.version(), 1),

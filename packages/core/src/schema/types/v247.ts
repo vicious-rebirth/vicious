@@ -1,10 +1,10 @@
 import { Class, field } from "../core";
-import { V391 } from "./v391";
+import { ListDataSource } from "./listDataSource";
 
 export class V247 extends Class {
   __id = 247;
   __todo = true;
   __offset = 0x126560;
 
-  base = field(V391);
+  base = field(ListDataSource);
 }
